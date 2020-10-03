@@ -5,7 +5,7 @@
 
 
 
-## Get Started! 
+## Get Started
 ###  To work on the repository:
 go on github:
 1)  fork the repository 
@@ -62,10 +62,10 @@ Liste des versions :(https://github.com/constellonautes/PIE_PROJECT/tags)
 * **Serge Rainjonneau** 
 * **Jeremie Labroquere **
 
-##
+
 ## License
 
-Ce projet est sous licence ``GNU GENERAL PUBLIC LICENSE`` - voir le fichier [LICENSE](LICENSE.md) pour plus d'informations
+Ce projet est sous licence ``GNU GENERAL PUBLIC LICENSE`` - voir le fichier [LICENSE](LICENSE) pour plus d'informations
 
 
 
