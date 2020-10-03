@@ -49,7 +49,7 @@ Liste des versions :(https://github.com/constellonautes/PIE_PROJECT/tags)
 * **Julie Bayard** 
 * **Amélie Falcou** 
 * **Thibault Hermaszweski**
-* **Loic Macé** _
+* **Loic Macé** 
 * **Théo Nguyen** _alias_ [@TheoNguyen611](https://github.com/TheoNguyen611)
 * **Louis Rivoire** 
 
@@ -59,8 +59,9 @@ Liste des versions :(https://github.com/constellonautes/PIE_PROJECT/tags)
 
 ## Projet commandé et supervisé par: 
 
+* **Jeremie Labroquere**
 * **Serge Rainjonneau** 
-* **Jeremie Labroquere **
+
 
 
 ## License
