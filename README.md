@@ -16,13 +16,13 @@ go on github:
 4) add the common remote repository 
   ``git remote add upstream common_repo_url``
 
-###  To save your changes your own  repository:
+###  To save the changes on your own  repository:
 
 1) stage and commit your changes 
 2) push your changes on your own remote repo
 ``git push origin master``
 
-###  To save your changes the common repository:
+###  To save the changes on the common repository:
 1) /!\ /!\ /!\ make sure you have the most updated work to avoid conflicts: fetch the upstream branch 
 ``git fetch upstream ``
 
@@ -48,7 +48,7 @@ Liste des versions :(https://github.com/constellonautes/PIE_PROJECT/tags)
 
 
 ## Auteurs
-Listez le(s) auteur(s) du projet ici !
+
 * **Julie Bayard** 
 * **Amélie Falcou** 
 * **Thibault Hermaszweski**
@@ -63,7 +63,7 @@ Listez le(s) auteur(s) du projet ici !
 ## Projet commandé et supervisé par: 
 
 * **Serge Rainjonneau** 
-* **Jérémie Labroquere **
+* **Jeremie Labroquere **
 
 ##
 ## License
