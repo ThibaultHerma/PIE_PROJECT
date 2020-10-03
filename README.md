@@ -29,7 +29,7 @@ go on github:
 2) merge the master branch of the upstream with your master branch 
 ``git merge upstream/master master``
 
-3)  commit and push your changes on your own remote repo
+3)  Eventually solve conflicts, then commit and push your changes on your own remote repo
 
 4) on GITHUB create a pull request from your own repo 
 
