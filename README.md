@@ -5,8 +5,8 @@
 
 
 
-## To work on the repository: 
-
+## Get Started! 
+###  To work on the repository:
 go on github:
 1)  fork the repository 
 2) clone the repository on your local machine : copy paste the url in the forked repo and then: 
@@ -46,23 +46,24 @@ Si vous souhaitez contribuer, lisez le fichier [CONTRIBUTING.md](https://example
 **Dernière version :** 1.0
 Liste des versions :(https://github.com/constellonautes/PIE_PROJECT/tags)
 
-## Projet commandé et supervisé par: 
 
-* **Serge Rainjoneau** _alias_ [@outout14](https://github.com/outout14)
-* **Jérémy ** _alias_ [@outout14](https://github.com/outout14)
 ## Auteurs
 Listez le(s) auteur(s) du projet ici !
-* **Julie Bayard** _alias_ [@outout14](https://github.com/outout14)
-* **Amélie Falcou** _alias_ [@outout14](https://github.com/outout14)
-* **Thibault Hermaszweski** _alias_ [@outout14](https://github.com/outout14)
-* **Loic Macé** _alias_ [@outout14](https://github.com/outout14)
-* **Théo Nguyen** _alias_ [@outout14](https://github.com/outout14)
-* **Louis Rivoire** _alias_ [@TheoNguyen611](https://github.com/TheoNguyen611)
+* **Julie Bayard** 
+* **Amélie Falcou** 
+* **Thibault Hermaszweski**
+* **Loic Macé** _
+* **Théo Nguyen** _alias_ [@TheoNguyen611](https://github.com/TheoNguyen611)
+* **Louis Rivoire** 
+
 
 
  liste des [contributeurs](https://github.com/constellonautes/PIE_PROJECT/contributors) 
 
-_(pour le lien mettez simplement l'URL de votre projet suivi de ``/contirubors``)_
+## Projet commandé et supervisé par: 
+
+* **Serge Rainjonneau** 
+* **Jérémie Labroquere **
 
 ##
 ## License
