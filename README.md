@@ -65,7 +65,7 @@ Liste des versions :(https://github.com/constellonautes/PIE_PROJECT/tags)
 ##
 ## License
 
-Ce projet est sous licence ``exemple: WTFTPL`` - voir le fichier [LICENSE.md](LICENSE.md) pour plus d'informations
+Ce projet est sous licence ``GNU GENERAL PUBLIC LICENSE`` - voir le fichier [LICENSE](LICENSE.md) pour plus d'informations
 
 
 
