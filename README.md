@@ -28,6 +28,7 @@ go on github:
 
 2) merge the master branch of the upstream with your master branch 
 ``git merge upstream/master master``
+( you can also do ``git pull upstream master``instead of fetch and merge )
 
 3)  Eventually solve conflicts, then commit and push your changes on your own remote repo
 
