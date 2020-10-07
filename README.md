@@ -22,7 +22,9 @@ go on github:
 
 ###  To save the changes on your own  repository:
 
-1) stage and commit your changes 
+1) stage and commit your changes
+``git add all`` or ``git add name_of_file``
+``git commit`` or ``git commit -m my_comment`` to add a comment
 2) push your changes on your own remote repo
 ``git push origin master``
 
