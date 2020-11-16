@@ -77,7 +77,7 @@ liste des [contributeurs](https://github.com/constellonautes/PIE_PROJECT/contrib
 
 ## License
 
-Ce projet est sous licence ``GNU GENERAL PUBLIC LICENSE`` - voir le fichier [LICENSE](LICENSE) pour plus d'informations
+Ce projet est sous licence ``GNU GENERAL PUBLIC LICENSE`` - voir le fichier [LICENSE](LICENSE) pour plus d'informations.
 
 
 
