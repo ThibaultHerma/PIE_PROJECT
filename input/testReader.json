@@ -1,0 +1,35 @@
+[
+    {   "useCaseId":1,
+        "useCaseDescription":"One plane, several satellites on this plan",
+
+        "optimisationParameters": {
+            "algoName": "genetic",
+            "stopParameters":{
+                "nbIteration":1000,
+                "maxTime(s):":3600
+            }
+        } ,
+
+
+        "constraints":{
+            "nbSat":{
+                "min":1,
+                "max":20
+            },
+            "inclination":{
+                "min":0.0,
+                "max":90.0
+            }
+        },
+
+        "zone":{
+            "latMin":43.603950,
+            "latMax":43.619355,
+            "lonMin":1.444510,
+            "lonMax":1.486368
+        }
+
+    }
+        
+        
+]
