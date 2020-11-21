@@ -21,6 +21,27 @@ import org.orekit.frames.TopocentricFrame;
 
 // TODO : write unit tests
 
+/**
+ * The next class enables the user to mesh a polygon with a set of points,
+ * and then compute revisit times over that set of points, that is over the given polygon.
+ * It has to be used by following these guidelines :
+ * - instantiate a new zone class by using the default constructor. The parameters are
+ *   a set of points representing a polygon. The points have to be given using the orekit
+ *   class GeodeticPoint. Then, a type of meshing has to be given as parameter.
+ * - call the method createEventsDetector on the zone object and give as parameter
+ *   the orekit propagator that will be used to propagate the orbit of the satellite.
+ *   The elevation of the points, which correspond to the field of view of the satellite, has
+ *   to be given too.
+ * - propagate the orbit, using the orekit tools.
+ * - call the methods which calculate the revisit times, etc...
+ * 
+ * TODO : write the methods which calculate the revisit times, etc...
+ * TODO : take into account the fact that we may have one zone object for several satellites : adapt everything 
+ * 
+ * 
+ * @author loulo
+ *
+ */
 public class Zone {
 	
 	
