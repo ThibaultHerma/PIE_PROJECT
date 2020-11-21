@@ -1,4 +1,4 @@
-[
+
     {   "useCaseId":1,
         "useCaseDescription":"One plane, several satellites on this plan",
 
@@ -6,20 +6,19 @@
             "algoName": "genetic",
             "stopParameters":{
                 "nbIteration":1000,
-                "maxTime(s):":3600
+                "maxRunTime(s)":3600.00
             }
         } ,
 
-
         "constraints":{
             "nbSat":{
-                "min":1,
-                "max":20
+                "min":1.0,
+                "max":20.0
             },
             "inclination":{
                 "min":0.0,
                 "max":90.0
-            }
+            },
         },
 
         "zone":{
@@ -32,4 +31,3 @@
     }
         
         
-]

@@ -49,18 +49,20 @@ public class Constellation {
 	 * @param satellitesList list of satellites of the plan
 	 * 
 	 */
-	//un plan peut être vide  ??? >>> non !
+	//un plan peut être vide  ??? 
 	public void addPlane(int idPlane, double inclinaison, double omega, double rightAscNode, arrayList<Satellites> satellitesList) {
 		nOrbitalPlanes+=1;
 		Plane w = new Plane(idPlane, inclination, omega, rightAscNode, satellitesList );
-		planesList.add(w);
-				
+		planesList.add(w);				
 	}
 	
-	AcquisitionWindow w = new AcquisitionWindow(id, this, satellite, earliestStart, latestStart, duration, zenithAngle, rollAngle, cloudProba, volume);
-	acquisitionWindows.add(w);
-	return w;
-}
+	public void addSatellite(double a, double eccentricity, double inclinaison, double omega, double rightAscNode, double periapsisArgument double anomaly, double t0) {
+		Satellite w = new Satellite (a, eccentricity, inclinaison, omega, rightAscNode, periapsisArgument, anomaly, t0)
+//		nOrbitalPlanes+=1;
+//		Plane w = new Plane(idPlane, inclination, omega, rightAscNode, satellitesList );
+//		planesList.add(w);				
+	}
+	
 	
 	+removePlane()+ addSatellite(a,e,omega,i,w,M,t0): void
 	+removeSatellite()
