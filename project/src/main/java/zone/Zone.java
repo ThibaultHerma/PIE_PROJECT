@@ -92,7 +92,7 @@ public class Zone {
 	 * The standard resolution is set to 1km (at the Equator).
 	 */
 	private double standardMeshResolution = 1000 / org.orekit.utils.Constants.WGS84_EARTH_EQUATORIAL_RADIUS;
-	
+	 
 
 	/**
 	 * Default constructor
@@ -371,7 +371,7 @@ class VisibilityHandler implements EventHandler<ElevationDetector> {
             // or may want to calculate the revisit time
             return Action.CONTINUE;
             }
-        
+         
     }
 
     public SpacecraftState resetState(final ElevationDetector detector, final SpacecraftState oldState) {

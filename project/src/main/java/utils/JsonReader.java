@@ -1,5 +1,6 @@
 package utils;
 
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -8,12 +9,13 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import org.orekit.bodies.GeodeticPoint;
+
+import zone.Zone;
+
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
+
 import java.util.Map;
 
 /**
@@ -50,7 +52,7 @@ public class JsonReader {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-	}
+	} 
 
 	/**
 	 * Print an error message in case the JSON doesn't have the correct syntax.
@@ -77,13 +79,16 @@ public class JsonReader {
 		try {
 			for (String key : map.keySet()) {
 
-				Double value;
+
 				if (map.get(key) instanceof Long) {
-					value = ((Long) map.get(key)).doubleValue();
-				} else {
-					value = (Double) map.get(key);
+					Double value = ((Long) map.get(key)).doubleValue();
+					mapDouble.put(key, value);
+				} 
+				if  (map.get(key) instanceof Double) {
+					Double value = (Double) map.get(key);
+					mapDouble.put(key, value);
 				}
-				mapDouble.put(key, value);
+
 			}
 		} catch (ClassCastException e) {
 			e.printStackTrace();
@@ -154,7 +159,7 @@ public class JsonReader {
 	@SuppressWarnings("unchecked")
 	public HashMap<String, Double> getStopParameters() {
 		HashMap<String, Object> stopParameters = new HashMap<String, Object>();// Stop parameters with eventually
-																				// different types
+		// different types
 
 		try {
 			stopParameters = (HashMap<String, Object>) getOptimisationParameters().get("stopParameters");
@@ -191,23 +196,76 @@ public class JsonReader {
 		return constraintsDouble;
 
 	}
- 
+
 	/**
-	 * Get the Zone to cover in the problem. The Zone is a HashMap with min and max
-	 * longitude and latitude. ex: "zone":{
-	 * "latMin":43.603950,"latMax":43.619355,"lonMin":1.444510,"lonMax":1.486368}
+	 * Read the Zone to cover in the problem and instantiate a Zone object. 
+	 * The input Zone is a HashMap with a list of geodetic points and the meshing style
+	 * longitude and latitude. Example :
+	 *"zone":{
+     *   	"meshingStyle":"lat_lon_standard_meshing",
+     *   	"inputPolygon":[
+     *  	
+     *      	{"lat":43.603950,
+     *       	"lon":1.444510,
+     *       	"alt":143 }
+     *       ,
+     *      
+     *       	{"lat":43.619355,
+     *       	"lon":1.486368,
+     *       	"alt":154}
+     *       
+     *       ]
 	 * 
 	 * @return the zone to cover.
 	 */
 	@SuppressWarnings("unchecked")
-	public HashMap<String, Double> getZone() {
-		HashMap<String, Object> zone = new HashMap<String, Object>();
+	public Zone getZone() {
+
+		// the Zone from the JSON file
+		HashMap<String, Object> zoneRaw = new HashMap<String, Object>(); 
+		//The style of meshing used (default value)
+		String meshingStyle="lat_lon_standard_meshing"; 
+		//The list of the polygon points from the JSON file
+		ArrayList<HashMap<String, Object>> inputPolygonRaw=new ArrayList<HashMap<String, Object>>();
+        
+		/** Read the JSON file*/
 		try {
-			zone = (HashMap<String, Object>) inputData.get("zone");
+			zoneRaw = (HashMap<String, Object>) inputData.get("zone");
+			meshingStyle = (String) zoneRaw.get("meshingStyle");
+			inputPolygonRaw=(ArrayList<HashMap<String, Object>>) zoneRaw.get("inputPolygon");
+
 		} catch (NullPointerException e) {
 			printError("zone");
 		}
-		return convertToDouble(zone);
+
+		/**Cast all values to double  and create a list of Geodetic points */
+
+		ArrayList<GeodeticPoint> inputPolygon =new ArrayList<GeodeticPoint>();
+
+
+		for (HashMap<String, Object> point : inputPolygonRaw) {
+			HashMap<String,Double> pointDouble =convertToDouble(point);
+            
+			double lat = pointDouble.get("lat");
+			double lon = pointDouble.get("lon");
+			double alt;
+			
+			if (pointDouble.containsKey("alt")) {
+				alt=pointDouble.get("alt");
+			}
+			else {
+				alt=org.orekit.utils.Constants.WGS84_EARTH_EQUATORIAL_RADIUS;
+			}
+			
+			GeodeticPoint geodeticPoint=new GeodeticPoint(lat,lon,alt);
+			inputPolygon.add(geodeticPoint);
+		}
+		
+		/** Create a Zone with the list of geodetics point and the specified meshing style */
+		
+		Zone zone =new Zone(inputPolygon,meshingStyle);
+
+		return  zone;
 	}
 
 }
