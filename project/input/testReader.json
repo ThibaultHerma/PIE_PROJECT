@@ -22,17 +22,16 @@
         },
 
         "zone":{
-        	"meshing"
-        	"GeodeticPoints":[
+        	"meshingStyle":"lat_lon_standard_meshing",
+        	"inputPolygon":[
         	
-            	{"lat":43.603950,
-            	"lon":1.444510,
+            	{"lat":0.76103249437,
+            	"lon":0.02521145558,
             	"alt":143 }
             ,
            
-            	{"lat":43.619355,
-            	"lon":1.486368,
-            	"alt":154}
+            	{"lat":0.761301362344,
+            	"lon":0.025942015496,}
             
             ]
 

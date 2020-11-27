@@ -231,19 +231,21 @@ public class JsonReader {
 		/** Read the JSON file*/
 		try {
 			zoneRaw = (HashMap<String, Object>) inputData.get("zone");
-			meshingStyle = (String) zoneRaw.get("meshingStyle");
 			inputPolygonRaw=(ArrayList<HashMap<String, Object>>) zoneRaw.get("inputPolygon");
+			if (zoneRaw.containsKey("meshingStyle")) {
+				meshingStyle = (String) zoneRaw.get("meshingStyle");
+			}
 
 		} catch (NullPointerException e) {
 			printError("zone");
-		}
+		} 
 
 		/**Cast all values to double  and create a list of Geodetic points */
 
 		ArrayList<GeodeticPoint> inputPolygon =new ArrayList<GeodeticPoint>();
 
 
-		for (HashMap<String, Object> point : inputPolygonRaw) {
+		for (HashMap<String, Object> point : inputPolygonRaw) { 
 			HashMap<String,Double> pointDouble =convertToDouble(point);
             
 			double lat = pointDouble.get("lat");
@@ -252,9 +254,9 @@ public class JsonReader {
 			
 			if (pointDouble.containsKey("alt")) {
 				alt=pointDouble.get("alt");
-			}
+			} 
 			else {
-				alt=org.orekit.utils.Constants.WGS84_EARTH_EQUATORIAL_RADIUS;
+				alt=parameters.projectEarthEquatorialRadius;
 			}
 			
 			GeodeticPoint geodeticPoint=new GeodeticPoint(lat,lon,alt);

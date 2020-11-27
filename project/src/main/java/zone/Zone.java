@@ -92,6 +92,11 @@ public class Zone {
 	 * The standard resolution is set to 1km (at the Equator).
 	 */
 	private double standardMeshResolution = 1000 / org.orekit.utils.Constants.WGS84_EARTH_EQUATORIAL_RADIUS;
+	
+	/**
+	 * The style of meshing which has to be used to convert a polygon into a list of meshing points
+	 */
+	private String meshingStyle; 
 	 
 
 	/**
@@ -104,8 +109,9 @@ public class Zone {
 	public Zone(ArrayList<GeodeticPoint> inputPolygon, String meshingStyle) {
 		super();
 		this.inputPolygon = inputPolygon;
-		if (meshingStyle == "lat_lon_standard_meshing") {
-			computeLatLonStandardMeshing();
+		this.meshingStyle = meshingStyle;
+		if (meshingStyle.equals("lat_lon_standard_meshing")) {
+			computeLatLonStandardMeshing(); 
 		}
 		else {
 			System.out.println("The meshing style " + meshingStyle +
@@ -115,7 +121,7 @@ public class Zone {
 		this.listEndVisibilitiesMesh = new HashMap<GeodeticPoint, ArrayList<AbsoluteDate>>();
 		this.logger = new EventsLogger();
 	}
-
+ 
 	
 	
 	/**
@@ -346,7 +352,11 @@ public class Zone {
 		this.standardMeshResolution = standardMeshResolution;
 	}
 	
-	
+	public String getMeshingStyle() {
+		return meshingStyle;
+	}
+
+
 	
 	
 }
