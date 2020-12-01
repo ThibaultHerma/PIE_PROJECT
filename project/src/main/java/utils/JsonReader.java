@@ -256,7 +256,7 @@ public class JsonReader {
 				alt=pointDouble.get("alt");
 			} 
 			else {
-				alt=parameters.projectEarthEquatorialRadius;
+				alt=Parameters.projectEarthEquatorialRadius;
 			}
 			
 			GeodeticPoint geodeticPoint=new GeodeticPoint(lat,lon,alt);

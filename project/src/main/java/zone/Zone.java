@@ -17,7 +17,7 @@ import org.orekit.propagation.events.handlers.EventHandler;
 import org.orekit.time.AbsoluteDate;
 import org.orekit.utils.IERSConventions;
 
-import utils.parameters;
+import utils.Parameters;
 
 import org.orekit.frames.FramesFactory;
 import org.orekit.frames.TopocentricFrame;
@@ -88,12 +88,12 @@ public class Zone {
 	
 	/**
 	 * The resolution of the standard mesh.
-	 * The unit is the radian.
+	 * The unit is the radian. 
 	 * The standard resolution is set to 1km (at the Equator).
 	 */
 	private double standardMeshResolution = 1000 / org.orekit.utils.Constants.WGS84_EARTH_EQUATORIAL_RADIUS;
 	
-	/**
+	/** 
 	 * The style of meshing which has to be used to convert a polygon into a list of meshing points
 	 */
 	private String meshingStyle; 
@@ -103,7 +103,7 @@ public class Zone {
 	 * Default constructor
 	 * Computes the meshing of the input polygon.
 	 * 
-	 * @param inputPolygon
+	 * @param inputPolygon List of the geodetic points which form the polygon we want to monitor.
 	 * @param meshingStyle The style of meshing which has to be used to convert a polygon into a list of meshing points
 	 */
 	public Zone(ArrayList<GeodeticPoint> inputPolygon, String meshingStyle) {
@@ -219,9 +219,9 @@ public class Zone {
 	 */
 	public void createEventsDetector(Propagator propagator, double elevation) {
 		
-		org.orekit.frames.Frame earthFrame = FramesFactory.getITRF(parameters.projectIERSConventions, true);
-		BodyShape earth = new OneAxisEllipsoid(parameters.projectEarthEquatorialRadius,
-											   parameters.projectEarthFlattening,
+		org.orekit.frames.Frame earthFrame = FramesFactory.getITRF(Parameters.projectIERSConventions, true);
+		BodyShape earth = new OneAxisEllipsoid(Parameters.projectEarthEquatorialRadius,
+											   Parameters.projectEarthFlattening,
 		                                       earthFrame);
 		
 		// TODO : find the meaning of these parameters
@@ -360,7 +360,6 @@ public class Zone {
 	
 	
 }
-
 
 /**
  * That class is here to display when an event is detected.

@@ -76,7 +76,7 @@ class JsonReaderTest {
 		assert(inputPolygon.get(0).getAltitude()==143);
 		assert(inputPolygon.get(1).getLatitude()==0.761301362344);
 		assert(inputPolygon.get(1).getLongitude()==0.025942015496);
-		assert(inputPolygon.get(1).getAltitude()==parameters.projectEarthEquatorialRadius);
+		assert(inputPolygon.get(1).getAltitude()==Parameters.projectEarthEquatorialRadius);
 		assert(zone.getMeshingStyle().equals("lat_lon_standard_meshing"));
 		
 	} 
