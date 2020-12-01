@@ -31,7 +31,7 @@ class ZoneTest {
 		inputPolygon.add(geodeticPoint2);
 		inputPolygon.add(geodeticPoint3);
 		inputPolygon.add(geodeticPoint4);
-		
+		 
 		// we instanciate a zone object, which will create a mesh for the input polygon
 		Zone zone = new Zone(inputPolygon, "lat_lon_standard_meshing");
 		

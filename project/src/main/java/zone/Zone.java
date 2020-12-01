@@ -16,6 +16,9 @@ import org.orekit.propagation.events.EventsLogger;
 import org.orekit.propagation.events.handlers.EventHandler;
 import org.orekit.time.AbsoluteDate;
 import org.orekit.utils.IERSConventions;
+
+import utils.parameters;
+
 import org.orekit.frames.FramesFactory;
 import org.orekit.frames.TopocentricFrame;
 
@@ -23,24 +26,27 @@ import org.orekit.frames.TopocentricFrame;
 
 /**
  * The next class enables the user to mesh a polygon with a set of points,
- * and then compute revisit times over that set of points, that is over the given polygon.
- * It has to be used by following these guidelines :
- * - instantiate a new zone class by using the default constructor. The parameters are
- *   a set of points representing a polygon. The points have to be given using the orekit
- *   class GeodeticPoint. Then, a type of meshing has to be given as parameter.
+ * and then computes the time at which the points are seen by a satellite.
+ * These are the guidelines to follow to use this class :
+ * - instantiate a new zone class by using the default constructor. The parameters of this
+ *   constructor are a set of points representing a polygon and a meshing type. The points have
+ *   to be given using the orekit class GeodeticPoint. Then, a type of meshing has to be 
+ *   given as a string parameter.
  * - call the method createEventsDetector on the zone object and give as parameter
  *   the orekit propagator that will be used to propagate the orbit of the satellite.
  *   The elevation of the points, which correspond to the field of view of the satellite, has
  *   to be given too.
  * - propagate the orbit, using the orekit tools.
- * - call the methods which calculate the revisit times, etc...
+ * - call the methods which gives back the list of revisit times on the mesh.
  * 
- * TODO : write the methods which calculate the revisit times, etc...
- * TODO : take into account the fact that we may have one zone object for several satellites : adapt everything 
+ * A zone object can be instantiated for a given polygon, and then used for several satellites :
+ * the only necessary step is to call the method createEventsDetector before every propagation
+ * and read the list of revisit times before propagating an other satellite.
+ * 
+ *  
+ * @author Louis Rivoire
  * 
  * 
- * @author loulo
- *
  */
 public class Zone {
 	
@@ -59,10 +65,20 @@ public class Zone {
 	
 	
 	/**
-	 * HashMap which contains all the dates at which a geodetic point is seen by the satellite
+	 * HashMap which contains all the dates at which a geodetic point is beginning to be seen
+	 * by the satellite. It corresponds to the moment at which the geodetic point enters into
+	 * the field of view of the satellite.
+	 * This can be used to computes data such as the revisit time, etc.
+	 */
+	private HashMap<GeodeticPoint, ArrayList<AbsoluteDate>> listBegVisibilitiesMesh;// = new HashMap<GeodeticPoint, ArrayList<AbsoluteDate>>();
+	
+	/**
+	 * HashMap which contains all the dates at which a geodetic point is not seen anymore
+	 * by the satellite. It corresponds to the moment at which the geodetic point goes out of
+	 * the field of view of the satellite.
 	 * This will be used to computes data such as the revisit time, etc.
 	 */
-	private HashMap<GeodeticPoint, ArrayList<AbsoluteDate>> listRevisitTimeMesh;// = new HashMap<GeodeticPoint, ArrayList<AbsoluteDate>>();
+	private HashMap<GeodeticPoint, ArrayList<AbsoluteDate>> listEndVisibilitiesMesh;// = new HashMap<GeodeticPoint, ArrayList<AbsoluteDate>>();
 
 
 	/**
@@ -77,6 +93,11 @@ public class Zone {
 	 */
 	private double standardMeshResolution = 1000 / org.orekit.utils.Constants.WGS84_EARTH_EQUATORIAL_RADIUS;
 	
+	/**
+	 * The style of meshing which has to be used to convert a polygon into a list of meshing points
+	 */
+	private String meshingStyle; 
+	 
 
 	/**
 	 * Default constructor
@@ -88,17 +109,19 @@ public class Zone {
 	public Zone(ArrayList<GeodeticPoint> inputPolygon, String meshingStyle) {
 		super();
 		this.inputPolygon = inputPolygon;
-		if (meshingStyle == "lat_lon_standard_meshing") {
-			computeLatLonStandardMeshing();
+		this.meshingStyle = meshingStyle;
+		if (meshingStyle.equals("lat_lon_standard_meshing")) {
+			computeLatLonStandardMeshing(); 
 		}
 		else {
 			System.out.println("The meshing style " + meshingStyle +
 					           " which has been given as input does not exist.");
 		}
-		this.listRevisitTimeMesh = new HashMap<GeodeticPoint, ArrayList<AbsoluteDate>>();;
+		this.listBegVisibilitiesMesh = new HashMap<GeodeticPoint, ArrayList<AbsoluteDate>>();
+		this.listEndVisibilitiesMesh = new HashMap<GeodeticPoint, ArrayList<AbsoluteDate>>();
 		this.logger = new EventsLogger();
 	}
-
+ 
 	
 	
 	/**
@@ -196,11 +219,10 @@ public class Zone {
 	 */
 	public void createEventsDetector(Propagator propagator, double elevation) {
 		
-		org.orekit.frames.Frame earthFrame = FramesFactory.getITRF(IERSConventions.IERS_2010, true);
-		BodyShape earth = new OneAxisEllipsoid(org.orekit.utils.Constants.WGS84_EARTH_EQUATORIAL_RADIUS,
-											   org.orekit.utils.Constants.WGS84_EARTH_FLATTENING,
+		org.orekit.frames.Frame earthFrame = FramesFactory.getITRF(parameters.projectIERSConventions, true);
+		BodyShape earth = new OneAxisEllipsoid(parameters.projectEarthEquatorialRadius,
+											   parameters.projectEarthFlattening,
 		                                       earthFrame);
-		// TODO : see if the parameters before can be set globally (the orekit constants)
 		
 		// TODO : find the meaning of these parameters
 		double maxcheck  = 60.0;
@@ -229,30 +251,29 @@ public class Zone {
 	
 	/**
 	 * This method reads what has been stored during the propagation in the list of
-	 * logged events. It fills the hashmap listRevisitTimeMesh with the time of 
-	 * revisit of each point of the meshing.
-	 * 
+	 * logged events. It fills the hashmaps listBegVisibilitiesMesh and
+	 * listEndVisibilitiesMesh with the time of revisit of each point of the
+	 * meshing.
 	 */
 	public void fillListRevisitTimeMeshFromLog() {
 
 		List<EventsLogger.LoggedEvent> listEvents = logger.getLoggedEvents();
 		
 		for (EventsLogger.LoggedEvent event : listEvents) {
+
+			ElevationDetector elevationDetector = (ElevationDetector) event.getEventDetector();
+			SpacecraftState spacecraftState = event.getState();
+			
+			GeodeticPoint mesh_point = elevationDetector.getTopocentricFrame().getPoint();
+			AbsoluteDate date = spacecraftState.getDate();
 			
 			// the method isIncreasing returns a boolean which states
 			// whether the satellite is entering or exiting the elevation zone
-			// we decide to add the event only if that boolean is true
-			// because we should not add an event for the enter AND the exit of a zone
 			if (event.isIncreasing()) {
-
-				ElevationDetector elevationDetector = (ElevationDetector) event.getEventDetector();
-				SpacecraftState spacecraftState = event.getState();
-				
-				GeodeticPoint mesh_point = elevationDetector.getTopocentricFrame().getPoint();
-				AbsoluteDate date = spacecraftState.getDate();
-				
-				addPointAndDateListRevisitTimeMesh(mesh_point, date);
-				
+				addPointAndDateListBegVisibilitiesMesh(mesh_point, date);
+			}
+			else {
+				addPointAndDateListEndVisibilitiesMesh(mesh_point, date);
 			}
 		}
 	}
@@ -286,18 +307,32 @@ public class Zone {
 	}
 	
 
-	public HashMap<GeodeticPoint, ArrayList<AbsoluteDate>> getListRevisitTimeMesh() {
-		return listRevisitTimeMesh;
+	public HashMap<GeodeticPoint, ArrayList<AbsoluteDate>> getListBegVisibilitiesMesh() {
+		return listBegVisibilitiesMesh;
 	}
 
-	public void setListRevisitTimeMesh(HashMap<GeodeticPoint, ArrayList<AbsoluteDate>> listRevisitTimeMesh) {
-		this.listRevisitTimeMesh = listRevisitTimeMesh;
+	public void setListBegVisibilitiesMesh(HashMap<GeodeticPoint, ArrayList<AbsoluteDate>> listBegVisibilitiesMesh) {
+		this.listBegVisibilitiesMesh = listBegVisibilitiesMesh;
 	}
 
-	public void addPointAndDateListRevisitTimeMesh(GeodeticPoint pointToAdd, AbsoluteDate dateToAdd) {
-		this.listRevisitTimeMesh.putIfAbsent(pointToAdd, new ArrayList<AbsoluteDate>());
-		this.listRevisitTimeMesh.get(pointToAdd).add(dateToAdd);
+	public void addPointAndDateListBegVisibilitiesMesh(GeodeticPoint pointToAdd, AbsoluteDate dateToAdd) {
+		this.listBegVisibilitiesMesh.putIfAbsent(pointToAdd, new ArrayList<AbsoluteDate>());
+		this.listBegVisibilitiesMesh.get(pointToAdd).add(dateToAdd);
 	}
+	
+	public HashMap<GeodeticPoint, ArrayList<AbsoluteDate>> getListEndVisibilitiesMesh() {
+		return listEndVisibilitiesMesh;
+	}
+
+	public void setListEndVisibilitiesMesh(HashMap<GeodeticPoint, ArrayList<AbsoluteDate>> listEndVisibilitiesMesh) {
+		this.listEndVisibilitiesMesh = listEndVisibilitiesMesh;
+	}
+
+	public void addPointAndDateListEndVisibilitiesMesh(GeodeticPoint pointToAdd, AbsoluteDate dateToAdd) {
+		this.listEndVisibilitiesMesh.putIfAbsent(pointToAdd, new ArrayList<AbsoluteDate>());
+		this.listEndVisibilitiesMesh.get(pointToAdd).add(dateToAdd);
+	}
+	
 
 	public EventsLogger getLogger() {
 		return logger;
@@ -317,15 +352,18 @@ public class Zone {
 		this.standardMeshResolution = standardMeshResolution;
 	}
 	
-	
+	public String getMeshingStyle() {
+		return meshingStyle;
+	}
+
+
 	
 	
 }
 
 
 /**
- * That class is here to define what has to be done once a mesh point
- * is detected by a satellite
+ * That class is here to display when an event is detected.
  *
  */
 class VisibilityHandler implements EventHandler<ElevationDetector> {
@@ -343,7 +381,7 @@ class VisibilityHandler implements EventHandler<ElevationDetector> {
             // or may want to calculate the revisit time
             return Action.CONTINUE;
             }
-        
+         
     }
 
     public SpacecraftState resetState(final ElevationDetector detector, final SpacecraftState oldState) {

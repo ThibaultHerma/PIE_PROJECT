@@ -22,10 +22,19 @@
         },
 
         "zone":{
-            "latMin":43.603950,
-            "latMax":43.619355,
-            "lonMin":1.444510,
-            "lonMax":1.486368
+        	"meshingStyle":"lat_lon_standard_meshing",
+        	"inputPolygon":[
+        	
+            	{"lat":0.76103249437,
+            	"lon":0.02521145558,
+            	"alt":143 }
+            ,
+           
+            	{"lat":0.761301362344,
+            	"lon":0.025942015496,}
+            
+            ]
+
         }
 
     }

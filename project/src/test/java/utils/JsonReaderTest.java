@@ -7,8 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
+import org.orekit.bodies.GeodeticPoint;
 
 import utils.JsonReader;
+import zone.Zone;
 
 
 class JsonReaderTest {
@@ -27,7 +29,7 @@ class JsonReaderTest {
 		assert(useCaseId==1);
 
 	}
-
+ 
 	@Test
 	void testGetAlgoName() {
 
@@ -53,7 +55,7 @@ class JsonReaderTest {
 		//assert
 		assert(constraints.get("inclination").get("min")==0.0);
 		assert(constraints.get("inclination").get("max")==90.0);
-		assert(constraints.get("nbSat").get("min")==1.0); 
+		assert(constraints.get("nbSat").get("min")==1.0);  
 		assert(constraints.get("nbSat").get("max")==20.0);
  
 	}
@@ -65,18 +67,24 @@ class JsonReaderTest {
 		JsonReader jsonReader=new JsonReader();
 		//Act 
 		jsonReader.read("input/testReader.json");
-		HashMap<String,Double> zone=jsonReader.getZone();
+		Zone zone=jsonReader.getZone();
+		ArrayList<GeodeticPoint> inputPolygon=zone.getInputPolygon();
+	
 		//Assert
-		assert(zone.get("latMin")==43.603950);
-		assert(zone.get("latMax")==43.619355);
-		assert(zone.get("lonMin")==1.444510); 
-		assert(zone.get("lonMax")==1.486368);
-	}
-
+		assert(inputPolygon.get(0).getLatitude()==0.76103249437);
+		assert(inputPolygon.get(0).getLongitude()==0.02521145558);
+		assert(inputPolygon.get(0).getAltitude()==143);
+		assert(inputPolygon.get(1).getLatitude()==0.761301362344);
+		assert(inputPolygon.get(1).getLongitude()==0.025942015496);
+		assert(inputPolygon.get(1).getAltitude()==parameters.projectEarthEquatorialRadius);
+		assert(zone.getMeshingStyle().equals("lat_lon_standard_meshing"));
+		
+	} 
+ 
 	@Test
 	void testGetStopParameters() {
  
-		//Arrange 
+		//Arrange  
 		JsonReader jsonReader=new JsonReader(); 
 		//Act 
 		jsonReader.read("input/testReader.json");
