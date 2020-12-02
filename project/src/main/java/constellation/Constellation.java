@@ -72,7 +72,33 @@ public class Constellation {
 	public Satellite getSatellitesList(){
 		return (satellitesList);
 	}
-
+	
+	/**
+	 * return the satellite of id "idSatellite" from satellitesList
+	 * @param idSatellite idSatellite of the satellite to get from the list
+	 */
+	public Satellite getSatellite(String idSatellite){
+		return satellitesList.get(idSatellite);		
+	}
+	
+	/**
+	 * return the plane of id "idPlane" from PlanesList
+	 * @param idPlane idPlane of the plane to get from the list
+	 */
+	public Plane getPlane(String idPlane){
+		return planesList.get(idPlane);
+	}
+	
+	
+	/**
+	 * return the plane of planesList the Satellite "satellite" is part of 
+	 * @param satellite Satellite  belonging to the plane we want to reach
+	 */
+	public Plane getPlaneOfSatellite(Satellite satellite){		
+		Plane p = this.getPlane(satellite.getIdPlane());
+		return p;
+	}
+	
 	
 	/**
 	 * add a plane
@@ -103,49 +129,30 @@ public class Constellation {
 	 * @param t0
 	 * 
 	 */
-	public void addSatellite(double a, double eccentricity, double inclination, double omega, double rightAscNode, double periapsisArgument, double anomaly, double t0) {
-
-		//Checking if the added satellite belongs to an already existing plane
-		int idPlane = -1;
-		if (nOrbitalPlanes !=0) {
-			for (int i = 0 ; i<nOrbitalPlanes ; i++) {
-				if (planesList.get(i).getInclination()==inclination && planesList.get(i).getRightAscNode()==rightAscNode) {
-					idPlane = i;
-				}
-			}
-		}
-		if (idPlane == -1) { //there is no such plane
-			int idNewPlane = this.idNewPlane();
-			Satellite w = new Satellite (idNewPlane, a, eccentricity, inclination, omega, rightAscNode, periapsisArgument, anomaly, t0);
-			this.addPlane(idNewPlane, inclination, rightAscNode, w);
-			nOrbitalPlanes+=1; // update nOrbitalPlanes
-			
-		} else { // the satellite belongs to the idPlane-th plane of planesList 
-			Satellite w = new Satellite (planesList.get.get(idPlane).getId(), a, eccentricity, inclination, omega, rightAscNode, periapsisArgument, anomaly, t0);
-			planesList.get(idPlane).addSatellite(w);
-		}
-		nSat+=1; //update nSat			
-	}
-	
-	/**
-	 * return an unused id for a new plan 
-	 */
-//	public int idNewPlane(){
-//		if (nOrbitalPlanes != 0) {
-//			return(planesList.get(nOrbitalPlanes-1).getId() + 1 ) // by default, returns the "id of the last existing plane in planesList + 1 "
+	// à convertir hashmap
+//	public void addSatellite(double a, double eccentricity, double inclination, double omega, double rightAscNode, double periapsisArgument, double anomaly, double t0) {
+//		//Checking if the added satellite belongs to an already existing plane
+//		int idPlane = -1;
+//		if (nOrbitalPlanes !=0) {
+//			for (int i = 0 ; i<nOrbitalPlanes ; i++) {
+//				if (planesList.get(i).getInclination()==inclination && planesList.get(i).getRightAscNode()==rightAscNode) {
+//					idPlane = i;
+//				}
+//			}
 //		}
-//		return (0);
+//		if (idPlane == -1) { //there is no such plane
+//			int idNewPlane = this.idNewPlane();
+//			Satellite w = new Satellite (idNewPlane, a, eccentricity, inclination, omega, rightAscNode, periapsisArgument, anomaly, t0);
+//			this.addPlane(idNewPlane, inclination, rightAscNode, w);
+//			nOrbitalPlanes+=1; // update nOrbitalPlanes
+//			
+//		} else { // the satellite belongs to the idPlane-th plane of planesList 
+//			Satellite w = new Satellite (planesList.get.get(idPlane).getId(), a, eccentricity, inclination, omega, rightAscNode, periapsisArgument, anomaly, t0);
+//			planesList.get(idPlane).addSatellite(w);
+//		}
+//		nSat+=1; //update nSat			
 //	}
 	
-//	/**
-//	 * return an unused id for a new plan 
-//	 */
-//	public void removePlane(){
-//		if (nOrbitalPlanes != 0) {
-//			return(planesList.get(nOrbitalPlanes-1).getId() + 1 ) // by default, returns the "id of the last existing plane in planesList + 1 "
-//		}
-//		return (0);
-//	}
 	
 	/**
 	 * remove the plane of id "idPlane" from planesList
@@ -167,36 +174,30 @@ public class Constellation {
 	}
 		
 	/**
-	 * remove the plane of id "idPlane" from planesList
-	 * @param idPlane idPlane of the plane to remove from the list
+	 * remove the satellite of id "idSatellite" from planesList
+	 * @param idSatellite idSatellite of the satellite to remove from the list
 	 */
 	public void removeSatellite(String idSatellite){
 		if (nSat != 0) {
 			if (satellitesList.get(idSatellite) != null) { //the satellite of id idSatellite is in satellitesList
-				Satellite s = satellitesList.get(idSatellite);
+				Satellite s = this.getSatellite(idSatellite);
 				Plane p = planesList.get(s.getIdPlane());
-				if (p.getSatellitesList().size()>1) {
+				if (p.getSatellitesList().size()>1) { //the plane p contains more than 1 satellite
 					p.get(s.getIdPlane()).removeSatellite();
 					
 				}else {
-					
+					//////////////////////////to complete /
 				}
 				satellitesList.remove(idSatellite);
 				nSat-=1;
 
-				}
+			}
 		}
 			
-	}	
-	+removeSatellite()
-	+ getSatellitesList()
-	
-
-		
-		
-		
-		
 	}
+	
+		
+		
 	
 	
 	
