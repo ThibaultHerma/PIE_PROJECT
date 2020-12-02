@@ -1,4 +1,7 @@
 package constellation;
+
+import java.util.ArrayList;
+
 /**
  * Class used for representing a constellation
  * @author ThibaultH
@@ -17,10 +20,10 @@ public class Constellation {
 	private int nSat;
 	
 	/** List of orbital plans of the constellation */
-	private arrayList<Plan> planesList;
+	private ArrayList<Plan> planesList;
 	
 	/** List of satellites of the constellation */
-	private arrayList<Satellite> satellitesList;
+	private ArrayList<Satellite> satellitesList;
 	
 	/**
 	 * Create an constellation
@@ -69,7 +72,7 @@ public class Constellation {
 	/**
 	 * return the list of the satellites of the constellation
 	 */
-	public Satellite getSatellitesList(){
+	public ArrayList<Satellite> getSatellitesList(){
 		return (satellitesList);
 	}
 	

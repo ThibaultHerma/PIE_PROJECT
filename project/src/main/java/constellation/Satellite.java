@@ -2,9 +2,13 @@ package constellation;
 
 import java.util.ArrayList;
 import java.lang.Object;
-import org.orekit.orbits.KeplerianOrbit; 
+import org.orekit.orbits.KeplerianOrbit;
+import org.orekit.orbits.Orbit;
 import org.hipparchus.geometry.euclidean.threed.Vector3D;
 import org.orekit.utils.PVCoordinates;
+
+import zone.Zone;
+
 import org.orekit.orbits.PositionAngle;
 import org.orekit.utils.Constants;
 import org.orekit.frames.FramesFactory;
@@ -18,9 +22,9 @@ import org.orekit.time.AbsoluteDate;
  * 
  * WARNINGS : - The time is an AbsoluteDate parameter 
  * 			  - The frame chosen is GCRF
- * 			  - Earth gravitational constant is taken from EGM96 model: 3.986004415e14 m³/s².
+ * 			  - Earth gravitational constant is taken from EGM96 model: 3.986004415e14 mï¿½/sï¿½.
  * 
- * @autor Amélie Falcou
+ * @autor Amï¿½lie Falcou
  */
 
 public class Satellite {
@@ -39,6 +43,8 @@ public class Satellite {
 	// The first term is at t0 and the time step dt is defined and the same for all the satellites
 	private ArrayList<Vector3D> positions; 
 	private ArrayList<Vector3D> velocities;
+	
+	private KeplerianOrbit keplerian;
 	
 	/** First contructor 
 	 * Input parameters : keplerian parameters and the absolute time t0 
@@ -61,7 +67,8 @@ public class Satellite {
 		
 		// Create the ArrayLists of positions and velocities
 		// Compute the position and velocity for time = t0
-		KeplerianOrbit keplerian = new KeplerianOrbit(a, e, i, w, raan, M, PositionAngle.MEAN, FramesFactory.getGCRF(), t0, Constants.EGM96_EARTH_MU);
+		//KeplerianOrbit keplerian = new KeplerianOrbit(a, e, i, w, raan, M, PositionAngle.MEAN, FramesFactory.getGCRF(), t0, Constants.EGM96_EARTH_MU);
+		this.keplerian = new KeplerianOrbit(a, e, i, w, raan, M, PositionAngle.MEAN, FramesFactory.getGCRF(), t0, Constants.EGM96_EARTH_MU);
 		PVCoordinates pvCoordinates = keplerian.getPVCoordinates();
 		this.positions = new ArrayList<Vector3D>(); 
 		this.velocities = new ArrayList<Vector3D>();
@@ -76,10 +83,11 @@ public class Satellite {
 	public Satellite(ArrayList<Vector3D> positions, ArrayList<Vector3D> velocities, AbsoluteDate t0) {
 		//Calculation of the keplerian parameters 
 		PVCoordinates pvCoordinates = new PVCoordinates(positions.get(0), velocities.get(0));
-		KeplerianOrbit keplerian = new KeplerianOrbit(pvCoordinates, FramesFactory.getGCRF(), t0, Constants.EGM96_EARTH_MU); 
+		this.keplerian = new KeplerianOrbit(pvCoordinates, FramesFactory.getGCRF(), t0, Constants.EGM96_EARTH_MU); 
 		this.a = keplerian.getA(); 
 		this.e = keplerian.getE(); 
 		this.i = keplerian.getI(); 
+		
 		this.raan = keplerian.getRightAscensionOfAscendingNode(); 
 		this.w = keplerian.getPerigeeArgument();
 		this.M = keplerian.getMeanAnomaly(); 
@@ -98,7 +106,14 @@ public class Satellite {
 		this.velocities = velocities; 
 	}
 	
-	public boolean isCoveredBySat(zone Zone, AbsoluteDate t) {
+	
+	public Orbit getInitialOrbit() {
+		return keplerian;
+	}
+	
+	
+	
+	public boolean isCoveredBySat(Zone zone, AbsoluteDate t) {
 		return true;
 	}
 	
