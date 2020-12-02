@@ -89,7 +89,6 @@ public class Constellation {
 		return planesList.get(idPlane);
 	}
 	
-	
 	/**
 	 * return the plane of planesList the Satellite "satellite" is part of 
 	 * @param satellite Satellite  belonging to the plane we want to reach
