@@ -1,4 +1,4 @@
 /bin/
-.DS_Store
-.sh
+*.DS_Store
+*.sh
 /.metadata/

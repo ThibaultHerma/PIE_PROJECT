@@ -176,24 +176,24 @@ public class JsonReader {
 	 * @return the constraints.
 	 */
 	@SuppressWarnings("unchecked")
-	public HashMap<String, HashMap<String, Double>> getConstraints() {
+	public HashMap<String, HashMap<String, Double>> getDecisionVariables() {
 
-		HashMap<String, HashMap<String, Object>> constraints = new HashMap<String, HashMap<String, Object>>();
-		HashMap<String, HashMap<String, Double>> constraintsDouble = new HashMap<String, HashMap<String, Double>>();
+		HashMap<String, HashMap<String, Object>> decisionVariables = new HashMap<String, HashMap<String, Object>>();
+		HashMap<String, HashMap<String, Double>> decisionVariablesDouble = new HashMap<String, HashMap<String, Double>>();
 		try {
 
-			constraints = (HashMap<String, HashMap<String, Object>>) inputData.get("constraints");
-
+			decisionVariables = (HashMap<String, HashMap<String, Object>>) inputData.get("decisionVariables");
+            System.out.println(decisionVariables.get("inclination").get("min"));
 		} catch (NullPointerException e) {
-			printError("constraints");
+			printError("decisionVariables");
 
 		}
 
 		// cast all values to double
-		for (String key : constraints.keySet()) {
-			constraintsDouble.put(key, convertToDouble(constraints.get(key)));
+		for (String key : decisionVariables.keySet()) {
+			decisionVariablesDouble.put(key, convertToDouble(decisionVariables.get(key)));
 		}
-		return constraintsDouble;
+		return decisionVariablesDouble;
 
 	}
 
