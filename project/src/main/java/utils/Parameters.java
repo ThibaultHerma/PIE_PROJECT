@@ -9,7 +9,7 @@ import org.orekit.utils.IERSConventions;
  * @author Louis Rivoire
  *
  */
-public class parameters {
+public class Parameters {
 	
 	/**
 	 * The IERS convention which should be used in all the project.
@@ -24,7 +24,7 @@ public class parameters {
 	/**
 	 * The Earth equatorial radius which should be used in all the project.
 	 */
-	public static double projectEarthFlattening = org.orekit.utils.Constants.WGS84_EARTH_FLATTENING;
+	public static double projectEarthFlattening = org.orekit.utils.Constants.WGS84_EARTH_FLATTENING; 
 
 
 }
