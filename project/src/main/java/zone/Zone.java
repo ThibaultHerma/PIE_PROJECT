@@ -217,7 +217,7 @@ public class Zone {
 	 * 					it is the elevation at which the point begins to be visible
 	 * 					(90° - elevation) corresponds to the half extent of the FOV of the satellite
 	 */
-	public void createEventsDetector(Propagator propagator, double elevation) {
+	public void createEventsDetector(Propagator propagator, EventsLogger logger, double elevation) {
 		
 		org.orekit.frames.Frame earthFrame = FramesFactory.getITRF(Parameters.projectIERSConventions, true);
 		BodyShape earth = new OneAxisEllipsoid(Parameters.projectEarthEquatorialRadius,
