@@ -1,7 +1,10 @@
 package useCase;
+import java.io.File;
 import java.util.ArrayList;
 
 import org.orekit.bodies.GeodeticPoint;
+import org.orekit.data.DataProvidersManager;
+import org.orekit.data.DirectoryCrawler;
 
 import decisionVector.DecisionVector;
 import decisionVector.DecisionVectorDemo;
@@ -18,6 +21,10 @@ import utils.Parameters;
 public class UseCaseDemo {
 	
 	public static void main(String[] args) {
+		
+		File orekitData = new File("data/orekit-data-master");
+		DataProvidersManager manager = DataProvidersManager.getInstance();
+		manager.addProvider(new DirectoryCrawler(orekitData));
 		
 		//read the JSON in input
 	    JsonReader jsonReader =new JsonReader();
