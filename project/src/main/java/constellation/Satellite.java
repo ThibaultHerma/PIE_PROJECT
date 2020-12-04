@@ -29,10 +29,11 @@ import org.orekit.time.AbsoluteDate;
 
 public class Satellite {
 	
+	 
 	private String idPlan; // always written "inclinaison_Omega"
 	private double a; //semi-major axis
-	private double e; //eccentricty
-	private double i; //inclinaison
+	private double e; //eccentricity
+	private double i; //inclination
 	private double raan; //rigthAscNode;
 	private double w; //Periapsis Argument 
 	private double M; //True anomaly
@@ -106,6 +107,17 @@ public class Satellite {
 		this.velocities = velocities; 
 	}
 	
+	public String idPlan; // always written "inclinaison_Omega"
+	private double a; //semi-major axis
+	private double e; //eccentricity
+	private double i; //inclination
+	private double raan; //rigthAscNode;
+	private double w; //Periapsis Argument 
+	private double M; //True anomaly
+	
+	public  getInitialOrbit() {
+		return keplerian;
+	}
 	
 	public Orbit getInitialOrbit() {
 		return keplerian;
