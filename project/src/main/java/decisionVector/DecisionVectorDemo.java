@@ -69,15 +69,19 @@ public  class DecisionVectorDemo extends DecisionVector{
 
 		//TODO WAITING TO BE ABLE TO INSTANTIATE A CONSTELLATION
 
+        Constellation constellation=new Constellation();
+
+
 		//add the satellite to the constellation
 		for(Double i=0.0;i<nbSat;i++) {
 			// We consider for the demonstration that the satellites are uniformly distributed along the orbit
 			Double anomaly=i/nbSat *2* Math.PI;
-			//constellation.addSatellite(a,eccentricity,inclination,rightAscNode,periapsisArgument,anomaly, t0)
+
+			constellation.addSatellite(a,eccentricity,inclination,rightAscendingNode,periapsisArgument,anomaly, t0);
 		}
 
-		//return constellation
-		return null;
+		return constellation;
+
 
 	}
 
@@ -106,11 +110,13 @@ public  class DecisionVectorDemo extends DecisionVector{
 
 
 		//TODO WAITING TO BE ABLE TO INSTANTIATE A CONSTELLATION
-		//Simulation simulation=new Simulation(constellation,t0,tf,zone);
-		//simulation.propagateOrbits();
-		//Double maxRevisit=simulation.getMaxRevisit();
-		//return maxRevisit;
-		return null;
+
+		Simulation simulation=new Simulation(constellation,t0,tf,zone);
+		simulation.propagateOrbits();
+		Double maxRevisit=simulation.getMaxRevisit();
+		return maxRevisit;
+		
+
 	}
 
 }

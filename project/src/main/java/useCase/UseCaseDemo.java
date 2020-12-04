@@ -37,7 +37,9 @@ public class UseCaseDemo {
 	   
 	    //compute the Objective Function 
 	    System.out.println("\n---- COMPUTE OBJECTIVE FUNCTION -----");
-	    decisionVectorDemo.objectiveFunction();
+
+	    System.out.println("Max revisit time: " +decisionVectorDemo.objectiveFunction());
+
 	    
 	    
 	    
