@@ -28,7 +28,7 @@ class JsonReaderTest {
 		//assert
 		assert(useCaseId==1);
 
-	}
+	} 
  
 	@Test
 	void testGetAlgoName() {
@@ -41,22 +41,23 @@ class JsonReaderTest {
 		System.out.println(algoName);
 		//assert
 		assert(algoName.equals("genetic")); 
-	}
+	} 
 
 	@Test
-	void testGetConstraints() {
+	void testGetDecisionVariables() {
  
 		//Arrange 
 		JsonReader jsonReader=new JsonReader();
 		//Act 
 		jsonReader.read("input/testReader.json");
-		HashMap<String,HashMap<String,Double>> constraints = jsonReader.getConstraints();
-		System.out.println(constraints.get("inclination").get("max")); 
+		HashMap<String,HashMap<String,Double>> decisionVariables = jsonReader.getDecisionVariables();
+		System.out.println(decisionVariables.get("inclination").get("max")); 
 		//assert
-		assert(constraints.get("inclination").get("min")==0.0);
-		assert(constraints.get("inclination").get("max")==90.0);
-		assert(constraints.get("nbSat").get("min")==1.0);  
-		assert(constraints.get("nbSat").get("max")==20.0);
+		assert(decisionVariables.get("inclination").get("min")==0.0); 
+		assert(decisionVariables.get("inclination").get("max")==90.0);
+		
+		assert(decisionVariables.get("nbSat").get("min")==1.0);  
+		assert(decisionVariables.get("nbSat").get("max")==20.0);
  
 	}
  
