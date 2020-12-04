@@ -20,7 +20,9 @@ public class Constellation {
 	private int nSat;
 	
 	/** List of orbital plans of the constellation */
+
 	private HashMap<String,Plane> mapPlanes;
+
 	
 	/** List of satellites of the constellation */
 	private ArrayList<Satellite> listSatellites;
@@ -68,11 +70,11 @@ public class Constellation {
 	public HashMap<String,Plane> getMapPlanes(){
 		return (mapPlanes);
 	}
-	
+    
 	/**
 	 * return the list of the satellites of the constellation
 	 */
-	public ArrayList<Satellite> getListSatellites(){
+	public ArrayList<Satellite> getSatellitesList(){
 		return (listSatellites);
 	}
 	

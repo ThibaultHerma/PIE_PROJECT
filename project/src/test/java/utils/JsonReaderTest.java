@@ -9,12 +9,13 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.orekit.bodies.GeodeticPoint;
 
+import decisionVector.DecisionVariable;
 import utils.JsonReader;
 import zone.Zone;
 
 
 class JsonReaderTest {
- 
+
 
 	@Test
 	void testGetUseCaseId() {
@@ -29,7 +30,7 @@ class JsonReaderTest {
 		assert(useCaseId==1);
 
 	} 
- 
+
 	@Test
 	void testGetAlgoName() {
 
@@ -45,22 +46,25 @@ class JsonReaderTest {
 
 	@Test
 	void testGetDecisionVariables() {
- 
+
 		//Arrange 
 		JsonReader jsonReader=new JsonReader();
 		//Act 
 		jsonReader.read("input/testReader.json");
-		HashMap<String,HashMap<String,Double>> decisionVariables = jsonReader.getDecisionVariables();
-		System.out.println(decisionVariables.get("inclination").get("max")); 
+
+		@SuppressWarnings("rawtypes")
+		ArrayList<DecisionVariable> decisionVariables = jsonReader.getDecisionVariables();
+
 		//assert
-		assert(decisionVariables.get("inclination").get("min")==0.0); 
-		assert(decisionVariables.get("inclination").get("max")==90.0);
-		
-		assert(decisionVariables.get("nbSat").get("min")==1.0);  
-		assert(decisionVariables.get("nbSat").get("max")==20.0);
- 
+		assert((Double)decisionVariables.get(0).getMin()==0.0); 
+		assert((Double)decisionVariables.get(0).getMax()==90.0);
+
+		assert((Integer)decisionVariables.get(1).getMin()==1); 
+		assert((Integer)decisionVariables.get(1).getMax()==20);
+
+
 	}
- 
+
 	@Test
 	void testGetZone() {
 
@@ -68,9 +72,8 @@ class JsonReaderTest {
 		JsonReader jsonReader=new JsonReader();
 		//Act 
 		jsonReader.read("input/testReader.json");
-		Zone zone=jsonReader.getZone();
-		ArrayList<GeodeticPoint> inputPolygon=zone.getInputPolygon();
-	
+		ArrayList<GeodeticPoint> inputPolygon =jsonReader.getZone();
+
 		//Assert
 		assert(inputPolygon.get(0).getLatitude()==0.76103249437);
 		assert(inputPolygon.get(0).getLongitude()==0.02521145558);
@@ -78,13 +81,13 @@ class JsonReaderTest {
 		assert(inputPolygon.get(1).getLatitude()==0.761301362344);
 		assert(inputPolygon.get(1).getLongitude()==0.025942015496);
 		assert(inputPolygon.get(1).getAltitude()==Parameters.projectEarthEquatorialRadius);
-		assert(zone.getMeshingStyle().equals("lat_lon_standard_meshing"));
-		
+		assert(Parameters.meshingStyle.equals("lat_lon_standard_meshing"));
+
 	} 
- 
+
 	@Test
 	void testGetStopParameters() {
- 
+
 		//Arrange  
 		JsonReader jsonReader=new JsonReader(); 
 		//Act 
@@ -96,18 +99,18 @@ class JsonReaderTest {
 		assert(stopParameters.get("maxRunTime(s)")==3600.0);
 
 	}
-	 
+
 
 	@Test
 	void testConvertToDouble() {
- 
+
 		//Arrange 
 		JsonReader jsonReader=new JsonReader(); 
 		HashMap<String,Object> map=new HashMap<String,Object>();
 		map.put("testDouble", 0.0);
 		map.put("testInt",(long) 1); 
-		
-		
+
+
 		//Act 
 		HashMap<String,Double> mapDouble=jsonReader.convertToDouble(map);
 		System.out.println(mapDouble.get("testInt").getClass().getName());

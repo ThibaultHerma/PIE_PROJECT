@@ -1,6 +1,6 @@
 
-    {   "useCaseId":1,
-        "useCaseDescription":"One plane, several satellites on this plan",
+    {   "useCaseId":0,
+        "useCaseDescription":"Demo of the simulation : a constellation is initialized randomly",
 
         "optimisationParameters": {
             "algoName": "genetic",
@@ -11,17 +11,43 @@
         } ,
 
         "decisionVariables":{
+
             "nbSat":{
                 "min":1.0,
                 "max":20.0,
                 "type":"Integer"
             },
-            "inclination":{
-                "min":0.0,
-                "max":90.0,
+            "a":{
+                "min":6800000,
+                "max":10000000,
                 "type":"Double"
 
             },
+             "eccentricity":{
+                "min":0.0,
+                "max":0.99,
+                "type":"Double"
+
+            },
+            "inclination":{
+                "min":0.0,
+                "max":3.1415926,
+                "type":"Double"
+
+            },
+           
+            "rightAscendingNode":{
+                "min":0.0,
+                "max":6.2831853,
+                "type":"Double"
+
+            },
+
+            "periapsisArgument":{
+                "min":0.0,
+                "max":6.2831853,
+                "type":"Double"
+            }
         },
 
         "zone":{

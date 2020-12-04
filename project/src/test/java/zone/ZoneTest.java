@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.orekit.bodies.GeodeticPoint;
 
 class ZoneTest {
-
+	
 	@Test
 	/**
 	 * The following test computes the meshing in a very simple case.
@@ -33,7 +33,7 @@ class ZoneTest {
 		inputPolygon.add(geodeticPoint4);
 		 
 		// we instanciate a zone object, which will create a mesh for the input polygon
-		Zone zone = new Zone(inputPolygon, "lat_lon_standard_meshing"); 
+		Zone zone = new Zone(inputPolygon); 
 		
 		// as the input polygon is very simple (a square) and as it has dimensions fitting
 		// the standard mesh resolution, the points of the mesh have to match the
