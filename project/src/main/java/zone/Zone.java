@@ -89,9 +89,9 @@ public class Zone {
 	/**
 	 * The resolution of the standard mesh.
 	 * The unit is the radian. 
-	 * The standard resolution is set to 1km (at the Equator).
+	 * The standard resolution is set to 20km (at the Equator).
 	 */
-	private double standardMeshResolution = 1000 / org.orekit.utils.Constants.WGS84_EARTH_EQUATORIAL_RADIUS;
+	private double standardMeshResolution = 20000 / org.orekit.utils.Constants.WGS84_EARTH_EQUATORIAL_RADIUS;
  
 	/** 
 	 * The style of meshing which has to be used to convert a polygon into a list of meshing points
@@ -145,16 +145,20 @@ public class Zone {
 		
 		int row = 0;
 		int col = 0;
+		
+		int nb_of_points = 0;
 
 		while ((latMin + row * standardMeshResolution) <= latMax) {
 			while ((lonMin + col * standardMeshResolution) <= lonMax) {
 				GeodeticPoint geodeticPoint = new GeodeticPoint((latMin + row * standardMeshResolution), (lonMin + col * standardMeshResolution), meanAltitude);
 				listMeshingPoints.add(geodeticPoint);
 				col += 1;
+				nb_of_points+=1;
 			}
 			row += 1;
 			col = 0;
 		} 
+		System.out.println("Nb of points to map the input polygon is " + nb_of_points);
 	}
 	
 	

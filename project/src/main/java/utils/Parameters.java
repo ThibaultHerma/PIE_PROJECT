@@ -38,7 +38,7 @@ public class Parameters {
 	 * The duration of the simulation in chosen time scale
 	 * (Terrestrial time for now)
 	 */
-	public static Double simulationDuration= 172800.0;
+	public static Double simulationDuration= 10000000.0;
 	
 	/**
 	 * The style of meshing which has to be used to convert a polygon into a list of meshing points
