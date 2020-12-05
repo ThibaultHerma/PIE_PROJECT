@@ -14,7 +14,7 @@ import zone.Zone;
 /**
  * 
  *---------------------------------------------------------------------------------------------------
- *---THIS CLASS EXTENDS THE CLASS DECISION VECTOR FOR A DEMONSTRATION BASED OF  THE USE CASE --------
+ *---THIS CLASS EXTENDS THE CLASS DECISION VECTOR FOR A DEMONSTRATION BASED ON THE 1st USE CASE -----
  *---------------------------------------------------------------------------------------------------
  * In this case, we consider that all the satellites are on a same orbital plane (meaning that 
  * a,e,i,raan,periapsis argument are the same for every satellite).

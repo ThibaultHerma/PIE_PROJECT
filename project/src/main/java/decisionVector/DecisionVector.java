@@ -11,7 +11,7 @@ import constellation.Constellation;
  * it calls the correct objective function in the simulation.  
  * 
  * Because the cost function and the vector depends of the use case, the method createConstellationFromVector() and 
- * costFunction() are implemented in children classes
+ * costFunction() are implemented in children classes.
  * 
  * WARNING : The cost function has to be thread Safe to allow multithread computing from the optimization library
  * TODO Ensure that the method objectiveFunction is thread safe.

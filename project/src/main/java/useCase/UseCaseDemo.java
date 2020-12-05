@@ -39,17 +39,18 @@ public class UseCaseDemo {
 	    System.out.println("\n---- INITIALIZE DECISION VECTOR -----");
 	    ArrayList<DecisionVariable> variableList=jsonReader.getDecisionVariables();
 	    DecisionVector decisionVectorDemo=new DecisionVectorDemo(variableList,inputPolygon);
+	    decisionVectorDemo.get("nbSat").setValue(2);
 	    //decisionVectorDemo.randomInit();
 	    
 	   
 	    //compute the Objective Function 
 	    System.out.println("\n---- COMPUTE OBJECTIVE FUNCTION -----");
 
+
 	    System.out.println("Max revisit time: " +decisionVectorDemo.objectiveFunction());
 
 	    
-	    
-	    
+
 		}
 	}
 

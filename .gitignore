@@ -2,3 +2,10 @@
 *.DS_Store
 *.sh
 /.metadata/
+
+*.class
+/project/.settings/
+/project/.classpath
+/project/bin/
+/project/target/surefire-reports/
+/project/doc/

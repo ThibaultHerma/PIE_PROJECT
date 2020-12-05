@@ -1,5 +1,0 @@
-*.class
-/.settings/
-.classpath
-/bin/
-/target/surefire-reports/
