@@ -16,7 +16,7 @@ class ZoneTest {
 	void testComputeLatLonStandardMeshing() {
 		
 		double earthRadius = org.orekit.utils.Constants.WGS84_EARTH_EQUATORIAL_RADIUS;
-		double standardMeshResolution = 1000 / earthRadius;
+		double standardMeshResolution = 20000 / earthRadius;
 		double latMin = 0;
 		double lonMin = 0;
 		
@@ -30,8 +30,7 @@ class ZoneTest {
 		inputPolygon.add(geodeticPoint1);
 		inputPolygon.add(geodeticPoint2);
 		inputPolygon.add(geodeticPoint3);
-		inputPolygon.add(geodeticPoint4);
-		 
+		System.out.println(inputPolygon.size());
 		// we instanciate a zone object, which will create a mesh for the input polygon
 		Zone zone = new Zone(inputPolygon); 
 		
@@ -39,13 +38,13 @@ class ZoneTest {
 		// the standard mesh resolution, the points of the mesh have to match the
 		// four points of the input polygon
 		ArrayList<GeodeticPoint> listMeshingPoints = zone.getListMeshingPoints();
-		
+		System.out.println("size:"+listMeshingPoints.size());
 		assert(geodeticPoint1.equals(listMeshingPoints.get(0)));
 		assert(geodeticPoint2.equals(listMeshingPoints.get(1)));
 		assert(geodeticPoint3.equals(listMeshingPoints.get(2)));
 		assert(geodeticPoint4.equals(listMeshingPoints.get(3)));
 		
-		
+	 
 		
 	}
 

@@ -13,14 +13,14 @@ import zone.Zone;
 
 /**
  * 
- *---------------------------------------------------------------------------------------------------
- *---THIS CLASS EXTENDS THE CLASS DECISION VECTOR FOR A DEMONSTRATION BASED ON THE 1st USE CASE -----
- *---------------------------------------------------------------------------------------------------
+ *
+ *THIS CLASS EXTENDS THE CLASS DECISION VECTOR FOR A DEMONSTRATION BASED ON THE 1st USE CASE 
+ *
  * In this case, we consider that all the satellites are on a same orbital plane (meaning that 
  * a,e,i,raan,periapsis argument are the same for every satellite).
  * The decision variables are  the following: nb_sat,a,e,i,raan,periapsis argument.
  * The cost  function is the following : Max revisit  time of a zone.
- *---------------------------------------------------------------------------------------------------
+ *
  * * The class is a decision vector for the optimization problem. It contains the variables 
  * to optimize and also their variation domain. The class is also able to compute the fitness 
  * (or objective) function of the vector. To do so, it creates a constellation and a simulation from 
@@ -67,7 +67,7 @@ public  class DecisionVectorDemo extends DecisionVector{
 		AbsoluteDate t0= Parameters.t0;
 
 
-		//TODO WAITING TO BE ABLE TO INSTANTIATE A CONSTELLATION
+		
 
         Constellation constellation=new Constellation();
 
@@ -109,7 +109,7 @@ public  class DecisionVectorDemo extends DecisionVector{
 		Zone zone =new Zone(this.inputPolygon);
 
 
-		//TODO WAITING TO BE ABLE TO INSTANTIATE A CONSTELLATION
+		
 
 		Simulation simulation=new Simulation(constellation,t0,tf,zone);
 		simulation.propagateOrbits();

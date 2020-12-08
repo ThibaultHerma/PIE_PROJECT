@@ -28,7 +28,7 @@ public class UseCaseDemo {
 		
 		//read the JSON in input
 	    JsonReader jsonReader =new JsonReader();
-	    jsonReader.read("input/useCaseDemo.json");
+	    jsonReader.read("input/useCaseDemoSentinel2.json");
 	    
 	    //get the Zone to cover
 	    System.out.println("\n---- GET THE ZONE TO COVER -----");
@@ -39,7 +39,7 @@ public class UseCaseDemo {
 	    System.out.println("\n---- INITIALIZE DECISION VECTOR -----");
 	    ArrayList<DecisionVariable> variableList=jsonReader.getDecisionVariables();
 	    DecisionVector decisionVectorDemo=new DecisionVectorDemo(variableList,inputPolygon);
-	    decisionVectorDemo.get("nbSat").setValue(2);
+	    //decisionVectorDemo.get("nbSat").setValue(2);
 	    //decisionVectorDemo.randomInit();
 	    
 	   

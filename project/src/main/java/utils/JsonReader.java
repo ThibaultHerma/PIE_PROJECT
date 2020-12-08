@@ -22,9 +22,14 @@ import java.util.Map;
 
 /**
  * Class to read a JSON file in input. It extracts the name of the use case,
- * some optimization parameters, the constraints, and a zone to watch.
+ * some optimization parameters, the decision variables, and a zone to watch.
+ * These are the guidelines to follow to use this class :
+ *  
+ * - Instantiate a new Json Reader.
+ * - Call the method read to parse the JSON and store the data of an input file.
+ * - Call one of the get method.
  * 
- * @author PIE_CONSTELLATION
+ * @author Theo Nguyen
  */
 
 public class JsonReader {
@@ -74,8 +79,6 @@ public class JsonReader {
 	
 	/**
 	 * Print the description of the use case.
-	 * 
-	 * 
 	 */
 	private void printDescription() {
 		String useCaseDescription="ERROR";
