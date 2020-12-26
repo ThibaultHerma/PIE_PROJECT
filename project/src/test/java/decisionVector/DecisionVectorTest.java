@@ -22,8 +22,6 @@ import constellation.Constellation;
 import constellation.Satellite;
 import utils.Parameters;
 
-//multithreading test
-import com.vmlens.api.AllInterleavings;
 
 class DecisionVectorDemoTest {
 	
