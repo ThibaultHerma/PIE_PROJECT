@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 /**
  * Class used for representing a plane
+ * Thread safety: the class is conditionally thread safe: it is safe to use the class only if each 
+ * thread access to its own different instance of the class.
  * @author ThibaultH
  *
  */

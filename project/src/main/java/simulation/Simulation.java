@@ -32,6 +32,8 @@ import zone.Zone;
  * 
  * - Call the method getMaxRevisit to have the maximum time of revisit.
  * 
+ * WARNING Thread safety: the class is conditionally thread safe if and only if  Parameters are immutable and each thread has
+ *  its own instance of Zone AND Constellation AND Simulation 
  *  
  * @author Julie Bayard
  * 

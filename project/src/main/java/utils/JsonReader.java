@@ -21,13 +21,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Class to read a JSON file in input. It extracts the name of the use case,
+
+ * <p>Class to read a JSON file in input. It extracts the name of the use case,
  * some optimization parameters, the decision variables, and a zone to watch.
- * These are the guidelines to follow to use this class :
- *  
- * - Instantiate a new Json Reader.
- * - Call the method read to parse the JSON and store the data of an input file.
- * - Call one of the get method.
+ * These are the guidelines to follow to use this class : </p>
+ * <p>- Instantiate a new Json Reader.</p>
+ * <p>- Call the method read to parse the JSON and store the data of an input file.</p>
+ * <p>- Call one of the get method.</p>
+
  * 
  * @author Theo Nguyen
  */
@@ -40,7 +41,7 @@ public class JsonReader {
 	/**
 	 * Read a JSON file and store it in inputData.
 	 * 
-	 * @param jsonFile : the path of the file to read.
+	 * @param jsonFile:String The path of the file to read.
 	 */
 	public void read(String jsonFile) {
         System.out.println("---- READING INPUT JSON FILE: " +jsonFile+ " ----");
@@ -68,7 +69,7 @@ public class JsonReader {
 	/**
 	 * Print an error message in case the JSON doesn't have the correct syntax.
 	 * 
-	 * @param name : name of the parameter not found.
+	 * @param name:String  name of the parameter not found.
 	 */
 	private void printError(String name) {
 		System.out.println(
@@ -99,8 +100,8 @@ public class JsonReader {
 	 * allows the JSON input to have Long and Double values which are then casted in
 	 * Double with this function.
 	 * 
-	 * @param map : the original hashMap with objects
-	 * @return the converted HashMap with Double
+	 * @param map:HashMap<String, Object> The original hashMap with objects
+	 * @return HashMap<String, Double> - the converted HashMap with Double
 	 */
 	protected HashMap<String, Double> convertToDouble(HashMap<String, Object> map) {
 
@@ -130,7 +131,7 @@ public class JsonReader {
 	/**
 	 * Get the use case ID of the problem.
 	 * 
-	 * @return use case ID
+	 * @return int - use case ID
 	 */
 	public int getUseCaseId() {
 		long useCaseId = -1;

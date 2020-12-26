@@ -23,7 +23,7 @@ class JsonReaderTest {
 		//Arrange 
 		JsonReader jsonReader=new JsonReader();
 		//Act 
-		jsonReader.read("input/testReader.json");
+		jsonReader.read(Parameters.inputPath+"TestReader.json");
 		int useCaseId=jsonReader.getUseCaseId();
 		System.out.println(useCaseId);
 		//assert
@@ -37,7 +37,7 @@ class JsonReaderTest {
 		//Arrange 
 		JsonReader jsonReader=new JsonReader();
 		//Act 
-		jsonReader.read("input/testReader.json");
+		jsonReader.read(Parameters.inputPath+"TestReader.json");
 		String algoName=jsonReader.getAlgoName();
 		System.out.println(algoName);
 		//assert
@@ -50,7 +50,7 @@ class JsonReaderTest {
 		//Arrange 
 		JsonReader jsonReader=new JsonReader();
 		//Act 
-		jsonReader.read("input/testReader.json");
+		jsonReader.read(Parameters.inputPath+"TestReader.json");
 
 		@SuppressWarnings("rawtypes")
 		ArrayList<DecisionVariable> decisionVariables = jsonReader.getDecisionVariables();
@@ -71,7 +71,7 @@ class JsonReaderTest {
 		//Arrange 
 		JsonReader jsonReader=new JsonReader();
 		//Act 
-		jsonReader.read("input/testReader.json");
+		jsonReader.read(Parameters.inputPath+"TestReader.json");
 		ArrayList<GeodeticPoint> inputPolygon =jsonReader.getZone();
 
 		//Assert
@@ -91,7 +91,7 @@ class JsonReaderTest {
 		//Arrange  
 		JsonReader jsonReader=new JsonReader(); 
 		//Act 
-		jsonReader.read("input/testReader.json");
+		jsonReader.read(Parameters.inputPath+"TestReader.json");
 		HashMap<String,Double> stopParameters=jsonReader.getStopParameters();
 		System.out.println(stopParameters.get("nbIteration"));
 		//assert

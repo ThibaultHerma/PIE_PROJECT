@@ -43,6 +43,8 @@ import org.orekit.frames.TopocentricFrame;
  * the only necessary step is to call the method createEventsDetector before every propagation
  * and read the list of revisit times before propagating an other satellite.
  * 
+ * WARNING Thread safety : The class is conditionally thread safe if and only if Parameters are immutable 
+ * and each thread has its own instance of Propagator and Logger.
  *  
  * @author Louis Rivoire
  * 

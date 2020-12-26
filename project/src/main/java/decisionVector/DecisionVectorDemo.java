@@ -14,6 +14,17 @@ import zone.Zone;
 /**
  * 
  *
+<<<<<<< HEAD
+ *<p><b>This class extends the DecisionVector for the a demonstration of the simulation </b></p>
+ *
+ *<p> In this case, we load a constellation with the characteristics of the sentinel2 mission. </p>
+ *
+ *<p> In this case, we consider only one satellite .</p>
+ * <p>The decision variables are  the following: nb_sat,a,e,i,raan,periapsis argument.
+ * The cost  function is the following : Max revisit  time of a zone.</p>
+ *
+ * <p> The class is a decision vector for the optimization problem. It contains the variables 
+=======
  *THIS CLASS EXTENDS THE CLASS DECISION VECTOR FOR A DEMONSTRATION BASED ON THE 1st USE CASE 
  *
  * In this case, we consider that all the satellites are on a same orbital plane (meaning that 
@@ -22,20 +33,20 @@ import zone.Zone;
  * The cost  function is the following : Max revisit  time of a zone.
  *
  * * The class is a decision vector for the optimization problem. It contains the variables 
+>>>>>>> b224dae58ea60285189477cd4030baa9b3ceec58
  * to optimize and also their variation domain. The class is also able to compute the fitness 
- * (or objective) function of the vector. To do so, it creates a constellation and a simulation from 
- * the decision vector and it calls the correct objective function in the simulation.  
+ * (or cost) function of the vector. To do so, it creates a constellation and a simulation from 
+ * the decision vector and it calls the correct cost function in the simulation.</p>  
  * 
- * These are the guidelines to follow to use this class :
+ * <p>These are the guidelines to follow to use this class :</p>
  *  
- * - Instantiate a new Decision Vector with the given constructor. It will randomly initialize
- * all the variables of the vector
- * - Call the method objectiveFunction to launch a simulation from the current state of the vector
+ * <p>- Instantiate a new Decision Vector with the given constructor. It will randomly initialize
+ * all the variables of the vector</p>
+ * <p>- Call the method costFunction to launch a simulation from the current state of the vector</p>
  * 
- * WARNING : The cost function has to be thread Safe to allow multithread computing from the optimization 
- * library
- * TODO Ensure that the method objectiveFunction is thread safe.
- * TODO Write the tests
+ * <p>WARNING : The cost function has to be thread Safe to allow multithread computing from the optimization 
+ * library</p>
+ * 
  *
  * @author Theo N
  */
@@ -52,18 +63,24 @@ public  class DecisionVectorDemo extends DecisionVector{
 	 * Implementation of the Abstract method which converts the current state of the  decision vector into
 	 * a Constellation. 
 	 * In this case, it takes the values of the the 5 Keplerian parameters of the plane and distributes
-	 * uniformly the satellites along the orbit in changing the mean anomaly 
-	 * @return a Constellation corresponding to the decision vector.
+	 * uniformly the satellites along the orbit in changing the mean anomaly. 
+	 * Threads safety : the function is reentrant because the storage is done in local variables. It calls only 
+	 * reentrant functions, and access the  global storage with read-only operations.
+	 * @param values:ArrayList(Object) current values of the vector from which we create the constellation.
+	 * @return Constellation - a Constellation corresponding to the decision vector.
 	 */
 	@Override
-	public Constellation createConstellationFromVector() {
-
-		Double inclination=(Double) get("inclination").getValue();
-		Double a=(Double) get("a").getValue();
-		Double eccentricity= (Double) get("eccentricity").getValue();
-		Double rightAscendingNode=(Double) get("rightAscendingNode").getValue();
-		Double periapsisArgument=(Double) get("periapsisArgument").getValue();
-		Integer nbSat= (Integer) get("nbSat").getValue();
+	public Constellation createConstellationFromVector(final ArrayList<Object> values) {
+		
+		
+		//get the values of each parameter from the index in the DecisionVector. 
+		//since the vector is immutable during the optimization process, it is thread safe to read the index.
+		Double inclination=(Double) values.get(getIndex("inclination"));
+		Double a=(Double) values.get(getIndex("a"));
+		Double eccentricity= (Double) values.get(getIndex("eccentricity"));
+		Double rightAscendingNode=(Double) values.get(getIndex("rightAscendingNode"));
+		Double periapsisArgument=(Double) values.get(getIndex("periapsisArgument"));
+		Integer nbSat= (Integer) values.get(getIndex("nbSat"));
 		AbsoluteDate t0= Parameters.t0;
 
 
@@ -85,21 +102,20 @@ public  class DecisionVectorDemo extends DecisionVector{
 
 	}
 
-
-
-
 	/**
-	 * The objective (or fitness) function of the problem. The goal is to MINIMIZE this function.
+	 * The cost (or fitness) function of the problem. The goal is to MINIMIZE this function.
 	 * It calls the method createConstellationFromVector to create a new constellation with the current
 	 * state of the vector and then creates a simulation to propagate the orbits of each satellite.
-	 * 
-	 * @return Double the fitness value
+	 * Threads safety : the function is reentrant because the storage is done in local variables. It calls only 
+	 * reentrant functions 
+	 * @param listValues:ArrayList(Object) current values of the vector from which we compute the fitness.
+	 * @return Double - the fitness value
 	 */
 	@Override
-	public  Double objectiveFunction() {
+	public  Double costFunction(final ArrayList<Object> listValues) {
 
 		//create the constellation from the current decision Vector
-		Constellation constellation=createConstellationFromVector();
+		Constellation constellation=createConstellationFromVector(listValues);
 
 		// Begging of the simulation
 		AbsoluteDate t0= Parameters.t0;
@@ -108,8 +124,6 @@ public  class DecisionVectorDemo extends DecisionVector{
 		// create the zone to cover
 		Zone zone =new Zone(this.inputPolygon);
 
-
-		
 
 		Simulation simulation=new Simulation(constellation,t0,tf,zone);
 		simulation.propagateOrbits();
