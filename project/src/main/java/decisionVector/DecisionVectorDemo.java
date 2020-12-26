@@ -12,28 +12,16 @@ import zone.Zone;
 
 
 /**
- * 
- *
-<<<<<<< HEAD
  *<p><b>This class extends the DecisionVector for the a demonstration of the simulation </b></p>
  *
  *<p> In this case, we load a constellation with the characteristics of the sentinel2 mission. </p>
  *
- *<p> In this case, we consider only one satellite .</p>
+ * <p> In this case, we consider only one satellite .</p>
+ * 
  * <p>The decision variables are  the following: nb_sat,a,e,i,raan,periapsis argument.
  * The cost  function is the following : Max revisit  time of a zone.</p>
  *
  * <p> The class is a decision vector for the optimization problem. It contains the variables 
-=======
- *THIS CLASS EXTENDS THE CLASS DECISION VECTOR FOR A DEMONSTRATION BASED ON THE 1st USE CASE 
- *
- * In this case, we consider that all the satellites are on a same orbital plane (meaning that 
- * a,e,i,raan,periapsis argument are the same for every satellite).
- * The decision variables are  the following: nb_sat,a,e,i,raan,periapsis argument.
- * The cost  function is the following : Max revisit  time of a zone.
- *
- * * The class is a decision vector for the optimization problem. It contains the variables 
->>>>>>> b224dae58ea60285189477cd4030baa9b3ceec58
  * to optimize and also their variation domain. The class is also able to compute the fitness 
  * (or cost) function of the vector. To do so, it creates a constellation and a simulation from 
  * the decision vector and it calls the correct cost function in the simulation.</p>  
