@@ -75,7 +75,10 @@ public class Constellation {
 	/**
 	 * return the list of the satellites of the constellation
 	 */
+
+
 	public ArrayList<Satellite> getSatellitesList(){
+
 		return (listSatellites);
 	}
 	
@@ -137,40 +140,51 @@ public class Constellation {
 
 		//Checking if the added satellite belongs to an already existing plane
 		String idPlane = String.valueOf(inclination)+'_'+String.valueOf(rightAscNode);
-		Satellite newSat = new Satellite ( a, eccentricity, inclination, rightAscNode, omega, anomaly, t0);
-		if (nOrbitalPlanes !=0) {
-			Plane p = mapPlanes.get(idPlane);
-			if (p==null) {//there is no such plane
 
-				
-				this.addPlane(inclination, rightAscNode, newSat);
-
-
-			}else { // the satellite belongs to the Plane p
-
-				/* check if a satellite with the same parameters already exist =====> TODO implement a function that guarantees 2 satellites are not too close from each other*/
-				//				int var=0;
-				//				for (Satellite s in p.getListSatellites()) { 
-				//					if (s.getA() == a 
-				//							&& s.getE() == eccentricity 
-				//							&& s.getI() == inclination 
-				//							&& s.getRaan() == rightAscNode 
-				//							&& s.getW() == omega 
-				//							&& s.getM() == anomaly 
-				//							&& s.getT0() == t0)     { //the newSat already exists within Plane p
-				//						var=1;
-				//					}
-				//					if (var==0) { //newSat can be added to Plane p						
-				
-				p.addSatellite(newSat);
-				//					}
-			}
-		}
+		Satellite newSat = new Satellite ( a, eccentricity, inclination, rightAscNode, omega, anomaly, t0);		
+		Plane p = mapPlanes.get(idPlane);
 		
+		if (p==null) {//there is no such plane
+
+			this.addPlane(inclination, rightAscNode, newSat);
+				
+		}else{ // the satellite belongs to the Plane p
+
+			//////////////////////////////
+//			/* check if a satellite with the same parameters already exist =====> TODO implement a function that guarantees 2 satellites are not too close from each other*/
+//			int var=0;
+//			ArrayList<Satellite> sList= p.getListSatellites();
+//			int size=sList.size();
+//			int i=0;			
+//			while (var==0 && i<size) { 
+//				if (sList.get(i).getA() == a 
+//						&& sList.get(i).getE() == eccentricity 										
+//						&& sList.get(i).getI() == inclination 
+//						&& sList.get(i).getRaan() == rightAscNode 
+//						&& sList.get(i).getW() == omega 
+//						&& sList.get(i).getM() == anomaly 
+//						&& sList.get(i).getT0() == t0)     { //the newSat already exists within Plane p
+//					var=1;
+//				}
+//				i+=1;
+//			}
+//			if (var==0) { //newSat can be added to Plane p						
+//				p.addSatellite(newSat);
+//				nSat+=1; //update nSat	
+//			}else {
+//				System.out.println("Satellite already existing : " +newSat);
+//			}
+				//////////////////////////////				
+			p.addSatellite(newSat);
+			nSat+=1; //update nSat									
+		}		
 		// add the satellite to the list of sat
-		listSatellites.add(newSat);
-		nSat+=1; //update nSat			
+		listSatellites.add(newSat);				
 	}
+
+	
+	
+	
 	
 }
 	
