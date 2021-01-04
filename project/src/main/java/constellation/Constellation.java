@@ -20,7 +20,9 @@ public class Constellation {
 	private int nSat;
 	
 	/** List of orbital plans of the constellation */
+
 	private HashMap<String,Plane> mapPlanes;
+
 	
 	/** List of satellites of the constellation */
 	private ArrayList<Satellite> listSatellites;
@@ -68,11 +70,14 @@ public class Constellation {
 	public HashMap<String,Plane> getMapPlanes(){
 		return (mapPlanes);
 	}
-	
+    
 	/**
 	 * return the list of the satellites of the constellation
 	 */
-	public ArrayList<Satellite> getListSatellites(){
+
+
+	public ArrayList<Satellite> getSatellitesList(){
+
 		return (listSatellites);
 	}
 	
@@ -134,37 +139,42 @@ public class Constellation {
 
 		//Checking if the added satellite belongs to an already existing plane
 		String idPlane = String.valueOf(inclination)+'_'+String.valueOf(rightAscNode);
-		
+
+		Satellite newSat = new Satellite ( a, eccentricity, inclination, rightAscNode, omega, anomaly, t0);
 		if (nOrbitalPlanes !=0) {
 			Plane p = mapPlanes.get(idPlane);
 			if (p==null) {//there is no such plane
-		
-				Satellite newSat = new Satellite ( a, eccentricity, inclination, rightAscNode, omega, anomaly, t0);
+
+				
 				this.addPlane(inclination, rightAscNode, newSat);
 
-				
-			}else { // the satellite belongs to the Plane p
-				
-				/* check if a satellite with the same parameters already exist =====> TODO implement a function that guarantees 2 satellites are not too close from each other*/
-//				int var=0;
-//				for (Satellite s in p.getListSatellites()) { 
-//					if (s.getA() == a 
-//							&& s.getE() == eccentricity 
-//							&& s.getI() == inclination 
-//							&& s.getRaan() == rightAscNode 
-//							&& s.getW() == omega 
-//							&& s.getM() == anomaly 
-//							&& s.getT0() == t0)     { //the newSat already exists within Plane p
-//						var=1;
-//					}
-//					if (var==0) { //newSat can be added to Plane p						
-				Satellite newSat = new Satellite ( a, eccentricity, inclination, rightAscNode, omega, anomaly, t0);
-				p.addSatellite(newSat);
-//					}
-				}
-			
 
+			}else { // the satellite belongs to the Plane p
+
+
+				/* check if a satellite with the same parameters already exist =====> TODO implement a function that guarantees 2 satellites are not too close from each other*/
+				//				int var=0;
+				//				for (Satellite s in p.getListSatellites()) { 
+				//					if (s.getA() == a 
+				//							&& s.getE() == eccentricity 
+				//							&& s.getI() == inclination 
+				//							&& s.getRaan() == rightAscNode 
+				//							&& s.getW() == omega 
+				//							&& s.getM() == anomaly 
+				//							&& s.getT0() == t0)     { //the newSat already exists within Plane p
+				//						var=1;
+				//					}
+				//					if (var==0) { //newSat can be added to Plane p						
+				
+				p.addSatellite(newSat);
+				//					}
 			}
+
+		}
+		
+		// add the satellite to the list of sat
+		listSatellites.add(newSat);
+
 		nSat+=1; //update nSat			
 	}
 	

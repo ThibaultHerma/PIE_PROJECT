@@ -175,7 +175,7 @@ public class Simulation {
 	 * 
 	 * It uses the hashmaps of beginning and end of events previously computed during the propagation.
 	 */
-	private double getMaxRevisit(Vector3D point) {
+	public double getMaxRevisit() {
 		
 		double maxRevisite = 0;
 		
@@ -227,6 +227,6 @@ public class Simulation {
 				}
 			}		
 		}
-		return maxRevisite;
+		return maxRevisite; 
 	}
 }

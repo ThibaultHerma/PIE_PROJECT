@@ -11,6 +11,8 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.orekit.bodies.GeodeticPoint;
 
+import decisionVector.DecisionVariable;
+
 import zone.Zone;
 
 import java.util.ArrayList;
@@ -36,7 +38,7 @@ public class JsonReader {
 	 * @param jsonFile : the path of the file to read.
 	 */
 	public void read(String jsonFile) {
-
+        System.out.println("---- READING INPUT JSON FILE: " +jsonFile+ " ----");
 		// JSON parser object to parse read file
 		JSONParser jsonParser = new JSONParser();
 
@@ -52,6 +54,10 @@ public class JsonReader {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
+		
+		//print some description
+		getUseCaseId();
+		printDescription();
 	} 
 
 	/**
@@ -63,6 +69,26 @@ public class JsonReader {
 		System.out.println(
 				"ERROR : unable to read the field " + name + " in the input JSON file. Please check that it exists,"
 						+ "that it is not empty, and that it has the correct syntax ");
+	}
+	
+	
+	/**
+	 * Print the description of the use case.
+	 * 
+	 * 
+	 */
+	private void printDescription() {
+		String useCaseDescription="ERROR";
+		try {
+			useCaseDescription=(String) inputData.get("useCaseDescription");
+			
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+			printError("useCaseDescription");
+		}
+		
+		System.out.println("use case description: "+useCaseDescription);
+		
 	}
 
 	/**
@@ -92,7 +118,7 @@ public class JsonReader {
 			}
 		} catch (ClassCastException e) {
 			e.printStackTrace();
-			System.out.println(" Input should have Long or Double values");
+			System.out.println("Input should have Long or Double values");
 		}
 		return mapDouble;
 
@@ -111,6 +137,8 @@ public class JsonReader {
 		} catch (NullPointerException e) {
 			printError("useCaseId");
 		}
+		
+		System.out.println("use case ID: "+useCaseId);
 		return (int) useCaseId;
 
 	}
@@ -170,35 +198,57 @@ public class JsonReader {
 	}
 
 	/**
-	 * get the constraints of the problem, a HashMap with the parameter as key and a
-	 * HashMap with min and max value as value. ex:"nbSat":{"min":1.0,"max":20.0}.
-	 * 
-	 * @return the constraints.
+	 * get a list of Decision Variables from the problem. The function reads a list of variables with their domain and type.  
+	 * Then, it instantiates the correct DecisionVariable for each variable
+	 * Example of input :"nbSat":{"min":1.0,"max":20.0, type:"Integer"}.
+	 * @return a list of Decision variables.
 	 */
-	@SuppressWarnings("unchecked")
-	public HashMap<String, HashMap<String, Double>> getDecisionVariables() {
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public ArrayList<DecisionVariable> getDecisionVariables() {
+
+		/** Raw decision variables*/
 		HashMap<String, HashMap<String, Object>> decisionVariables = new HashMap<String, HashMap<String, Object>>();
-		HashMap<String, HashMap<String, Double>> decisionVariablesDouble = new HashMap<String, HashMap<String, Double>>();
+		
+		/** Try to read the JSON*/
 		try {
-
 			decisionVariables = (HashMap<String, HashMap<String, Object>>) inputData.get("decisionVariables");
-            System.out.println(decisionVariables.get("inclination").get("min"));
+            
 		} catch (NullPointerException e) {
 			printError("decisionVariables");
-
 		}
-
-		// cast all values to double
+        
+		/** Instantiate a DecisionVariable class for each decision variable*/
+		ArrayList<DecisionVariable>decisionVariableList=new ArrayList<DecisionVariable>();
+		
 		for (String key : decisionVariables.keySet()) {
-			decisionVariablesDouble.put(key, convertToDouble(decisionVariables.get(key)));
+			//convert first all variables to Doubles to avoid JSON errors
+			HashMap<String, Double> varDouble = convertToDouble(decisionVariables.get(key));
+			
+			//if the decision variable is a Double or if the type is not specified, instantiate a Double Decision Variable
+			if (!decisionVariables.get(key).containsKey("type")||decisionVariables.get(key).get("type").equals("Double")) {
+				DecisionVariable<Double> var=new DecisionVariable(Double.class,key, varDouble.get("min"),varDouble.get("max"));
+				decisionVariableList.add(var);
+			}
+			//if the decision variable is an Integer, instantiate an Integer Decision Variable
+			else if (decisionVariables.get(key).get("type").equals("Integer")) {
+				DecisionVariable<Integer> var=new DecisionVariable(Integer.class,key,  varDouble.get("min").intValue(),varDouble.get("max").intValue());
+				decisionVariableList.add(var);
+			}
+			
 		}
-		return decisionVariablesDouble;
+		//check if the method was able to read the JSON
+		if (decisionVariableList.size()==0) {
+			System.out.println("ERROR: No decision variable with the correct type found in the JSON");
+		}
+			
+		return decisionVariableList;
+
 
 	}
 
 	/**
-	 * Read the Zone to cover in the problem and instantiate a Zone object. 
+	 * Read the Zone to cover in the problem and return an array of geodetic points. 
 	 * The input Zone is a HashMap with a list of geodetic points and the meshing style
 	 * longitude and latitude. Example :
 	 *"zone":{
@@ -219,12 +269,14 @@ public class JsonReader {
 	 * @return the zone to cover.
 	 */
 	@SuppressWarnings("unchecked")
-	public Zone getZone() {
-
+	public ArrayList<GeodeticPoint> getZone() {
+		
 		// the Zone from the JSON file
 		HashMap<String, Object> zoneRaw = new HashMap<String, Object>(); 
+		
 		//The style of meshing used (default value)
 		String meshingStyle="lat_lon_standard_meshing"; 
+		
 		//The list of the polygon points from the JSON file
 		ArrayList<HashMap<String, Object>> inputPolygonRaw=new ArrayList<HashMap<String, Object>>();
         
@@ -263,11 +315,10 @@ public class JsonReader {
 			inputPolygon.add(geodeticPoint);
 		}
 		
-		/** Create a Zone with the list of geodetics point and the specified meshing style */
-		
-		Zone zone =new Zone(inputPolygon,meshingStyle);
+		/**Store the meshing style in the parameter class */
+		Parameters.meshingStyle=meshingStyle;
 
-		return  zone;
+		return  inputPolygon;
 	}
 
 }
