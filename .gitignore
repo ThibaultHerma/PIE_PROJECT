@@ -1,6 +1,7 @@
 /bin/
 *.DS_Store
 *.sh
+!target.sh
 /.metadata/
 
 *.class
