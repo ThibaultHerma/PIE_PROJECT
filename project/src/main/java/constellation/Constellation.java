@@ -6,6 +6,8 @@ import java.util.HashMap;
 import org.orekit.time.AbsoluteDate;
 /**
  * Class used for representing a constellation
+ * Thread safety: the class is conditionally thread safe: it is safe to use the class only if each 
+ * thread access  to its own different instance of the class.
  * @author ThibaultH
  *
  */
@@ -20,7 +22,6 @@ public class Constellation {
 	private int nSat;
 	
 	/** List of orbital plans of the constellation */
-
 	private HashMap<String,Plane> mapPlanes;
 
 	
@@ -32,7 +33,7 @@ public class Constellation {
 	 * @param mapPlanes list of orbital plans of the constellation
 	 * @param listSatellites list of satellites of the constellation
 	 */
-	public Constellation(  HashMap<String,Plane> mapPlanes, ArrayList<Satellite> listSatellites){
+	public Constellation(HashMap<String,Plane> mapPlanes, ArrayList<Satellite> listSatellites){
 	
 		this.nOrbitalPlanes = mapPlanes.size();
 		this.nSat = listSatellites.size();

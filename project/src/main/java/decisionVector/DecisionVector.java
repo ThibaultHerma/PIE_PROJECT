@@ -1,99 +1,154 @@
 package decisionVector;
 import java.util.ArrayList;
-import java.util.HashMap;
 import org.orekit.bodies.GeodeticPoint;
 import constellation.Constellation;
 
 /**
- * The class is a decision vector for the optimization problem. It contains the variables 
- * to optimize and also their variation domain. The class is also able to compute the fitness (or objective) 
+ * <p>The class is a decision vector for the optimization problem. It contains the variables 
+ * to optimize and also their variation domain. The class is also able to compute the fitness (or cost) 
  * function of the vector. To do so, it creates a constellation and a simulation from the decision vector and 
- * it calls the correct objective function in the simulation.  
+ * it calls the correct cost function in the simulation.  </p>
  * 
- * Because the cost function and the vector depends of the use case, the method createConstellationFromVector() and 
- * costFunction() are implemented in children classes
+ * <p>Because the cost function and the vector depend of the use case, the method createConstellationFromVector() and 
+ * costFunction() are implemented in  subclasses.</p>
  * 
- * WARNING : The cost function has to be thread Safe to allow multithread computing from the optimization library
- * TODO Ensure that the method objectiveFunction is thread safe.
- * These are the guidelines to follow to use this class :
+ * <p>WARNING : The cost function has to be thread Safe to allow multithread computing from the optimization library</p>
+ * 
+ * <p>These are the guidelines to follow to use this class :</p>
  *  
- * - Instantiate a new Decision Vector with the given constructor. It will randomly initialize
- * all the variables of the vector
- * - Call the method objectiveFunction to launch a simulation from the current state of the vector
+ * <p>- Instantiate a new Decision Vector with the given constructor. It will randomly initialize
+ * all the variables of the vector.</p>
+ * <p>- Call the method costFunction to launch a simulation from the current state of the vector</p>
  *
  * @author Theo Nguyen
  */
+
 @SuppressWarnings("rawtypes")
-public abstract  class DecisionVector {
-
-	/* The optimization variables on which the optimization program will play to optimize the cost function*/
-	protected HashMap<String,DecisionVariable> variablesMap;
-
-	/*The input polygon of the zone to cover (useful for the simulation in the objective function*/
-	protected ArrayList<GeodeticPoint>inputPolygon;
+public abstract class DecisionVector {
 
 	/*
-	 * Constructor  of the class : 
-	 * @Param ArrayList<DecisionVariable> decisionVariableList : The list of decision variables for the problem.
-	 * @Param ArrayList<GeodeticPoint> inputPolygon : The list of Geodetic points  which forms the  zone to cover
+	 * The optimization variables on which the optimization program will play to
+	 * optimize the cost function
 	 */
-	public DecisionVector(ArrayList<DecisionVariable> decisionVariableList,ArrayList<GeodeticPoint>inputPolygon) {
+	protected final ArrayList<DecisionVariable> listDecisionVariables;
 
+	/*
+	 * The input polygon of the zone to cover (useful for the simulation in the cost
+	 * function
+	 */
+	protected final ArrayList<GeodeticPoint> inputPolygon;
 
-		this.variablesMap=new HashMap<String,DecisionVariable>();
+	/*
+	 * Constructor of the class :
+	 * 
+	 * @Param ArrayList<DecisionVariable> decisionVariableList : The list of
+	 * decision variables for the problem.
+	 * 
+	 * @Param ArrayList<GeodeticPoint> inputPolygon : The list of Geodetic points
+	 * which forms the zone to cover
+	 */
+	public DecisionVector(ArrayList<DecisionVariable> listDecisionVariable, ArrayList<GeodeticPoint> inputPolygon) {
 
-		//store the decision variables in a dictionary
-		for (DecisionVariable var: decisionVariableList) {
-			this.variablesMap.put(var.getName(),var);
-		}
+		this.listDecisionVariables = listDecisionVariable;
 
-		//stores the points of the polygon
-		this.inputPolygon=inputPolygon;
+		// stores the points of the polygon
+		this.inputPolygon = inputPolygon;
 
-		//initialize randomly the vector
+		// initialize randomly the vector
 		randomInit();
 	}
 
 	/**
-	 * Get the specified decision variable in the vector. 
-	 * @param String variableName : the name of the variable to get
-	 * @return the decision variable 
+	 * Get the specified decision variable in the vector with its index.
+	 * 
+	 * @param variableIndex:int the index of the variable to get
+	 * @return the decision variable
+	 */
+	public DecisionVariable get(int variableIndex) {
+		return listDecisionVariables.get(variableIndex);
+
+	}
+
+	/**
+	 * Get the specified decision variable in the vector with its name.
+	 * 
+	 * @param variableName:String the name of the variable to get
+	 * @return the decision variable
 	 */
 	public DecisionVariable get(String variableName) {
 
-		//Warning if the variable is not stored in the vector.
-		if (!variablesMap.containsKey(variableName)) {
-			System.out.println("ERROR  The variable : "+variableName+" doesn't exist in the decision vector");
-		}
-		return(variablesMap.get(variableName));
-
+		return this.listDecisionVariables.get(getIndex(variableName));
 	}
 
 	/**
-	 * Initialize randomly the vector. For each decision variable, take a value in its domain.
+	 * Get the current decision variable values in a list in the correct order.
+	 * 
+	 * @return ArrayList(Object) - listValues current decision variable values
+	 */
+	public ArrayList<Object> getValues() {
+		ArrayList<Object> listValues = new ArrayList<Object>();
+		for (DecisionVariable var : listDecisionVariables) {
+			if (var.isDouble()) {
+				listValues.add((Double) var.getValue());
+			}
+			if (var.isInteger()) {
+				listValues.add((Integer) var.getValue());
+			}
+
+		}
+		return listValues;
+	}
+
+	/**
+	 * Initialize randomly the vector. For each decision variable, take a value in
+	 * its domain.
 	 */
 
-	public void  randomInit() {
-		for (String var: variablesMap.keySet()) {
-			variablesMap.get(var).randomInit();
+	public void randomInit() {
+		for (DecisionVariable var : listDecisionVariables) {
+			var.randomInit();
 		}
 	}
 
 	/**
-	 * Abstract method which converts the current state of the  decision vector into a Constellation. 
-	 * Its implementation depends of the Use Case. 
-	 * @return a Constellation corresponding to the decision vector.
+	 * Get the index of a variable in the decision Vector. Threads safety : the
+	 * function is reentrant because access to the storage is done by atomic
+	 * operations since the functions use read-only operations.
+	 * 
+	 * @param variableName:String the name of the decision variable
+	 * @return int - the index of the variable
 	 */
-	protected abstract Constellation createConstellationFromVector();
+	public int getIndex(String variableName) {
+
+		for (int i = 0; i < listDecisionVariables.size(); i++) {
+			if (listDecisionVariables.get(i).getName().equals(variableName)) {
+				return (i);
+			}
+		}
+		System.out.println("ERROR  The variable : " + variableName + " doesn't exist in the decision vector");
+		return -1;
+	}
 
 	/**
-	 * The objective (or fitness) function of the problem. The goal is to MINIMIZE this function.
-	 * It calls the method createConstellationFromVector to create a new constellation with the current
-	 * state of the vector and then creates a simulation to propagate the orbits of each satellite.
-	 * Its implementation depends of the Use Case. 
-	 * @return Double the fitness value
+	 * Abstract method which converts the current state of the decision vector into
+	 * a Constellation. Its implementation depends of the Use Case.
+	 * 
+	 * @param listValues:ArrayList(Object) current values of the vector from which
+	 *        we create the constellation.
+	 * @return Constellation - A Constellation corresponding to the decision vector.
 	 */
-	public abstract Double objectiveFunction();
+	public abstract Constellation createConstellationFromVector(final ArrayList<Object> listValues);
+
+	/**
+	 * The cost (or fitness) function of the problem. The goal is to MINIMIZE this
+	 * function. It calls the method createConstellationFromVector to create a new
+	 * constellation with the current state of the vector and then creates a
+	 * simulation to propagate the orbits of each satellite. Its implementation
+	 * depends of the Use Case.
+	 * 
+	 * @param listValues:ArrayList(Object) current values of the vector from which
+	 *        we compute the fitness.
+	 * @return Double - the fitness value
+	 */
+	public abstract Double costFunction(final ArrayList<Object> listValues);
 }
-
-

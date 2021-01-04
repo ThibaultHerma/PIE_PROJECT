@@ -39,6 +39,23 @@
 		</dependency>
 
 
+<!-- https://mvnrepository.com/artifact/io.jenetics/jenetics -->
+<dependency>
+    <groupId>io.jenetics</groupId>
+    <artifactId>jenetics</artifactId>
+    <version>6.1.0</version>
+</dependency>
+
+<!-- https://mvnrepository.com/artifact/org.orekit/orekit -->
+<dependency>
+    <groupId>org.orekit</groupId>
+    <artifactId>orekit</artifactId>
+    <version>10.2</version>
+</dependency>
+
+
+
+
 
 	</dependencies>
 

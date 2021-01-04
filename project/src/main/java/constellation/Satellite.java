@@ -19,11 +19,14 @@ import org.orekit.time.AbsoluteDate;
  * six keplerian parameters, the time t0 at which the data are given. It also
  * contains two ArrayList of Vectors3D
  * 
- * WARNINGS : - The time is an AbsoluteDate parameter - The frame chosen is GCRF
- * - Earth gravitational constant is taken from EGM96 model: 3.986004415e14
- * m�/s�.
+ * WARNINGS : - The time is an AbsoluteDate parameter 
+ * 			  - The frame chosen is GCRF
+ * 			  - Earth gravitational constant is taken from EGM96 model: 3.986004415e14 m�/s�.
+ * Thread Safety : the class is conditionally thread safe if and only if Parameters are immutable. 
+ * (see later with the method isCoveredBySat)
+ * TODO put constants in Parameters class
  * 
- * @autor Am�lie Falcou
+ * @autor Amelie Falcou
  */
 
 public class Satellite {

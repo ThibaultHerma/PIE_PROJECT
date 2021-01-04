@@ -1,0 +1,72 @@
+
+    {   "useCaseId":0,
+        "useCaseDescription":"Demo of the simulation : a Sentinel-2 like satellite",
+
+        "optimisationParameters": {
+            "algoName": "genetic",
+            "stopParameters":{
+                "nbIteration":1000,
+                "maxRunTime(s)":3600.00
+            }
+        } ,
+
+        "decisionVariables":{
+
+            "nbSat":{
+                "min":1.0,
+                "max":2.0,
+                "type":"Integer"
+            },
+            "a":{
+                "min":7157000,
+                "max":7157001,
+                "type":"Double"
+
+            },
+             "eccentricity":{
+                "min":0.0,
+                "max":0.01,
+                "type":"Double"
+
+            },
+            "inclination":{
+                "min":1.719,
+                "max":1.7191,
+                "type":"Double"
+
+            },
+           
+            "rightAscendingNode":{
+                "min":0.0,
+                "max":0.01,
+                "type":"Double"
+
+            },
+
+            "periapsisArgument":{
+                "min":0.0,
+                "max":0.01,
+                "type":"Double"
+            }
+        },
+
+        "zone":{
+        	"meshingStyle":"lat_lon_standard_meshing",
+        	"inputPolygon":[
+        	
+            	{"lat":-0.005,
+            	"lon":44,
+            	"alt":143 }
+            ,
+           
+            	{"lat":0.005,
+            	"lon":44.005,
+            	"alt":144 }
+            
+            ]
+
+        }
+
+    }
+        
+        

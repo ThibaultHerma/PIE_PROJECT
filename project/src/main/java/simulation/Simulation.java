@@ -32,6 +32,8 @@ import zone.Zone;
  * 
  * - Call the method getMaxRevisit to have the maximum time of revisit.
  * 
+ * WARNING Thread safety: the class is conditionally thread safe if and only if  Parameters are immutable and each thread has
+ *  its own instance of Zone AND Constellation AND Simulation 
  *  
  * @author Julie Bayard
  * 
@@ -60,7 +62,7 @@ public class Simulation {
 	 * Elevation in radian, the elevation at which the point begins to be visible
 	 * 	(90Â° - elevation) corresponds to the half extent of the FOV of the satellite
 	 * */
-	private double elevation = 1;
+	private double elevation = java.lang.Math.PI * 0.5 - 0.18;
 	
 	/**
 	 * HashMap which contains all the dates at which a geodetic point is beginning to be seen

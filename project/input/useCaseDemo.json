@@ -13,8 +13,8 @@
         "decisionVariables":{
 
             "nbSat":{
-                "min":1.0,
-                "max":20.0,
+                "min":1,
+                "max":20,
                 "type":"Integer"
             },
             "a":{
@@ -25,7 +25,7 @@
             },
              "eccentricity":{
                 "min":0.0,
-                "max":0.99,
+                "max":0.5,
                 "type":"Double"
 
             },
@@ -60,7 +60,8 @@
             ,
            
             	{"lat":0.761301362344,
-            	"lon":0.025942015496,}
+            	"lon":0.025942015496,
+            	"alt":144 }
             
             ]
 

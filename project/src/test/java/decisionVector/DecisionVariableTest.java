@@ -55,6 +55,19 @@ class DecisionVariableTest  {
 		assert(testDouble);
 		
 	}
-
+	
+	@Test
+	void testRandomInit() {
+		//Arrange 
+		DecisionVariable<Integer> nbSat=new DecisionVariable<Integer>(Integer.class,"nbSat",1,2);
+		DecisionVariable<Double> inclination=new DecisionVariable<Double>(Double.class,"inclination",1.0,1.1);
+		//Act 
+	    nbSat.randomInit();
+	    inclination.randomInit();
+		//assert
+		assert((Integer)nbSat.getValue()==1);
+		assert((Double)inclination.getValue()<1.1);
+		assert((Double)inclination.getValue()>1);
+	}
  
 }
