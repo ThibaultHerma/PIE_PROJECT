@@ -3,6 +3,7 @@
 *.sh
 !target.sh
 /.metadata/
+**/.idea/
 
 *.class
 /project/.settings/
@@ -11,3 +12,4 @@
 /project/target/surefire-reports/
 /project/doc/
 project/.metadata/
+/project/target/*/*/README.md
