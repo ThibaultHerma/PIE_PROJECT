@@ -84,7 +84,9 @@ public class Satellite {
 		this.T = keplerian.getKeplerianPeriod();
 
 	}
-
+	
+	
+	
 	public Satellite(ArrayList<Vector3D> positions, ArrayList<Vector3D> velocities, AbsoluteDate t0) {
 		// Calculation of the keplerian parameters
 		PVCoordinates pvCoordinates = new PVCoordinates(positions.get(0), velocities.get(0));
@@ -110,6 +112,56 @@ public class Satellite {
 		this.positions = positions;
 		this.velocities = velocities;
 	}
+	
+	/**
+	 * return the a-parameter of the satellites 
+	 */
+	public double getA(){
+		return (a);
+	}
+	
+	/**
+	 * return the e-parameter of the satellites 
+	 */
+	public double getE(){
+		return (e);
+	}
+	
+	/**
+	 * return the i-parameter of the satellites 
+	 */
+	public double getI(){
+		return (i);
+	}
+	
+	/**
+	 * return the raan-parameter of the satellites 
+	 */
+	public double getRaan(){
+		return (raan);
+	}
+
+	/**
+	 * return the w-parameter of the satellites 
+	 */
+	public double getW(){
+		return (w);
+	}
+	
+	/**
+	 * return the M-parameter of the satellites 
+	 */
+	public double getM(){
+		return (M);
+	}
+	
+	/**
+	 * return the t0-parameter of the satellites 
+	 */
+	public AbsoluteDate getT0(){
+		return (t0);
+	}
+	
 
 	public Orbit getInitialOrbit() {
 		return keplerian;
@@ -118,5 +170,7 @@ public class Satellite {
 	public boolean isCoveredBySat(Zone zone, AbsoluteDate t) {
 		return true;
 	}
+	
+	
 
 }
