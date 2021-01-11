@@ -2,6 +2,18 @@ package time;
 
 import org.orekit.time.DateComponents;
 
+/**
+ * This class represents a time broken up as year, month, day, hour, minute and second. It also contains the
+ * julian time component associated with the time described.
+ * 
+ * Two constructors are available for this class:
+ *  - A Time instance can be defined with a year, a month, a day, an hour, a minute and a second.
+ *  - A Time instance can be defined by its julian of type double.
+ * 
+ * @author Loic Mace
+ * 
+ */
+
 public class Time {
 
 	private double julian2000;
@@ -15,7 +27,7 @@ public class Time {
 	
 	/**
 	 * Create a Time instance from a Julian with a reference set to 1st January 2000, 12:00
-	 * @param double - julian
+	 * @param double julian
 	 */
 	public Time(double julian) {
 		this.julian2000 = julian;
@@ -38,12 +50,12 @@ public class Time {
 	
 	/**
 	 * Create a Time instance from a Gregorian date
-	 * @param int - year
-	 * @param int - month
-	 * @param int - day
-	 * @param int - hour
-	 * @param int - minute
-	 * @param double - second
+	 * @param int year
+	 * @param int month
+	 * @param int day
+	 * @param int hour
+	 * @param int minute
+	 * @param double second
 	 */
 	public Time(int year, int month, int day, int hour, int minute, double second) {
 		this.year = year;

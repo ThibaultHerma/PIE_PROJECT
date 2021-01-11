@@ -30,7 +30,7 @@ public abstract class DecisionVector {
 	 * The optimization variables on which the optimization program will play to
 	 * optimize the cost function
 	 */
-	protected final ArrayList<DecisionVariable> listDecisionVariables;
+	public final ArrayList<DecisionVariable> listDecisionVariables;
 
 	/*
 	 * The input polygon of the zone to cover (useful for the simulation in the cost
