@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import constellation.Constellation;
 import decisionVector.DecisionVector;
 import decisionVector.DecisionVector1;
+import optimisation.Optimisation;
 import decisionVector.DecisionVariable;
 
 /**
@@ -56,38 +57,22 @@ public class UseCase1 extends UseCase {
 		// we need to modify the list of variables, so as to add a variable for the
 		// anomaly of every potential satellite
 		modifyVariablesList();
+		System.out.print(this.variablesList + "\n");
 
 		DecisionVector decisionVector1 = new DecisionVector1(this.variablesList, this.inputPolygon);
 		// decisionVectorDemo.get("nbSat").setValue(2);
 		// decisionVectorDemo.randomInit();
-
-		/** TODO create an optimization instance to optimize the vector. */
-
-		/**
-		 * -----------BLOC TO PUT IN THE OPTIMIZATION CLASS--------------- //compute the
-		 * Objective Function System.out.println("\n---- COMPUTE OBJECTIVE FUNCTION
-		 * -----"); //get the values of the decision vector
-		 * ArrayList<Object>values=decisionVector1.getValues(); //compute objective
-		 * function (the objective function is thread safe, therefore we have //to pass
-		 * the values as an argument of the function System.out.println("Max revisit
-		 * time: " +decisionVector1.costFunction(values));
-		 * ---------------------------------------------------------------------
-		 */
-
-		// get and return the constellation from the decision vector
 		
+		
+		Optimisation optimisationProblem = new Optimisation(decisionVector1);
+		ArrayList<Object> optimisedValues = optimisationProblem.optimise(decisionVector1);
 
-		// compute the Objective Function
-		System.out.println("\n---- COMPUTE OBJECTIVE FUNCTION -----");
-		// get the values of the decision vector
-		ArrayList<Object> values = decisionVector1.getValues();
 		// compute objective function (the objective function is thread safe, therefore
-		// we have
-		// to pass the values as an argument of the function
-		System.out.println("Max revisit time: " + decisionVector1.costFunction(values));
+		// we have to pass the values as an argument of the function
+		System.out.println("Max revisit time: " + decisionVector1.costFunction(optimisedValues));
 
 		// get and return the constellation from the decision vector
-		return (decisionVector1.createConstellationFromVector(values));
+		return (decisionVector1.createConstellationFromVector(optimisedValues));
 	}
 
 	/**

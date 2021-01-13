@@ -4,15 +4,7 @@ import java.util.ArrayList;
 
 import constellation.Constellation;
 import decisionVector.DecisionVectorDemo;
-import io.jenetics.DoubleChromosome;
-import io.jenetics.Genotype;
-import io.jenetics.IntegerChromosome;
-import io.jenetics.Optimize;
-import io.jenetics.Phenotype;
-import io.jenetics.engine.Engine;
-import io.jenetics.engine.EvolutionResult;
 import optimisation.Optimisation;
-import utils.Parameters;
 
 /**
  * 
@@ -63,28 +55,7 @@ public class UseCaseDemo extends UseCase {
 		// decisionVectorDemo.randomInit();
 
 		Optimisation optimisationProblem = new Optimisation(decisionVectorDemo);
-		final Engine engine = Engine.builder(UseCaseDemo::fitnessDemo, optimisationProblem.getCode())
-				.optimize(Optimize.MINIMUM).populationSize(2) // Small value for tests
-				.build();
-
-		final Phenotype bestConstellation = (Phenotype) engine.stream().limit(2) // Small value for tests
-				.collect(EvolutionResult.toBestPhenotype());
-
-		// Best constellation found
-		System.out.println(bestConstellation);
-
-		// get the values of the decision vector
-		ArrayList<Object> optimisedValues = new ArrayList<Object>();
-		for (int i = 0; i < bestConstellation.genotype().length(); i++) {
-			if (decisionVectorDemo.get(i).isDouble()) {
-				DoubleChromosome dc = (DoubleChromosome) bestConstellation.genotype().get(i);
-				optimisedValues.add((Double) dc.doubleValue());
-			}
-			if (decisionVectorDemo.get(i).isInteger()) {
-				IntegerChromosome ic = (IntegerChromosome) bestConstellation.genotype().get(i);
-				optimisedValues.add((Integer) ic.intValue());
-			}
-		}
+		ArrayList<Object> optimisedValues = optimisationProblem.optimise(decisionVectorDemo);
 
 		// compute objective function (the objective function is thread safe, therefore
 		// we have to pass the values as an argument of the function
@@ -93,47 +64,6 @@ public class UseCaseDemo extends UseCase {
 		// get and return the constellation from the decision vector
 		return (decisionVectorDemo.createConstellationFromVector(optimisedValues));
 
-	}
-
-	/**
-	 * Fitness function for the Demo case
-	 * 
-	 * @param currentGenotype: Genotype Set of values to be evaluated
-	 * @return cost: double Cost of the set of values
-	 */
-	private static double fitnessDemo(final Genotype currentGenotype) { // Use decisionVector1
-
-		// compute the Objective Function from a sentinel constellation
-		System.out.println("\n---- COMPUTE OBJECTIVE FUNCTION -----");
-
-		/*
-		 * TO DO: Find a way to get the initial decision vector without creating it
-		 * again. Problem is that the keyword "this" cannot be used in static method
-		 */
-		UseCaseDemo useCaseDemo = new UseCaseDemo();
-		useCaseDemo.loadParams(Parameters.inputPath + "DemoSentinel2.json");
-		DecisionVectorDemo decisionVectorDemo = new DecisionVectorDemo(useCaseDemo.variablesList,
-				useCaseDemo.inputPolygon);
-
-		/*
-		 * Values from the genotype are converted into an ArrayList<Object>, so we can
-		 * use the cost function defined in the decision vector.
-		 */
-		ArrayList<Object> listValues = new ArrayList<Object>();
-		for (int i = 0; i < currentGenotype.geneCount(); i++) {
-			if (decisionVectorDemo.get(i).isDouble()) {
-				DoubleChromosome doubleChr = (DoubleChromosome) currentGenotype.get(i);
-				listValues.add((Double) doubleChr.doubleValue());
-			}
-			if (decisionVectorDemo.get(i).isInteger()) {
-				IntegerChromosome intChr = (IntegerChromosome) currentGenotype.get(i);
-				listValues.add((Integer) intChr.intValue());
-			}
-		}
-		System.out.print("EVALUATION OF THE GENOTYPE :" + listValues + "\n");
-
-		double cost = decisionVectorDemo.costFunction(listValues);
-		return cost;
 	}
 
 }
