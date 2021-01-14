@@ -10,30 +10,46 @@ import simulation.Simulation;
 import utils.Parameters;
 import zone.Zone;
 
-
 /**
  * 
  *
- *<p><b>This class extends the decision vector for the first Use Case </b></p>
+ * <p>
+ * <b>This class extends the decision vector for the first Use Case </b>
+ * </p>
  *
- *<p> In this case, we consider that all the satellites are on a same orbital plane (meaning that 
- * a,e,i,raan,periapsis argument are the same for every satellite).</p>
- * The decision variables are  the following: nb_sat,a,e,i,raan,periapsis argument.
- * The cost  function is the following : Max revisit  time of a zone.
+ * <p>
+ * In this case, we consider that all the satellites are on a same orbital plane
+ * (meaning that a,e,i,raan,periapsis argument are the same for every
+ * satellite).
+ * </p>
+ * The decision variables are the following: nb_sat,a,e,i,raan,periapsis
+ * argument. The cost function is the following : Max revisit time of a zone.
  *
- * <p> The class is a decision vector for the optimization problem. It contains the variables 
- * to optimize and also their variation domain. The class is also able to compute the fitness 
- * (or cost) function of the vector. To do so, it creates a constellation and a simulation from 
- * the decision vector and it calls the correct cost function in the simulation.</p>  
+ * <p>
+ * The class is a decision vector for the optimization problem. It contains the
+ * variables to optimize and also their variation domain. The class is also able
+ * to compute the fitness (or cost) function of the vector. To do so, it creates
+ * a constellation and a simulation from the decision vector and it calls the
+ * correct cost function in the simulation.
+ * </p>
  * 
- * <p>These are the guidelines to follow to use this class :</p>
- *  
- * <p>- Instantiate a new Decision Vector with the given constructor. It will randomly initialize
- * all the variables of the vector</p>
- * <p>- Call the method costFunction to launch a simulation from the current state of the vector</p>
+ * <p>
+ * These are the guidelines to follow to use this class :
+ * </p>
  * 
- * <p>WARNING : The cost function has to be thread Safe to allow multithread computing from the optimization 
- * library</p>
+ * <p>
+ * - Instantiate a new Decision Vector with the given constructor. It will
+ * randomly initialize all the variables of the vector
+ * </p>
+ * <p>
+ * - Call the method costFunction to launch a simulation from the current state
+ * of the vector
+ * </p>
+ * 
+ * <p>
+ * WARNING : The cost function has to be thread Safe to allow multithread
+ * computing from the optimization library
+ * </p>
  * 
  * TODO Write the tests
  *
@@ -57,7 +73,7 @@ public class DecisionVector1 extends DecisionVector {
 	 * operations.
 	 * 
 	 * @param values:ArrayList(Object) current values of the vector from which we
-	 *        create the constellation.
+	 *                                 create the constellation.
 	 * @return Constellation - a Constellation corresponding to the decision vector.
 	 */
 	@Override
@@ -76,11 +92,12 @@ public class DecisionVector1 extends DecisionVector {
 
 		Constellation constellation = new Constellation();
 
-		// add the satellite to the constellation
+		// the anomaly is the only parameter which can change in the use case 1,
+		// so we have one value for every satellite
+		// read the anomaly and add each satellite to the constellation
 		for (Double i = 0.0; i < nbSat; i++) {
-			// We consider for the demonstration that the satellites are uniformly
-			// distributed along the orbit
-			Double anomaly = i / nbSat * 2 * Math.PI;
+			String nameAnomaly = "anomaly" + Double.toString(i);
+			Double anomaly = (Double) values.get(getIndex(nameAnomaly));
 
 			constellation.addSatellite(a, eccentricity, inclination, rightAscendingNode, periapsisArgument, anomaly,
 					t0);
@@ -98,7 +115,7 @@ public class DecisionVector1 extends DecisionVector {
 	 * calls only reentrant functions
 	 * 
 	 * @param listValues:ArrayList(Object) current values of the vector from which
-	 *        we compute the fitness.
+	 *                                     we compute the fitness.
 	 * @return Double - the fitness value
 	 */
 	@Override

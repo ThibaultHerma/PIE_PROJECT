@@ -1,6 +1,9 @@
 package useCase;
 
 import java.util.ArrayList;
+  
+   
+
 
 
 
@@ -47,10 +50,20 @@ public class UseCaseDemo extends UseCase {
 		System.out.println("\n---- COMPUTE OBJECTIVE FUNCTION -----");
 		// get the values of the decision vector
 		ArrayList<Object> values = decisionVectorDemo.getValues();
+		
+		//duration of the program : TOP
+		long startTime = System.nanoTime();
+
+		
 		// compute objective function (the objective function is thread safe, therefore
 		// we have
 		// to pass the values as an argument of the function
 		System.out.println("Max revisit time: " + decisionVectorDemo.costFunction(values));
+		
+		//duration of the program : END
+		long endTime   = System.nanoTime();
+		long totalTime = endTime - startTime;
+		System.out.println("run time : "+totalTime/Math.pow(10, 9)); 
 
 		// get and return the constellation from the decision vector
 		return (decisionVectorDemo.createConstellationFromVector(values));

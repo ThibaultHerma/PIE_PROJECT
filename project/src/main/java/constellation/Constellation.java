@@ -75,14 +75,12 @@ public class Constellation {
 	/**
 	 * return the list of the satellites of the constellation
 	 */
-
-
 	public ArrayList<Satellite> getSatellitesList(){
 
 		return (listSatellites);
 	}
 	
-// useful ?? TODO implement in Satellite : getIdPlane(), getA() ...
+// useful ?? 
 //	/**
 //	 * return the plane of planesList the Satellite "satellite" is part of 
 //	 * @param satellite Satellite  belonging to the plane we want to reach
@@ -109,7 +107,7 @@ public class Constellation {
 	}
 	
 	/**
-	 * add a plane
+	 * add a new plane to the constellation for a given satellite
 	 * @param inclinaison inclination of the plane
 	 * @param rightAscNode right ascension of the ascending node of the plane 
 	 * @param satellitesList list of satellites of the plan
@@ -145,6 +143,7 @@ public class Constellation {
 		Plane p = mapPlanes.get(idPlane);
 		
 		if (p==null) {//there is no such plane
+
 
 			this.addPlane(inclination, rightAscNode, newSat);
 			listSatellites.add(newSat);	
@@ -183,6 +182,7 @@ public class Constellation {
 		}		
 
 					
+
 	}
 
 	

@@ -22,6 +22,8 @@ import utils.Parameters;
 import org.orekit.frames.FramesFactory;
 import org.orekit.frames.TopocentricFrame;
 
+import java.lang.Math;
+
 // TODO : write unit tests
 
 /**
@@ -93,7 +95,7 @@ public class Zone {
 	 * The unit is the radian. 
 	 * The standard resolution is set to 20km (at the Equator).
 	 */
-	private double standardMeshResolution = 20000 / org.orekit.utils.Constants.WGS84_EARTH_EQUATORIAL_RADIUS;
+	private double standardMeshResolution = Parameters.standardMeshResolution;
  
 	/** 
 	 * The style of meshing which has to be used to convert a polygon into a list of meshing points
@@ -221,7 +223,7 @@ public class Zone {
 	 * 
 	 * @param elevation in radian
 	 * 					it is the elevation at which the point begins to be visible
-	 * 					(90° - elevation) corresponds to the half extent of the FOV of the satellite
+	 * 					(90° - elevation) corresponds approximately to the half extent of the FOV of the satellite if it is not agile
 	 */
 	public void createEventsDetector(Propagator propagator, EventsLogger logger, double elevation) {
 		
@@ -233,6 +235,63 @@ public class Zone {
 		// TODO : find the meaning of these parameters
 		double maxcheck  = 60.0;
 		double threshold =  0.001;
+		
+		// we go through all the points of the meshing and add them as events to be detected
+		for (int point_index = 0; point_index < listMeshingPoints.size(); point_index++) {
+			
+			GeodeticPoint mesh_point = listMeshingPoints.get(point_index);
+
+			TopocentricFrame staFrame = new TopocentricFrame(earth, mesh_point, "mesh_point_" + point_index);
+			
+			EventDetector staVisi =
+			  new ElevationDetector(maxcheck, threshold, staFrame).
+			  withConstantElevation(elevation).
+			  withHandler(new VisibilityHandler());
+			// TODO : the visibility handler is only there to display informations but has no utility
+			
+			
+			// when we add an event detector, we monitor it to be able to retrieve it
+			propagator.addEventDetector(logger.monitorDetector(staVisi));
+		}
+		
+	}
+	//adaptative maxcheck
+	/**
+	 * WARNING for now, the orbit is assumed circular, thus the altitude of the satellite is assumed constant
+	 * 
+	 * This method creates all the events for eachpoint of the meshing.
+	 * The events are "ElevationDetector" events.
+	 * This method has to be called before propagating the orbit.
+	 * 
+	 * @param propagator the propagator used
+	 * 
+	 * @param halfFOV in radian
+	 * 					half FOV of the satellite
+	 * 
+	 * @param a : satellite to center of the Earth distance 
+	 */
+	public void createEventsDetectorSatellite(Propagator propagator, EventsLogger logger, double halfFOV, double a) {
+		
+		org.orekit.frames.Frame earthFrame = FramesFactory.getITRF(Parameters.projectIERSConventions, true);
+		BodyShape earth = new OneAxisEllipsoid(Parameters.projectEarthEquatorialRadius,
+											   Parameters.projectEarthFlattening,
+		                                       earthFrame);
+		
+		// angle between the direction from the center of the Earth to the mesh point and the direction from the center of the Earth to the satellite 
+		double alpha = -halfFOV + Math.asin(a/Parameters.projectEarthEquatorialRadius * Math.sin(halfFOV));
+		
+		// elevation at which the point begins to be visible
+		double elevation = Math.PI/2 - (halfFOV + alpha);
+
+				
+		// time window when the satellite is seen by the station (assuming the orbit is passing over the station)
+		double visibilityWindow = (alpha/Math.PI)*2*Math.PI*Math.sqrt(Math.pow(a, 3)/Parameters.projectEarthMu);
+		
+		// adaptative maxcheck : increases with altitude >> the higher the maxcheck, the faster the algorithm (the higher the probability of missing a satellite pass)
+		double maxcheck  = visibilityWindow/3; // the division factor to tune the frequency at which each detector checks if a satellite is passing over the mesh point
+		//double maxcheck  = 60;
+		
+		double threshold =  0.01;// accuracy of 0.01 s
 		
 		// we go through all the points of the meshing and add them as events to be detected
 		for (int point_index = 0; point_index < listMeshingPoints.size(); point_index++) {

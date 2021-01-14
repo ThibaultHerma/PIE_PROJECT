@@ -11,7 +11,9 @@ import utils.Parameters;
 
 class ConstellationTest {
 
+	
 	@Test
+
 	void testAddPlane() {
 		//Arrange 
 		Constellation constel=new Constellation();
@@ -27,7 +29,6 @@ class ConstellationTest {
 	    assert(constel.getNSat()==1);
 	    assert(p1.getListSatellites().size()==1);
 	    
-
 	}
 	
 	@Test
