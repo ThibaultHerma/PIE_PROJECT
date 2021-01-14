@@ -50,7 +50,7 @@ public class Satellite {
 	private KeplerianOrbit keplerian;
 
 	/**
-	 * First contructor Input parameters : keplerian parameters and the absolute
+	 * First constructor Input parameters : keplerian parameters and the absolute
 	 * time t0 The orbital period is calculated thanks to the inputs The Lists
 	 * positions and velocities are filled only for t = t0 and calculated with the
 	 * Orekit classes "KeplerianOrbit" and "PVCoordinates".
@@ -111,12 +111,72 @@ public class Satellite {
 		this.velocities = velocities;
 	}
 
+	
+	/**
+	 * return the a-parameter of the satellites 
+	 */
+	public double getA(){
+		return (a);
+	}
+	
+	/**
+	 * return the e-parameter of the satellites 
+	 */
+	public double getE(){
+		return (e);
+	}
+	
+	/**
+	 * return the i-parameter of the satellites 
+	 */
+	public double getI(){
+		return (i);
+	}
+	
+	/**
+	 * return the raan-parameter of the satellites 
+	 */
+	public double getRaan(){
+		return (raan);
+	}
+
+	/**
+	 * return the w-parameter of the satellites 
+	 */
+	public double getW(){
+		return (w);
+	}
+	
+	/**
+	 * return the M-parameter of the satellites 
+	 */
+	public double getM(){
+		return (M);
+	}
+	
+	/**
+	 * return the t0-parameter of the satellites 
+	 */
+	public AbsoluteDate getT0(){
+		return (t0);
+	}
+	
+
 	public Orbit getInitialOrbit() {
 		return keplerian;
 	}
 
+
 	public boolean isCoveredBySat(Zone zone, AbsoluteDate t) {
 		return true;
 	}
+	
+	/**
+	 * print the satellite parameters
+	 */
+	public String toString() {
+		return "satellite - idPlane : " + idPlan + " a : "+a+" e : "+e+" i : "+i+" raan : "+raan+" w : "+w+" M : "+M;
+	}
+
 
 }

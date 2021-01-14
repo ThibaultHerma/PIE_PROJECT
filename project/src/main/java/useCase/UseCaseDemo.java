@@ -1,6 +1,9 @@
 package useCase;
 
 import java.util.ArrayList;
+  
+   
+
 
 import constellation.Constellation;
 import decisionVector.DecisionVectorDemo;
@@ -53,6 +56,9 @@ public class UseCaseDemo extends UseCase {
 		DecisionVectorDemo decisionVectorDemo = new DecisionVectorDemo(this.variablesList, this.inputPolygon);
 		// decisionVectorDemo.get("nbSat").setValue(2);
 		// decisionVectorDemo.randomInit();
+
+		// compute the Objective Function from a sentinel constellation
+		System.out.println("\n---- COMPUTE OBJECTIVE FUNCTION -----");
 
 		Optimisation optimisationProblem = new Optimisation(decisionVectorDemo);
 		ArrayList<Object> optimisedValues = optimisationProblem.optimise(decisionVectorDemo);

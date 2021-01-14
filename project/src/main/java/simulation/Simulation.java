@@ -12,6 +12,8 @@ import org.orekit.propagation.events.EventDetector;
 import org.orekit.propagation.events.EventsLogger;
 import org.orekit.time.AbsoluteDate;
 
+import utils.Parameters;
+
 import constellation.Constellation;
 import constellation.Satellite;
 import zone.Zone;
@@ -62,7 +64,7 @@ public class Simulation {
 	 * Elevation in radian, the elevation at which the point begins to be visible
 	 * 	(90Â° - elevation) corresponds to the half extent of the FOV of the satellite
 	 * */
-	private double elevation = java.lang.Math.PI * 0.5 - 0.18;
+	private double elevation = Parameters.elevation;
 	
 	/**
 	 * HashMap which contains all the dates at which a geodetic point is beginning to be seen
@@ -137,7 +139,10 @@ public class Simulation {
 			KeplerianPropagator propagator = new KeplerianPropagator(sat.getInitialOrbit());
 			
 			// Addition of all event detectors
-			zone.createEventsDetector(propagator, logger, elevation);
+//			zone.createEventsDetector(propagator, logger, elevation);
+			
+			// Addition of all event detectors : adaptative maxcheck version
+			zone.createEventsDetectorSatellite(propagator, logger, Parameters.halfFOV, sat.getA());
 			
 			// Propagation of the orbit of the satellite
 			propagator.propagate(t0, tf);
@@ -229,6 +234,11 @@ public class Simulation {
 				}
 			}		
 		}
+		if (maxRevisite==0){
+			System.out.println("ERROR maxRevisite = 0 s for constellation : \n"+ constellation );
+			maxRevisite=1000000000;
+		}
+		
 		return maxRevisite; 
 	}
 }

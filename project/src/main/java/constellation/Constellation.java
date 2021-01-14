@@ -75,14 +75,12 @@ public class Constellation {
 	/**
 	 * return the list of the satellites of the constellation
 	 */
-
-
 	public ArrayList<Satellite> getSatellitesList(){
 
 		return (listSatellites);
 	}
 	
-// useful ?? TODO implement in Satellite : getIdPlane(), getA() ...
+// useful ?? 
 //	/**
 //	 * return the plane of planesList the Satellite "satellite" is part of 
 //	 * @param satellite Satellite  belonging to the plane we want to reach
@@ -109,7 +107,7 @@ public class Constellation {
 	}
 	
 	/**
-	 * add a plane
+	 * add a new plane to the constellation for a given satellite
 	 * @param inclinaison inclination of the plane
 	 * @param rightAscNode right ascension of the ascending node of the plane 
 	 * @param satellitesList list of satellites of the plan
@@ -146,42 +144,54 @@ public class Constellation {
 		
 		if (p==null) {//there is no such plane
 
+
 			this.addPlane(inclination, rightAscNode, newSat);
-				
+			listSatellites.add(newSat);	
+			
 		}else{ // the satellite belongs to the Plane p
 
 			//////////////////////////////
-//			/* check if a satellite with the same parameters already exist =====> TODO implement a function that guarantees 2 satellites are not too close from each other*/
-//			int var=0;
-//			ArrayList<Satellite> sList= p.getListSatellites();
-//			int size=sList.size();
-//			int i=0;			
-//			while (var==0 && i<size) { 
-//				if (sList.get(i).getA() == a 
-//						&& sList.get(i).getE() == eccentricity 										
-//						&& sList.get(i).getI() == inclination 
-//						&& sList.get(i).getRaan() == rightAscNode 
-//						&& sList.get(i).getW() == omega 
-//						&& sList.get(i).getM() == anomaly 
-//						&& sList.get(i).getT0() == t0)     { //the newSat already exists within Plane p
-//					var=1;
-//				}
-//				i+=1;
-//			}
-//			if (var==0) { //newSat can be added to Plane p						
-//				p.addSatellite(newSat);
-//				nSat+=1; //update nSat	
-//			}else {
-//				System.out.println("Satellite already existing : " +newSat);
-//			}
+			/* check if a satellite with the same parameters already exist =====> TODO implement a function that guarantees 2 satellites are not too close from each other*/
+			int var=0;
+			ArrayList<Satellite> sList= p.getListSatellites();
+			int size=sList.size();
+			int i=0;			
+			while (var==0 && i<size) { 
+				if (sList.get(i).getA() == a 
+						&& sList.get(i).getE() == eccentricity 										
+						&& sList.get(i).getI() == inclination 
+						&& sList.get(i).getRaan() == rightAscNode 
+						&& sList.get(i).getW() == omega 
+						&& sList.get(i).getM() == anomaly 
+						&& sList.get(i).getT0() == t0)     { //the newSat already exists within Plane p
+					var=1;
+				}
+				i+=1;
+			}
+			if (var==0) { //newSat can be added to Plane p						
+				p.addSatellite(newSat);
+				nSat+=1; //update nSat	
+				listSatellites.add(newSat);	
+			}else {
+				System.out.println("Satellite already existing : " +newSat);
+			}
 				//////////////////////////////				
-			p.addSatellite(newSat);
-			nSat+=1; //update nSat									
+//			p.addSatellite(newSat);
+//			nSat+=1; //update nSat		
+//			listSatellites.add(newSat);	
 		}		
-		// add the satellite to the list of sat
-		listSatellites.add(newSat);				
-	}
 
+					
+
+	}
+	
+	public String toString() {	
+		String str="Constellation : \nnOrbitalPlanes : "+nOrbitalPlanes+" nSat : "+nSat ;
+		for (Satellite sat : listSatellites) {
+			str=str+"\n"+sat.toString();
+		}
+		return str;
+	}
 	
 	
 	

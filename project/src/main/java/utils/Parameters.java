@@ -33,6 +33,11 @@ public class Parameters {
 	 * The Earth equatorial radius which should be used in all the project.
 	 */
 	public static final  double projectEarthFlattening = org.orekit.utils.Constants.WGS84_EARTH_FLATTENING; 
+	
+	/**
+	 * The Earth mu which should be used in all the project.
+	 */
+	public static final  double projectEarthMu = org.orekit.utils.Constants.WGS84_EARTH_MU; 
     
 	/**
 	 * The start time of the simulation. By default, the constructor set the date 
@@ -46,6 +51,23 @@ public class Parameters {
 	 * (Terrestrial time for now)
 	 */
 	public static final Double simulationDuration= 10000000.0;
+	
+	/**
+	 * The satellites half FOV, value in radian.
+	 */
+	public static final  double halfFOV = 0.18; 
+	
+	/**
+	 * The elevation at which the point begins to be visible by a mesh point, value in radian.
+	 */
+	public static final  double elevation = java.lang.Math.PI * 0.5 - 0.18; 
+	
+	/**
+	 * The resolution of the standard mesh.
+	 * The unit is the radian. 
+	 * The standard resolution is set to 20km (at the Equator).
+	 */
+	public static double standardMeshResolution = 20000 / projectEarthEquatorialRadius;
 	
 	
 	/**---- Simulation parameters which can also be loaded from the JSON file ----*/

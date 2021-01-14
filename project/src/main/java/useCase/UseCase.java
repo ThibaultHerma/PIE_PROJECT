@@ -125,10 +125,21 @@ public abstract class UseCase {
 		} else {
 			throw new Exception("\"The use case specified (" + useCaseNb + ") doesn't exist");
 		}
-
+		
+		//duration of the program : TOP
+		long startTime = System.nanoTime();
+		
 		Constellation bestConstellation = useCase.optimizeConstellation();
+		
+		//duration of the program : END
+		long endTime   = System.nanoTime();
+		long totalTime = endTime - startTime;
+		System.out.println("run time : "+totalTime/Math.pow(10, 9)); 
+
 		useCase.exportConstellation(bestConstellation);
 
 	}
 
 }
+
+
