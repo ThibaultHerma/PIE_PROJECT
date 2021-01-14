@@ -17,6 +17,7 @@ import zone.Zone;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.lang.Math;
 
 import java.util.Map;
 
@@ -304,8 +305,10 @@ public class JsonReader {
 		for (HashMap<String, Object> point : inputPolygonRaw) { 
 			HashMap<String,Double> pointDouble =convertToDouble(point);
             
-			double lat = pointDouble.get("lat");
-			double lon = pointDouble.get("lon");
+			// we need to convert the coordinates in radian
+			double lat = pointDouble.get("lat") * java.lang.Math.PI / 180;
+			double lon = pointDouble.get("lon") * java.lang.Math.PI / 180;
+			// the altitude is in meters
 			double alt;
 			
 			if (pointDouble.containsKey("alt")) {

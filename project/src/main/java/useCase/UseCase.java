@@ -1,7 +1,5 @@
 package useCase;
 
-
-
 import java.io.File;
 import java.util.ArrayList;
 
@@ -15,22 +13,30 @@ import decisionVector.DecisionVariable;
 import utils.JsonReader;
 import utils.Parameters;
 
-
 /**
- * <p>The class is the main class of the program. It loads the input, instantiates a decision vector,
- *  optimizes the type of constellation given, and export the best constellation found.  </p>
+ * <p>
+ * The class is the main class of the program. It loads the input, instantiates
+ * a decision vector, optimizes the type of constellation given, and export the
+ * best constellation found.
+ * </p>
  * 
- * <p>The optimization depend of the use case since the following characteristics can change:<br>
+ * <p>
+ * The optimization depend of the use case since the following characteristics
+ * can change:<br>
  * - The type of constellation <br>
  * - The decision variables of the decision vector<br>
  * - The optimization algorithm<br>
- * Therefore, the function optimizeConstellation is implemented in subclasses.</p>
+ * Therefore, the function optimizeConstellation is implemented in subclasses.
+ * </p>
  * 
- * <p>These are the guidelines to follow to use this class :<br>
- * - Instantiate a UseCase corresponding to the use case number that you want to solve.<br>
+ * <p>
+ * These are the guidelines to follow to use this class :<br>
+ * - Instantiate a UseCase corresponding to the use case number that you want to
+ * solve.<br>
  * - Call the method loadParams. <br>
  * - Call the method optimizeConstellation<br>
- * - Eventually export the constellation with the method exportConstellation()</p>
+ * - Eventually export the constellation with the method exportConstellation()
+ * </p>
  * 
  * @author Theo Nguyen
  */
@@ -114,12 +120,22 @@ public abstract class UseCase {
 		} else if (useCaseNb == 1) {
 			useCase = new UseCase1();
 			// TODO create the JSON for use case 1
-			useCase.loadParams(Parameters.inputPath + "useCase1.json");
+			useCase.loadParams(Parameters.inputPath + "1.json");
+			System.out.print("Reached" + "\n" + "\n");
 		} else {
 			throw new Exception("\"The use case specified (" + useCaseNb + ") doesn't exist");
 		}
-
+		
+		//duration of the program : TOP
+		long startTime = System.nanoTime();
+		
 		Constellation bestConstellation = useCase.optimizeConstellation();
+		
+		//duration of the program : END
+		long endTime   = System.nanoTime();
+		long totalTime = endTime - startTime;
+		System.out.println("run time : "+totalTime/Math.pow(10, 9)); 
+
 		useCase.exportConstellation(bestConstellation);
 
 	}
