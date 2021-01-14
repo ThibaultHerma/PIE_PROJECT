@@ -60,7 +60,8 @@ class ConstellationTest {
 		assert(p1.getListSatellites().size()==2);
 		assert(p2.getListSatellites().size()==1);
 		assert(p3.getListSatellites().size()==2);
-
+		
+		System.out.println(constel.toString());
 	}
 	
 

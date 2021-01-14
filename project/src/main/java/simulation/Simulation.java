@@ -234,6 +234,11 @@ public class Simulation {
 				}
 			}		
 		}
+		if (maxRevisite==0){
+			System.out.println("ERROR maxRevisite = 0 s for constellation : \n"+ constellation );
+			maxRevisite=1000000000;
+		}
+		
 		return maxRevisite; 
 	}
 }

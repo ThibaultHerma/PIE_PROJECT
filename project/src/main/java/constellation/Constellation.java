@@ -184,7 +184,14 @@ public class Constellation {
 					
 
 	}
-
+	
+	public String toString() {	
+		String str="Constellation : \nnOrbitalPlanes : "+nOrbitalPlanes+" nSat : "+nSat ;
+		for (Satellite sat : listSatellites) {
+			str=str+"\n"+sat.toString();
+		}
+		return str;
+	}
 	
 	
 	
