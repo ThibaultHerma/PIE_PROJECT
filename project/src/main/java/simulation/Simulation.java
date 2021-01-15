@@ -62,7 +62,7 @@ public class Simulation {
 
 	/** 
 	 * Elevation in radian, the elevation at which the point begins to be visible
-	 * 	(90Â° - elevation) corresponds to the half extent of the FOV of the satellite
+	 * 	(90° - elevation) corresponds to the half extent of the FOV of the satellite
 	 * */
 	private double elevation = Parameters.elevation;
 	
@@ -128,7 +128,7 @@ public class Simulation {
 	 * The dates at which each point of the mesh enters and exits the satellite view are
 	 * stored in the corresponding HashMaps. 
 	 */
-	public void propagateOrbits() {
+	public void propagateOrbits(Boolean verbose) {
 		
 		for (Satellite sat : constellation.getSatellitesList()) {
 			
@@ -156,12 +156,13 @@ public class Simulation {
  				if (detector.g(propagator.getInitialState())>0)  {
  					ElevationDetector eDetector = (ElevationDetector) detector;
  					addPointAndDateListBegVisibilitiesMesh(eDetector.getTopocentricFrame().getPoint(), t0)  ;
+ 					if (verbose) System.out.println("g>0 en d�but de simulation pour " + detector.toString() + "  " + sat.toString());
  				}
  			}
 
  			
 			for (final EventsLogger.LoggedEvent event : logger.getLoggedEvents()) {
-				System.out.println(event.toString());
+				if (verbose) System.out.println(event.toString());
 				ElevationDetector elevationDetector = (ElevationDetector) event.getEventDetector();
 				
 				GeodeticPoint mesh_point = elevationDetector.getTopocentricFrame().getPoint();				
