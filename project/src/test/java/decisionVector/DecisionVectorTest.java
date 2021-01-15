@@ -65,7 +65,7 @@ class DecisionVectorDemoTest {
 	}
 
 	@Test
-	void testgetFromIndex() {
+	void testGetFromIndex() {
 
 		// Arrange
 
@@ -140,20 +140,40 @@ class DecisionVectorDemoTest {
 		assert (satList.size() == 2);
 
 		for (Satellite sat : satList) {
-			KeplerianOrbit orbit = (KeplerianOrbit) sat.getInitialOrbit();
+			
 
-			assert (orbit.getI() == 1.05);
-			assert (orbit.getA() == 2.05);
-			assert (orbit.getE() == 0.05);
+			assert (sat.getI() == 1.05);
+			assert (sat.getA() == 2.05);
+			assert (sat.getE() == 0.05);
 
-			assert (orbit.getRightAscensionOfAscendingNode() == 4.05);
-			assert (orbit.getPerigeeArgument() == 5.05);
+			assert (sat.getRaan() == 4.05);
+			assert (sat.getW() == 5.05);
 
-			assert (orbit.getMeanAnomaly() == 0
-					|| (orbit.getMeanAnomaly() > 3.1415 && orbit.getMeanAnomaly() < 3.1416));
+			assert (sat.getM() == 0
+					|| (sat.getM() > 3.1415 && sat.getM() < 3.1416));
 
 		}
 
+	}
+	@Test
+	public void testSize() {
+		
+		// Arrange
+				this.variableList.add(testDouble);
+				this.variableList.add(testInt);
+				
+				this.inputPolygon.add(testPoint);
+				this.inputPolygon.add(testPoint2);
+
+
+				// Act
+				DecisionVector decisionVector = new DecisionVectorDemo(this.variableList, this.inputPolygon);
+				
+
+				// Assert
+				assert (decisionVector.size() == 2);
+				
+		
 	}
 
     /**
@@ -208,7 +228,7 @@ class DecisionVectorDemoTest {
 		
 		
 		//To decrease test duration, change the number of thread tested (the number is x2, for one thread by constellation
-		Integer threadNb=3;
+		Integer threadNb=2;
 		
 		
 		//configure every thread

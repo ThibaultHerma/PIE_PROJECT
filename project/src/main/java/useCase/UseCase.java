@@ -134,6 +134,7 @@ public abstract class UseCase {
 		//duration of the program : END
 		long endTime   = System.nanoTime();
 		long totalTime = endTime - startTime;
+		
 		System.out.println("run time : "+totalTime/Math.pow(10, 9)); 
 		System.out.println("best constellation : "+ bestConstellation);
 
