@@ -28,13 +28,13 @@
         	"meshingStyle":"lat_lon_standard_meshing",
         	"inputPolygon":[
         	
-            	{"lat":0.76103249437,
-            	"lon":0.02521145558,
+            	{"lat":40,
+            	"lon":5,
             	"alt":143 }
             ,
            
-            	{"lat":0.761301362344,
-            	"lon":0.025942015496,}
+            	{"lat":30,
+            	"lon":2}
             
             ]
 

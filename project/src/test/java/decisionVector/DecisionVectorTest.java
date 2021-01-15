@@ -164,7 +164,8 @@ class DecisionVectorDemoTest {
      */
 	@Test
 	public void testThreadSafety() throws InterruptedException {
-
+		
+		
 		// Arrange
 		
 		//values for the the decision variables of the 1st constellation
@@ -235,7 +236,7 @@ class DecisionVectorDemoTest {
 			listThread.add(first);
 			listThread.add(second);
 		}
-		
+		System.out.println("---RUNNING THREAD SAFETY TEST (please wait) ---");
 		//Start all threads simultaneously
 		for (Thread thread:listThread) {
 			thread.start();
@@ -257,6 +258,7 @@ class DecisionVectorDemoTest {
 		}
 		System.out.println("Cost1: "+mapCost1);
 		System.out.println("Cost2: "+mapCost2);
+		System.out.println("---END OF THREAD SAFETY TEST ---");
 	}
 	
 }

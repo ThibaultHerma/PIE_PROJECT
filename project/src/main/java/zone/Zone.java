@@ -432,12 +432,10 @@ class VisibilityHandler implements EventHandler<ElevationDetector> {
     public Action eventOccurred(final SpacecraftState s, final ElevationDetector detector,
                                 final boolean increasing) {
         if (increasing) {
-            System.out.println(" Visibility on " + detector.getTopocentricFrame().getName()
-                                                 + " begins at " + s.getDate());
+            //System.out.println(" Visibility on " + detector.getTopocentricFrame().getName()+ " begins at " + s.getDate());
             return Action.CONTINUE;
         } else {
-            System.out.println(" Visibility on " + detector.getTopocentricFrame().getName()
-                                                 + " ends at " + s.getDate());
+            //System.out.println(" Visibility on " + detector.getTopocentricFrame().getName()+ " ends at " + s.getDate());
             // we need to continue the simulation once a point is seen because we may have other points
             // or may want to calculate the revisit time
             return Action.CONTINUE;

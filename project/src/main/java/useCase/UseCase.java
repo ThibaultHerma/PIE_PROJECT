@@ -116,7 +116,7 @@ public abstract class UseCase {
 		UseCase useCase;
 		if (useCaseNb == 0) {
 			useCase = new UseCaseDemo();
-			useCase.loadParams(Parameters.inputPath + "DemoSentinel2.json");
+			useCase.loadParams(Parameters.inputPath + "Demo.json");
 		} else if (useCaseNb == 1) {
 			useCase = new UseCase1();
 			// TODO create the JSON for use case 1
@@ -135,6 +135,7 @@ public abstract class UseCase {
 		long endTime   = System.nanoTime();
 		long totalTime = endTime - startTime;
 		System.out.println("run time : "+totalTime/Math.pow(10, 9)); 
+		System.out.println("best constellation : "+ bestConstellation);
 
 		useCase.exportConstellation(bestConstellation);
 

@@ -79,10 +79,10 @@ public class Optimisation {
 	public ArrayList<Object> optimise(DecisionVector decisionVector) {
 
 		final Engine engine = Engine.builder(Optimisation::fitness, this.CODE).optimize(Optimize.MINIMUM)
-				.populationSize(3) // Small value for tests
+				.populationSize(10) // Small value for tests
 				.build();
 
-		final Phenotype bestConstellation = (Phenotype) engine.stream().limit(3) // Small value for tests
+		final Phenotype bestConstellation = (Phenotype) engine.stream().limit(5) // Small value for tests
 				.collect(EvolutionResult.toBestPhenotype());
 
 		// Best constellation found

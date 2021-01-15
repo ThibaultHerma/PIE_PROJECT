@@ -114,7 +114,7 @@ public  class DecisionVectorDemo extends DecisionVector{
 
 
 		Simulation simulation=new Simulation(constellation,t0,tf,zone);
-		simulation.propagateOrbits();
+		simulation.propagateOrbits(false);
 		Double maxRevisit=simulation.getMaxRevisit();
 		return maxRevisit;
 		

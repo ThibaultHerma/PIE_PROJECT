@@ -75,11 +75,12 @@ class JsonReaderTest {
 		ArrayList<GeodeticPoint> inputPolygon =jsonReader.getZone();
 
 		//Assert
-		assert(inputPolygon.get(0).getLatitude()==0.76103249437);
-		assert(inputPolygon.get(0).getLongitude()==0.02521145558);
+		
+		assert(inputPolygon.get(0).getLatitude()==40./180*Math.PI);
+		assert(inputPolygon.get(0).getLongitude()==5./180*Math.PI);
 		assert(inputPolygon.get(0).getAltitude()==143);
-		assert(inputPolygon.get(1).getLatitude()==0.761301362344);
-		assert(inputPolygon.get(1).getLongitude()==0.025942015496);
+		assert(inputPolygon.get(1).getLatitude()==30./180*Math.PI);
+		assert(inputPolygon.get(1).getLongitude()==2./180*Math.PI);
 		assert(inputPolygon.get(1).getAltitude()==Parameters.projectEarthEquatorialRadius);
 		assert(Parameters.meshingStyle.equals("lat_lon_standard_meshing"));
 

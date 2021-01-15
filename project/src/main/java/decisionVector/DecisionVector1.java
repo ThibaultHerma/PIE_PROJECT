@@ -102,6 +102,8 @@ public class DecisionVector1 extends DecisionVector {
 			constellation.addSatellite(a, eccentricity, inclination, rightAscendingNode, periapsisArgument, anomaly,
 					t0);
 		}
+		
+		System.out.println( "Current individual: " +constellation);
 
 		return constellation;
 	}
@@ -132,7 +134,7 @@ public class DecisionVector1 extends DecisionVector {
 		Zone zone = new Zone(this.inputPolygon);
 
 		Simulation simulation = new Simulation(constellation, t0, tf, zone);
-		simulation.propagateOrbits();
+		simulation.propagateOrbits(false);
 		Double maxRevisit = simulation.getMaxRevisit();
 		return maxRevisit;
 

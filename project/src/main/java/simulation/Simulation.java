@@ -156,7 +156,7 @@ public class Simulation {
  				if (detector.g(propagator.getInitialState())>0)  {
  					ElevationDetector eDetector = (ElevationDetector) detector;
  					addPointAndDateListBegVisibilitiesMesh(eDetector.getTopocentricFrame().getPoint(), t0)  ;
- 					if (verbose) System.out.println("g>0 en début de simulation pour " + detector.toString() + "  " + sat.toString());
+ 					if (verbose) System.out.println("g>0 en debut de simulation pour " + detector.toString() + "  " + sat.toString());
  				}
  			}
 

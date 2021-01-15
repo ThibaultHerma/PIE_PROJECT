@@ -14,7 +14,7 @@
 
             "nbSat":{
                 "min":1,
-                "max":20,
+                "max":4,
                 "type":"Integer"
             },
             "a":{
@@ -54,14 +54,14 @@
         	"meshingStyle":"lat_lon_standard_meshing",
         	"inputPolygon":[
         	
-            	{"lat":0.76103249437,
-            	"lon":0.02521145558,
-            	"alt":143 }
+            	{"lat":-0.005,
+                "lon":44,
+                "alt":143 }
             ,
            
-            	{"lat":0.761301362344,
-            	"lon":0.025942015496,
-            	"alt":144 }
+                {"lat":0.005,
+                "lon":44.005,
+                "alt":144 }
             
             ]
 
