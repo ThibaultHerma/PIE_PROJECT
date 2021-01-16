@@ -84,7 +84,7 @@ public class Parameters {
 	 * The use case chosen. WARNING : The use case nb is here temporarily for convenient reasons.
 	 * It will be in the arguments of the main in the releases.
 	 */
-	public static final int useCaseNb=0;
+	public static final int useCaseNb=1;
 	
 	
 	/**

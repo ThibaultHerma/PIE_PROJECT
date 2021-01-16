@@ -42,17 +42,16 @@ public class Optimisation {
 
 		Optimisation.decisionVector = decisionVector;
 
-		
 		/*
 		 * A list of chromosomes is created depending on their type, in the order given
 		 * by the input file. They are all cast as Chromosome to allow the creation of a
 		 * multi-type genotype. All chromosome sizes are set to 1.
 		 */
-		List<Chromosome> listChromosomes0 = new ArrayList<Chromosome>();
-		
-		for (int i=0; i<decisionVector.size();i++) {
-			DecisionVariable currentVariable=decisionVector.get(i);
-			
+		final var listChromosomes0 = new ArrayList();
+
+		for (int i = 0; i < decisionVector.size(); i++) {
+			DecisionVariable currentVariable = decisionVector.get(i);
+
 			if (currentVariable.isDouble()) {
 				listChromosomes0.add((Chromosome) DoubleChromosome.of((Double) currentVariable.getMin(),
 						(Double) currentVariable.getMax(), 1));
@@ -60,19 +59,14 @@ public class Optimisation {
 				listChromosomes0.add((Chromosome) IntegerChromosome.of((Integer) currentVariable.getMin(),
 						(Integer) currentVariable.getMax(), 1));
 			} else {
+				// Provisoire pour gérer les null du usecase1
+				listChromosomes0.add((Chromosome) DoubleChromosome.of((Double) currentVariable.getMin(),
+						(Double) currentVariable.getMax(), 1));
 				// TO DO: return an error if no other type allowed
 			}
 		}
-		/*
-		 * Genotype.of cannot take a list as argument. TO DO: find a way to write the
-		 * following line without adding each chromosome individually
-		 */
 		
-		
-		 //this.CODE = Genotype.of(set);
-		
-		this.CODE = Genotype.of(listChromosomes0.remove(0), listChromosomes0.remove(0), listChromosomes0.remove(0),
-				listChromosomes0.remove(0), listChromosomes0.remove(0), listChromosomes0.remove(0));
+		this.CODE = Genotype.of(listChromosomes0);
 	}
 
 	/**
@@ -83,25 +77,20 @@ public class Optimisation {
 	 *         constellation
 	 */
 	public ArrayList<Object> optimise(DecisionVector decisionVector) {
-		
+
 		System.out.println("\n \n *********** BEGINING OPTIMIZATION ***********");
 
 		final Engine engine = Engine.builder(Optimisation::fitness, this.CODE).optimize(Optimize.MINIMUM)
-				.populationSize(10) // Small value for tests
+				.populationSize(3) // Small value for tests
 				.build();
-		
-		final EvolutionStatistics<Double, DoubleMomentStatistics> statistics =
-			    EvolutionStatistics.ofNumber();
 
+		final EvolutionStatistics<Double, DoubleMomentStatistics> statistics = EvolutionStatistics.ofNumber();
 
-		final Phenotype bestConstellation = (Phenotype) engine.stream()
-				.limit(5) // Small value for tests
-				.peek(statistics)
-				.collect(EvolutionResult.toBestPhenotype());
+		final Phenotype bestConstellation = (Phenotype) engine.stream().limit(3) // Small value for tests
+				.peek(statistics).collect(EvolutionResult.toBestPhenotype());
 
 		// Best constellation found
 		System.out.println(bestConstellation);
-		
 
 		// get the values of the decision vector
 		ArrayList<Object> optimisedValues = new ArrayList<Object>();
@@ -110,12 +99,17 @@ public class Optimisation {
 				DoubleChromosome dc = (DoubleChromosome) bestConstellation.genotype().get(i);
 				optimisedValues.add((Double) dc.doubleValue());
 			}
-			if (decisionVector.get(i).isInteger()) {
+			else if (decisionVector.get(i).isInteger()) {
 				IntegerChromosome ic = (IntegerChromosome) bestConstellation.genotype().get(i);
 				optimisedValues.add((Integer) ic.intValue());
 			}
+			// Provisoire pour gérer les null du usecase1
+			else {
+				DoubleChromosome dc = (DoubleChromosome) bestConstellation.genotype().get(i);
+				optimisedValues.add((Double) dc.doubleValue());
+			}
 		}
-		
+
 		System.out.println("\n*********** END OF OPTIMIZATION ***********\n\n");
 		System.out.println(statistics);
 
@@ -145,15 +139,20 @@ public class Optimisation {
 				DoubleChromosome doubleChr = (DoubleChromosome) currentGenotype.get(i);
 				listValues.add((Double) doubleChr.doubleValue());
 			}
-			if (decisionVector.get(i).isInteger()) {
+			else if (decisionVector.get(i).isInteger()) {
 				IntegerChromosome intChr = (IntegerChromosome) currentGenotype.get(i);
 				listValues.add((Integer) intChr.intValue());
+			}
+			// Solution provisoire pour gérer les null du usecase1
+			else {
+				DoubleChromosome doubleChr = (DoubleChromosome) currentGenotype.get(i);
+				listValues.add((Double) doubleChr.doubleValue());
 			}
 		}
 		System.out.print("EVALUATION OF THE GENOTYPE :" + listValues + "\n");
 
 		double cost = decisionVector.costFunction(listValues);
-		System.out.print("cost: "+cost + "\n");
+		System.out.print("cost: " + cost + "\n");
 		return cost;
 	}
 
