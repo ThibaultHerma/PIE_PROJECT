@@ -73,7 +73,7 @@ public class Parameters {
 	/**
 	 * The elevation at which the point begins to be visible by a mesh point, value in radian.
 	 */
-	public static final  double elevation = java.lang.Math.PI * 0.5 - 0.18; 
+	public static final  double elevation = java.lang.Math.PI * 0.5 - halfFOV; 
 	
 	/**
 	 * The resolution of the standard mesh.

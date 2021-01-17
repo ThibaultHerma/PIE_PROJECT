@@ -95,9 +95,8 @@ public class DecisionVector1 extends DecisionVector {
 		// the anomaly is the only parameter which can change in the use case 1,
 		// so we have one value for every satellite
 		// read the anomaly and add each satellite to the constellation
-		for (Double i = 0.0; i < nbSat; i++) {
-			String nameAnomaly = "anomaly" + Double.toString(i);
-
+		for (Integer i = 0; i < nbSat; i++) {
+			String nameAnomaly = "anomaly" + Integer.toString(i);
 			Double anomaly = (Double) values.get(getIndex(nameAnomaly));
 
 			constellation.addSatellite(a, eccentricity, inclination, rightAscendingNode, periapsisArgument, anomaly,

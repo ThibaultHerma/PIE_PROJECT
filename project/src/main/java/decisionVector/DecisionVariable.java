@@ -139,6 +139,16 @@ public class DecisionVariable<T> {
 	}
 
 	/**
+	 * Get the type of the variable.
+	 *
+	 * @return T - the max value .
+	 */
+	public Class<T> getType() {
+		return (this.type);
+	}
+
+
+	/**
 	 * Get the name of the variable Threads safety : the function is reentrant
 	 * because the access to the storage is done by atomic operations since the
 	 * function use a read-only operation.

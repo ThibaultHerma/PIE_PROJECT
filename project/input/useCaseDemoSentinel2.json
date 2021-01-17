@@ -1,6 +1,6 @@
 
-    {   "useCaseId":0,
-        "useCaseDescription":"Demo of the simulation : a Sentinel-2 like satellite",
+    {   "useCaseId":-2,
+        "useCaseDescription":"Demo of the simulation : a Sentinel-2 like satellite, without optimization (only simulation)",
 
         "optimisationParameters": {
             "algoName": "genetic",
@@ -55,12 +55,12 @@
         	"inputPolygon":[
         	
             	{"lat":-0.005,
-            	"lon":44,
+            	"lon":0,
             	"alt":143 }
             ,
            
             	{"lat":0.005,
-            	"lon":44.005,
+            	"lon":0.005,
             	"alt":144 }
             
             ]

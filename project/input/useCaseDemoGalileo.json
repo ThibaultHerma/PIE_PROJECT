@@ -1,6 +1,6 @@
 
-    {   "useCaseId":1,
-        "useCaseDescription":"use case 1 : the satellites are on the same orbital plane, we optimize the number of satellites and the anomaly of every satellite.",
+    {   "useCaseId":-1,
+        "useCaseDescription":"Demo of the simulation : a Galileo like satellite, without optimization (only simulation)",
 
         "optimisationParameters": {
             "algoName": "genetic",
@@ -14,12 +14,12 @@
 
             "nbSat":{
                 "min":1.0,
-                "max":6.0,
+                "max":2.0,
                 "type":"Integer"
             },
             "a":{
-                "min":7157000,
-                "max":7157001,
+                "min":29622000,
+                "max":29622001,
                 "type":"Double"
 
             },
@@ -30,8 +30,8 @@
 
             },
             "inclination":{
-                "min":1.719,
-                "max":1.7191,
+                "min":0.9774,
+                "max":0.97741,
                 "type":"Double"
 
             },
@@ -47,12 +47,6 @@
                 "min":0.0,
                 "max":0.01,
                 "type":"Double"
-            },
-
-            "anomaly":{
-                "min":0.0,
-                "max":6.28318,
-                "type":"Double"
             }
         },
 
@@ -61,12 +55,12 @@
         	"inputPolygon":[
         	
             	{"lat":-0.005,
-            	"lon":0,
+            	"lon":44,
             	"alt":143 }
             ,
            
             	{"lat":0.005,
-            	"lon":0.005,
+            	"lon":44.005,
             	"alt":144 }
             
             ]

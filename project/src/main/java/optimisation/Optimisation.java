@@ -57,7 +57,8 @@ public class Optimisation {
 						(Double) currentVariable.getMax(), 1));
 			} else if (currentVariable.isInteger()) {
 				listChromosomes0.add((Chromosome) IntegerChromosome.of((Integer) currentVariable.getMin(),
-						(Integer) currentVariable.getMax(), 1));
+						(Integer) currentVariable.getMax() - 1, 1));
+				// we subtract 1 as the maximum value has to be excluded from the possible values
 			} else {
 				// Provisoire pour gérer les null du usecase1
 				listChromosomes0.add((Chromosome) DoubleChromosome.of((Double) currentVariable.getMin(),
@@ -103,7 +104,7 @@ public class Optimisation {
 				IntegerChromosome ic = (IntegerChromosome) bestConstellation.genotype().get(i);
 				optimisedValues.add((Integer) ic.intValue());
 			}
-			// Provisoire pour gérer les null du usecase1
+			// Provisoire pour gerer les null du usecase1
 			else {
 				DoubleChromosome dc = (DoubleChromosome) bestConstellation.genotype().get(i);
 				optimisedValues.add((Double) dc.doubleValue());

@@ -114,7 +114,13 @@ public abstract class UseCase {
 		int useCaseNb = Parameters.useCaseNb;
 
 		UseCase useCase;
-		if (useCaseNb == 0) {
+		if (useCaseNb == -2) {
+			useCase = new UseCaseSentinel2();
+			useCase.loadParams(Parameters.inputPath + "DemoSentinel2.json");
+		} else if (useCaseNb == -1) {
+			useCase = new UseCaseGalileo();
+			useCase.loadParams(Parameters.inputPath + "DemoGalileo.json");
+		} else if (useCaseNb == 0) {
 			useCase = new UseCaseDemo();
 			useCase.loadParams(Parameters.inputPath + "Demo.json");
 		} else if (useCaseNb == 1) {

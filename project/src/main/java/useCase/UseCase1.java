@@ -115,11 +115,11 @@ public class UseCase1 extends UseCase {
 
 		// first of all we find the maximum number of satellites
 		Integer nbSatMax = (Integer) decVarNbSat.getMax();
-
+		
 		// then we add the new decision variables
-		for (int sat = 0; sat < nbSatMax; sat++) {
-			String newName = decVarAnomaly.getName() + Double.toString(sat);
-			DecisionVariable newDecVarAnomaly = new DecisionVariable(decVarAnomaly.getClass(), newName,
+		for (int sat = 0; sat < (nbSatMax-1); sat++) {
+			String newName = decVarAnomaly.getName() + Integer.toString(sat);
+			DecisionVariable newDecVarAnomaly = new DecisionVariable(decVarAnomaly.getType(), newName,
 					decVarAnomaly.getMin(), decVarAnomaly.getMax());
 			this.variablesList.add(newDecVarAnomaly);
 		}

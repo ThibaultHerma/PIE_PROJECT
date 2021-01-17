@@ -169,8 +169,8 @@ public class Simulation {
 			TopocentricFrame staFrame = new TopocentricFrame(Parameters.earth, meshPoint, "mesh_point_" + pointIndex);
 			topoFramePoint.put(staFrame, meshPoint);
 			
-			EventDetector staVisi = new ElevationDetector(maxcheck, threshold, staFrame).withConstantElevation(elevation);
-			if (this.verbose) staVisi = new ElevationDetector(maxcheck, threshold, staFrame).withConstantElevation(elevation).withHandler(new VisibilityHandler());						
+			EventDetector staVisi = new ElevationDetector(maxcheck, threshold, staFrame).withConstantElevation(elevation).withHandler(new VisibilityHandlerSilent());
+			if (this.verbose) staVisi = new ElevationDetector(maxcheck, threshold, staFrame).withConstantElevation(elevation).withHandler(new VisibilityHandlerVerbose());						
 			
 			// when we add an event detector, we monitor it to be able to retrieve it
 			propagator.addEventDetector(logger.monitorDetector(staVisi));
@@ -202,6 +202,13 @@ public class Simulation {
 		// elevation at which the point begins to be visible
 		double elevation = Math.PI/2 - (halfFOV + alpha);
 
+		
+		if (verbose) {
+			System.out.println("halfFOV is : "+halfFOV*180/Math.PI+" degree");
+			System.out.println("180 - halfFOV is : "+(90-halfFOV*180/Math.PI)+" degree");
+			System.out.println("computed elevation is : "+elevation*180/Math.PI+" degree");
+		}
+
 				
 		// time window when the satellite is seen by the station (assuming the orbit is passing over the station)
 		double visibilityWindow = (alpha/Math.PI)*2*Math.PI*Math.sqrt(Math.pow(a, 3)/Parameters.projectEarthMu);
@@ -209,6 +216,8 @@ public class Simulation {
 		// adaptative maxcheck : increases with altitude >> the higher the maxcheck, the faster the algorithm (the higher the probability of missing a satellite pass)
 		double maxcheck  = visibilityWindow/3; // the division factor to tune the frequency at which each detector checks if a satellite is passing over the mesh point
 		//double maxcheck  = 60;
+		
+		if (verbose) {System.out.println("Maxcheck is : "+maxcheck);}
 		
 		double threshold =  0.01;// accuracy of 0.01 s
 		
@@ -220,8 +229,8 @@ public class Simulation {
 			TopocentricFrame staFrame = new TopocentricFrame(Parameters.earth, meshPoint, "mesh_point_" + pointIndex);
 			topoFramePoint.put(staFrame, meshPoint);
 			
-			EventDetector staVisi = new ElevationDetector(maxcheck, threshold, staFrame).withConstantElevation(elevation);
-			if (this.verbose) staVisi = new ElevationDetector(maxcheck, threshold, staFrame).withConstantElevation(elevation).withHandler(new VisibilityHandler());			
+			EventDetector staVisi = new ElevationDetector(maxcheck, threshold, staFrame).withConstantElevation(elevation).withHandler(new VisibilityHandlerSilent());
+			if (this.verbose) staVisi = new ElevationDetector(maxcheck, threshold, staFrame).withConstantElevation(elevation).withHandler(new VisibilityHandlerVerbose());			
 			
 			// when we add an event detector, we monitor it to be able to retrieve it
 			propagator.addEventDetector(logger.monitorDetector(staVisi));
@@ -249,6 +258,7 @@ public class Simulation {
 			
 			// Addition of all event detectors : adaptative maxcheck version
 			createEventsDetectorSatellite(propagator, logger, Parameters.halfFOV, sat.getA());
+			//createEventsDetector(propagator, logger, Parameters.elevation);
 			
 			// Propagation of the orbit of the satellite
 			propagator.propagate(this.t0, this.tf);
@@ -298,8 +308,8 @@ public class Simulation {
 					
 		ArrayList<AbsoluteDate> begDates = listBegVisibilitiesMesh.get(meshPoint);
 		
-		// Dans le cas où le point n'est jamais vu : 1000000000
-		if (begDates.isEmpty()) return 1000000000;	
+		// Dans le cas ou le point n'est jamais vu : Double.MAX_VALUE
+		if (begDates.isEmpty()) return Double.MAX_VALUE;	
 		
 		ArrayList<AbsoluteDate> endDates = listEndVisibilitiesMesh.get(meshPoint);
 					
@@ -348,7 +358,7 @@ public class Simulation {
 		
 		if (maxRevisit==-1){
 			System.out.println("ERROR maxRevisite = -1 s for constellation : \n"+ constellation + "\nand point  "+ meshPoint);
-			maxRevisit=1000000000;
+			maxRevisit=Double.MAX_VALUE;
 		}
 		return maxRevisit;
 	}	
@@ -371,7 +381,7 @@ public class Simulation {
 		}
 		if (maxRevisit==-1){
 			System.out.println("ERROR maxRevisite = -1 s for constellation : \n"+ constellation );
-			maxRevisit=1000000000;
+			maxRevisit=Double.MAX_VALUE;
 		}
 		
 		return maxRevisit; 
@@ -383,8 +393,9 @@ public class Simulation {
  * That class is here to display when an event is detected.
  *
  */
-class VisibilityHandler implements EventHandler<ElevationDetector> {
+class VisibilityHandlerVerbose implements EventHandler<ElevationDetector> {
 
+	
     public Action eventOccurred(final SpacecraftState s, final ElevationDetector detector,
                                 final boolean increasing) {
         if (increasing) {
@@ -397,6 +408,25 @@ class VisibilityHandler implements EventHandler<ElevationDetector> {
             return Action.CONTINUE;
             }
          
+    }
+    
+
+    public SpacecraftState resetState(final ElevationDetector detector, final SpacecraftState oldState) {
+        return oldState;
+    }
+
+}
+
+/**
+ * Visibility handler class.
+ *
+ */
+class VisibilityHandlerSilent implements EventHandler<ElevationDetector> {
+
+	
+    public Action eventOccurred(final SpacecraftState s, final ElevationDetector detector,
+                                final boolean increasing) {
+    	return Action.CONTINUE;
     }
 
     public SpacecraftState resetState(final ElevationDetector detector, final SpacecraftState oldState) {
