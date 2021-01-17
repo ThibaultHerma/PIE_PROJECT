@@ -135,7 +135,7 @@ public class DecisionVector1 extends DecisionVector {
 		Zone zone = new Zone(this.inputPolygon);
 
 		Simulation simulation = new Simulation(constellation, t0, tf, zone);
-		simulation.propagateOrbits(false);
+		simulation.propagateOrbits();
 		Double maxRevisit = simulation.getMaxRevisit();
 		return maxRevisit;
 
