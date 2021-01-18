@@ -1,24 +1,41 @@
 package decisionVector;
+
 import java.util.ArrayList;
 import org.orekit.bodies.GeodeticPoint;
 import constellation.Constellation;
 
 /**
- * <p>The class is a decision vector for the optimization problem. It contains the variables 
- * to optimize and also their variation domain. The class is also able to compute the fitness (or cost) 
- * function of the vector. To do so, it creates a constellation and a simulation from the decision vector and 
- * it calls the correct cost function in the simulation.  </p>
+ * <p>
+ * The class is a decision vector for the optimization problem. It contains the
+ * variables to optimize and also their variation domain. The class is also able
+ * to compute the fitness (or cost) function of the vector. To do so, it creates
+ * a constellation and a simulation from the decision vector and it calls the
+ * correct cost function in the simulation.
+ * </p>
  * 
- * <p>Because the cost function and the vector depend of the use case, the method createConstellationFromVector() and 
- * costFunction() are implemented in  subclasses.</p>
+ * <p>
+ * Because the cost function and the vector depend of the use case, the method
+ * createConstellationFromVector() and costFunction() are implemented in
+ * subclasses.
+ * </p>
  * 
- * <p>WARNING : The cost function has to be thread Safe to allow multithread computing from the optimization library</p>
+ * <p>
+ * WARNING : The cost function has to be thread Safe to allow multithread
+ * computing from the optimization library
+ * </p>
  * 
- * <p>These are the guidelines to follow to use this class :</p>
- *  
- * <p>- Instantiate a new Decision Vector with the given constructor. It will randomly initialize
- * all the variables of the vector.</p>
- * <p>- Call the method costFunction to launch a simulation from the current state of the vector</p>
+ * <p>
+ * These are the guidelines to follow to use this class :
+ * </p>
+ * 
+ * <p>
+ * - Instantiate a new Decision Vector with the given constructor. It will
+ * randomly initialize all the variables of the vector.
+ * </p>
+ * <p>
+ * - Call the method costFunction to launch a simulation from the current state
+ * of the vector
+ * </p>
  *
  * @author Theo Nguyen
  */
@@ -56,8 +73,9 @@ public abstract class DecisionVector {
 
 		// initialize randomly the vector
 		randomInit();
-		
-		// print the decision vector 
+
+		// print the decision vector
+
 		System.out.println(this);
 	}
 
@@ -132,31 +150,35 @@ public abstract class DecisionVector {
 		System.out.println("ERROR  The variable : " + variableName + " doesn't exist in the decision vector");
 		return -1;
 	}
-	
+
 	/**
 	 * Convert the decision vector to String.
+	 * 
 	 * @return String - the string of the decision vector
 	 */
 	public String toString() {
-		String stringVector ="\n";
-		for (DecisionVariable var:listDecisionVariables) {
-			stringVector+="\n"+var;
+		String stringVector = "\n";
+		for (DecisionVariable var : listDecisionVariables) {
+			stringVector += "\n" + var;
 		}
-		return(stringVector);
+		return (stringVector);
 	}
+
 	/**
 	 * get the size of the vector
-	 * @return  int - the number of decision variable in the vector
+	 * 
+	 * @return int - the number of decision variable in the vector
 	 */
 	public int size() {
 		return listDecisionVariables.size();
 	}
+
 	/**
 	 * Abstract method which converts the current state of the decision vector into
 	 * a Constellation. Its implementation depends of the Use Case.
 	 * 
 	 * @param listValues:ArrayList(Object) current values of the vector from which
-	 *        we create the constellation.
+	 *                                     we create the constellation.
 	 * @return Constellation - A Constellation corresponding to the decision vector.
 	 */
 	public abstract Constellation createConstellationFromVector(final ArrayList<Object> listValues);
@@ -169,7 +191,7 @@ public abstract class DecisionVector {
 	 * depends of the Use Case.
 	 * 
 	 * @param listValues:ArrayList(Object) current values of the vector from which
-	 *        we compute the fitness.
+	 *                                     we compute the fitness.
 	 * @return Double - the fitness value
 	 */
 	public abstract Double costFunction(final ArrayList<Object> listValues);

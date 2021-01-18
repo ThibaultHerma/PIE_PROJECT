@@ -1,6 +1,5 @@
 package utils;
 
-
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -22,14 +21,22 @@ import java.lang.Math;
 import java.util.Map;
 
 /**
-
- * <p>Class to read a JSON file in input. It extracts the name of the use case,
+ * 
+ * <p>
+ * Class to read a JSON file in input. It extracts the name of the use case,
  * some optimization parameters, the decision variables, and a zone to watch.
- * These are the guidelines to follow to use this class : </p>
- * <p>- Instantiate a new Json Reader.</p>
- * <p>- Call the method read to parse the JSON and store the data of an input file.</p>
- * <p>- Call one of the get method.</p>
-
+ * These are the guidelines to follow to use this class :
+ * </p>
+ * <p>
+ * - Instantiate a new Json Reader.
+ * </p>
+ * <p>
+ * - Call the method read to parse the JSON and store the data of an input file.
+ * </p>
+ * <p>
+ * - Call one of the get method.
+ * </p>
+ * 
  * 
  * @author Theo Nguyen
  */
@@ -45,7 +52,7 @@ public class JsonReader {
 	 * @param jsonFile:String The path of the file to read.
 	 */
 	public void read(String jsonFile) {
-        System.out.println("---- READING INPUT JSON FILE: " +jsonFile+ " ----");
+		System.out.println("---- READING INPUT JSON FILE: " + jsonFile + " ----");
 		// JSON parser object to parse read file
 		JSONParser jsonParser = new JSONParser();
 
@@ -61,39 +68,38 @@ public class JsonReader {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		
-		//print some description
+
+		// print some description
 		getUseCaseId();
 		printDescription();
-	} 
+	}
 
 	/**
 	 * Print an error message in case the JSON doesn't have the correct syntax.
 	 * 
-	 * @param name:String  name of the parameter not found.
+	 * @param name:String name of the parameter not found.
 	 */
 	private void printError(String name) {
 		System.out.println(
 				"ERROR : unable to read the field " + name + " in the input JSON file. Please check that it exists,"
 						+ "that it is not empty, and that it has the correct syntax ");
 	}
-	
-	
+
 	/**
 	 * Print the description of the use case.
 	 */
 	private void printDescription() {
-		String useCaseDescription="ERROR";
+		String useCaseDescription = "ERROR";
 		try {
-			useCaseDescription=(String) inputData.get("useCaseDescription");
-			
+			useCaseDescription = (String) inputData.get("useCaseDescription");
+
 		} catch (NullPointerException e) {
 			e.printStackTrace();
 			printError("useCaseDescription");
 		}
-		
-		System.out.println("use case description: "+useCaseDescription);
-		
+
+		System.out.println("use case description: " + useCaseDescription);
+
 	}
 
 	/**
@@ -110,12 +116,11 @@ public class JsonReader {
 		try {
 			for (String key : map.keySet()) {
 
-
 				if (map.get(key) instanceof Long) {
 					Double value = ((Long) map.get(key)).doubleValue();
 					mapDouble.put(key, value);
-				} 
-				if  (map.get(key) instanceof Double) {
+				}
+				if (map.get(key) instanceof Double) {
 					Double value = (Double) map.get(key);
 					mapDouble.put(key, value);
 				}
@@ -142,8 +147,8 @@ public class JsonReader {
 		} catch (NullPointerException e) {
 			printError("useCaseId");
 		}
-		
-		System.out.println("use case ID: "+useCaseId);
+
+		System.out.println("use case ID: " + useCaseId);
 		return (int) useCaseId;
 
 	}
@@ -184,8 +189,9 @@ public class JsonReader {
 	}
 
 	/**
-	 * Get the stop parameters of the optimization algorithm. The stop parameters are in
-	 * a HashMap with the name of the parameter as key and max value as value.
+	 * Get the stop parameters of the optimization algorithm. The stop parameters
+	 * are in a HashMap with the name of the parameter as key and max value as
+	 * value.
 	 * 
 	 * @return stop parameters
 	 */
@@ -203,129 +209,126 @@ public class JsonReader {
 	}
 
 	/**
-	 * get a list of Decision Variables from the problem. The function reads a list of variables with their domain and type.  
-	 * Then, it instantiates the correct DecisionVariable for each variable
-	 * Example of input :"nbSat":{"min":1.0,"max":20.0, type:"Integer"}.
+	 * get a list of Decision Variables from the problem. The function reads a list
+	 * of variables with their domain and type. Then, it instantiates the correct
+	 * DecisionVariable for each variable Example of input
+	 * :"nbSat":{"min":1.0,"max":20.0, type:"Integer"}.
+	 * 
 	 * @return a list of Decision variables.
 	 */
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public ArrayList<DecisionVariable> getDecisionVariables() {
 
-		/** Raw decision variables*/
+		/** Raw decision variables */
 		HashMap<String, HashMap<String, Object>> decisionVariables = new HashMap<String, HashMap<String, Object>>();
-		
-		/** Try to read the JSON*/
+
+		/** Try to read the JSON */
 		try {
 			decisionVariables = (HashMap<String, HashMap<String, Object>>) inputData.get("decisionVariables");
-            
+
 		} catch (NullPointerException e) {
 			printError("decisionVariables");
 		}
-        
-		/** Instantiate a DecisionVariable class for each decision variable*/
-		ArrayList<DecisionVariable>decisionVariableList=new ArrayList<DecisionVariable>();
-		
+
+		/** Instantiate a DecisionVariable class for each decision variable */
+		ArrayList<DecisionVariable> decisionVariableList = new ArrayList<DecisionVariable>();
+
 		for (String key : decisionVariables.keySet()) {
-			//convert first all variables to Doubles to avoid JSON errors
+			// convert first all variables to Doubles to avoid JSON errors
 			HashMap<String, Double> varDouble = convertToDouble(decisionVariables.get(key));
-			
-			//if the decision variable is a Double or if the type is not specified, instantiate a Double Decision Variable
-			if (!decisionVariables.get(key).containsKey("type")||decisionVariables.get(key).get("type").equals("Double")) {
-				DecisionVariable<Double> var=new DecisionVariable(Double.class,key, varDouble.get("min"),varDouble.get("max"));
+
+			// if the decision variable is a Double or if the type is not specified,
+			// instantiate a Double Decision Variable
+			if (!decisionVariables.get(key).containsKey("type")
+					|| decisionVariables.get(key).get("type").equals("Double")) {
+				DecisionVariable<Double> var = new DecisionVariable(Double.class, key, varDouble.get("min"),
+						varDouble.get("max"));
 				decisionVariableList.add(var);
 			}
-			//if the decision variable is an Integer, instantiate an Integer Decision Variable
+			// if the decision variable is an Integer, instantiate an Integer Decision
+			// Variable
 			else if (decisionVariables.get(key).get("type").equals("Integer")) {
-				DecisionVariable<Integer> var=new DecisionVariable(Integer.class,key,  varDouble.get("min").intValue(),varDouble.get("max").intValue());
+				DecisionVariable<Integer> var = new DecisionVariable(Integer.class, key,
+						varDouble.get("min").intValue(), varDouble.get("max").intValue());
 				decisionVariableList.add(var);
 			}
-			
+
 		}
-		//check if the method was able to read the JSON
-		if (decisionVariableList.size()==0) {
+		// check if the method was able to read the JSON
+		if (decisionVariableList.size() == 0) {
 			System.out.println("ERROR: No decision variable with the correct type found in the JSON");
 		}
-			
-		return decisionVariableList;
 
+		return decisionVariableList;
 
 	}
 
 	/**
-	 * Read the Zone to cover in the problem and return an array of geodetic points. 
-	 * The input Zone is a HashMap with a list of geodetic points and the meshing style
-	 * longitude and latitude. Example :
-	 *"zone":{
-     *   	"meshingStyle":"lat_lon_standard_meshing",
-     *   	"inputPolygon":[
-     *  	
-     *      	{"lat":43.603950,
-     *       	"lon":1.444510,
-     *       	"alt":143 }
-     *       ,
-     *      
-     *       	{"lat":43.619355,
-     *       	"lon":1.486368,
-     *       	"alt":154}
-     *       
-     *       ]
+	 * Read the Zone to cover in the problem and return an array of geodetic points.
+	 * The input Zone is a HashMap with a list of geodetic points and the meshing
+	 * style longitude and latitude. Example : "zone":{
+	 * "meshingStyle":"lat_lon_standard_meshing", "inputPolygon":[
+	 * 
+	 * {"lat":43.603950, "lon":1.444510, "alt":143 } ,
+	 * 
+	 * {"lat":43.619355, "lon":1.486368, "alt":154}
+	 * 
+	 * ]
 	 * 
 	 * @return the zone to cover.
 	 */
 	@SuppressWarnings("unchecked")
 	public ArrayList<GeodeticPoint> getZone() {
-		
+
 		// the Zone from the JSON file
-		HashMap<String, Object> zoneRaw = new HashMap<String, Object>(); 
-		
-		//The style of meshing used (default value)
-		String meshingStyle="lat_lon_standard_meshing"; 
-		
-		//The list of the polygon points from the JSON file
-		ArrayList<HashMap<String, Object>> inputPolygonRaw=new ArrayList<HashMap<String, Object>>();
-        
-		/** Read the JSON file*/
+		HashMap<String, Object> zoneRaw = new HashMap<String, Object>();
+
+		// The style of meshing used (default value)
+		String meshingStyle = "lat_lon_standard_meshing";
+
+		// The list of the polygon points from the JSON file
+		ArrayList<HashMap<String, Object>> inputPolygonRaw = new ArrayList<HashMap<String, Object>>();
+
+		/** Read the JSON file */
 		try {
 			zoneRaw = (HashMap<String, Object>) inputData.get("zone");
-			inputPolygonRaw=(ArrayList<HashMap<String, Object>>) zoneRaw.get("inputPolygon");
+			inputPolygonRaw = (ArrayList<HashMap<String, Object>>) zoneRaw.get("inputPolygon");
 			if (zoneRaw.containsKey("meshingStyle")) {
 				meshingStyle = (String) zoneRaw.get("meshingStyle");
 			}
 
 		} catch (NullPointerException e) {
 			printError("zone");
-		} 
+		}
 
-		/**Cast all values to double  and create a list of Geodetic points */
+		/** Cast all values to double and create a list of Geodetic points */
 
-		ArrayList<GeodeticPoint> inputPolygon =new ArrayList<GeodeticPoint>();
+		ArrayList<GeodeticPoint> inputPolygon = new ArrayList<GeodeticPoint>();
 
+		for (HashMap<String, Object> point : inputPolygonRaw) {
+			HashMap<String, Double> pointDouble = convertToDouble(point);
 
-		for (HashMap<String, Object> point : inputPolygonRaw) { 
-			HashMap<String,Double> pointDouble =convertToDouble(point);
-            
 			// we need to convert the coordinates in radian
 			double lat = pointDouble.get("lat") * java.lang.Math.PI / 180;
 			double lon = pointDouble.get("lon") * java.lang.Math.PI / 180;
 			// the altitude is in meters
 			double alt;
-			
+
 			if (pointDouble.containsKey("alt")) {
-				alt=pointDouble.get("alt");
-			} 
-			else {
-				alt=Parameters.projectEarthEquatorialRadius;
+				alt = pointDouble.get("alt");
+			} else {
+				alt = Parameters.projectEarthEquatorialRadius;
 			}
-			
-			GeodeticPoint geodeticPoint=new GeodeticPoint(lat,lon,alt);
+
+			GeodeticPoint geodeticPoint = new GeodeticPoint(lat, lon, alt);
 			inputPolygon.add(geodeticPoint);
 		}
-		
-		/**Store the meshing style in the parameter class */
-		Parameters.meshingStyle=meshingStyle;
 
-		return  inputPolygon;
+		/** Store the meshing style in the parameter class */
+		Parameters.meshingStyle = meshingStyle;
+
+		return inputPolygon;
 	}
 
 }

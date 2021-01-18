@@ -1,96 +1,108 @@
 package constellation;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
 /**
- * Class used for representing a plane
- * Thread safety: the class is conditionally thread safe: it is safe to use the class only if each 
- * thread access to its own different instance of the class.
+ * Class used for representing a plane Thread safety: the class is conditionally
+ * thread safe: it is safe to use the class only if each thread access to its
+ * own different instance of the class.
+ * 
  * @author ThibaultH
  *
  */
 public class Plane {
 
-	/** String - idPlane - Id of the plane corresponding to "inclination_rightAscensionOfAscendingNode" */
-	private String idPlane ;
-	
-	/** ArrayList<Satellite> - listSatellites - List with the satellites of the plane */
+	/**
+	 * String - idPlane - Id of the plane corresponding to
+	 * "inclination_rightAscensionOfAscendingNode"
+	 */
+	private String idPlane;
+
+	/**
+	 * ArrayList<Satellite> - listSatellites - List with the satellites of the plane
+	 */
 	private ArrayList<Satellite> listSatellites;
-	
-	/** double - inclination - Inclination of the Plane (Precision given up to 3 digits)*/
+
+	/**
+	 * double - inclination - Inclination of the Plane (Precision given up to 3
+	 * digits)
+	 */
 	private double inclination;
-	
-	/** double - rightAscNode - Right ascension of the ascending node of the Plane (Precision given up to 3 digits) */
+
+	/**
+	 * double - rightAscNode - Right ascension of the ascending node of the Plane
+	 * (Precision given up to 3 digits)
+	 */
 	private double rightAscNode;
 
-	
 	/**
-	 * Create an empty plane of given inclination and right ascension of the ascending node
-	 * @param inclination inclination of the Plane
+	 * Create an empty plane of given inclination and right ascension of the
+	 * ascending node
+	 * 
+	 * @param inclination  inclination of the Plane
 	 * @param rightAscNode rightAscNode of the Plane
 	 */
-	public Plane(double inclination, double rightAscNode){
-		this.idPlane = String.valueOf(inclination)+'_'+String.valueOf(rightAscNode);
+	public Plane(double inclination, double rightAscNode) {
+		this.idPlane = String.valueOf(inclination) + '_' + String.valueOf(rightAscNode);
 		this.listSatellites = new ArrayList<Satellite>();
 		this.inclination = inclination;
-		this.rightAscNode = rightAscNode;			
+		this.rightAscNode = rightAscNode;
 	}
-	
+
 	/**
 	 * Create a plane
-	 * @param inclination inclination of the Plane
-	 * @param rightAscNode rightAscNode of the Plane
+	 * 
+	 * @param inclination    inclination of the Plane
+	 * @param rightAscNode   rightAscNode of the Plane
 	 * @param listSatellites ArrayList of satellites
 	 */
-	public Plane( double inclination, double rightAscNode, ArrayList<Satellite>  listSatellites){
-		this.idPlane = String.valueOf(inclination)+'_'+String.valueOf(rightAscNode);
+	public Plane(double inclination, double rightAscNode, ArrayList<Satellite> listSatellites) {
+		this.idPlane = String.valueOf(inclination) + '_' + String.valueOf(rightAscNode);
 		this.listSatellites = listSatellites;
 		this.inclination = inclination;
 		this.rightAscNode = rightAscNode;
-			
+
 	}
-	
+
 	/**
 	 * Return idPlane of the Plane
 	 */
 	public String getIdPlane() {
-		return idPlane;		
+		return idPlane;
 	}
-	
+
 	/**
 	 * Return the inclination of the Plane
 	 */
 	public double getInclinaison() {
-		return inclination;		
+		return inclination;
 	}
-	
+
 	/**
 	 * Return the right ascension of the ascending node of the Plane
 	 */
 	public double getRightAscNode() {
-		return rightAscNode;		
+		return rightAscNode;
 	}
-	
+
 	/**
 	 * Return listSatellites of the Plane
 	 */
 	public ArrayList<Satellite> getListSatellites() {
-		return listSatellites;		
+		return listSatellites;
 	}
-	
+
 	/**
 	 * Add a satellite to a Plane
+	 * 
 	 * @param s Satellite to be added
 	 */
-	public void addSatellite(Satellite s){
-		listSatellites.add(s);			
+	public void addSatellite(Satellite s) {
+		listSatellites.add(s);
 	}
-	
-	
-
 
 }

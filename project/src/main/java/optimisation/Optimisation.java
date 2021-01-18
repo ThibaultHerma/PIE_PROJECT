@@ -17,6 +17,7 @@ import io.jenetics.engine.EvolutionStatistics;
 import io.jenetics.stat.DoubleMomentStatistics;
 import io.jenetics.util.ISeq;
 import io.jenetics.util.Seq;
+import time.Time;
 
 /**
  * Optimisation class. At the moment, it is only suitable for the demo case.
@@ -47,6 +48,7 @@ public class Optimisation {
 		 * by the input file. They are all cast as Chromosome to allow the creation of a
 		 * multi-type genotype. All chromosome sizes are set to 1.
 		 */
+
 		final var listChromosomes0 = new ArrayList();
 
 		for (int i = 0; i < decisionVector.size(); i++) {
@@ -58,7 +60,8 @@ public class Optimisation {
 			} else if (currentVariable.isInteger()) {
 				listChromosomes0.add((Chromosome) IntegerChromosome.of((Integer) currentVariable.getMin(),
 						(Integer) currentVariable.getMax() - 1, 1));
-				// we subtract 1 as the maximum value has to be excluded from the possible values
+				// we subtract 1 as the maximum value has to be excluded from the possible
+				// values
 			} else {
 				// Provisoire pour gérer les null du usecase1
 				listChromosomes0.add((Chromosome) DoubleChromosome.of((Double) currentVariable.getMin(),
@@ -66,8 +69,9 @@ public class Optimisation {
 				// TO DO: return an error if no other type allowed
 			}
 		}
-		
+
 		this.CODE = Genotype.of(listChromosomes0);
+
 	}
 
 	/**
@@ -77,17 +81,18 @@ public class Optimisation {
 	 * @return optimisedValues: ArrayList<Object> Values for the optimal
 	 *         constellation
 	 */
-	public ArrayList<Object> optimise(DecisionVector decisionVector) {
+
+	public ArrayList<Object> optimise(DecisionVector decisionVector, int populationSize, int generationNb) {
 
 		System.out.println("\n \n *********** BEGINING OPTIMIZATION ***********");
 
 		final Engine engine = Engine.builder(Optimisation::fitness, this.CODE).optimize(Optimize.MINIMUM)
-				.populationSize(3) // Small value for tests
+				.populationSize(populationSize) // Small value for tests
 				.build();
 
 		final EvolutionStatistics<Double, DoubleMomentStatistics> statistics = EvolutionStatistics.ofNumber();
 
-		final Phenotype bestConstellation = (Phenotype) engine.stream().limit(3) // Small value for tests
+		final Phenotype bestConstellation = (Phenotype) engine.stream().limit(generationNb) // Small value for tests
 				.peek(statistics).collect(EvolutionResult.toBestPhenotype());
 
 		// Best constellation found
@@ -99,8 +104,7 @@ public class Optimisation {
 			if (decisionVector.get(i).isDouble()) {
 				DoubleChromosome dc = (DoubleChromosome) bestConstellation.genotype().get(i);
 				optimisedValues.add((Double) dc.doubleValue());
-			}
-			else if (decisionVector.get(i).isInteger()) {
+			} else if (decisionVector.get(i).isInteger()) {
 				IntegerChromosome ic = (IntegerChromosome) bestConstellation.genotype().get(i);
 				optimisedValues.add((Integer) ic.intValue());
 			}
@@ -110,6 +114,9 @@ public class Optimisation {
 				optimisedValues.add((Double) dc.doubleValue());
 			}
 		}
+
+		System.out.println("\n*********** END OF OPTIMIZATION ***********\n\n");
+		System.out.println(statistics);
 
 		System.out.println("\n*********** END OF OPTIMIZATION ***********\n\n");
 		System.out.println(statistics);
@@ -139,8 +146,7 @@ public class Optimisation {
 			if (decisionVector.get(i).isDouble()) {
 				DoubleChromosome doubleChr = (DoubleChromosome) currentGenotype.get(i);
 				listValues.add((Double) doubleChr.doubleValue());
-			}
-			else if (decisionVector.get(i).isInteger()) {
+			} else if (decisionVector.get(i).isInteger()) {
 				IntegerChromosome intChr = (IntegerChromosome) currentGenotype.get(i);
 				listValues.add((Integer) intChr.intValue());
 			}
@@ -153,7 +159,10 @@ public class Optimisation {
 		System.out.print("EVALUATION OF THE GENOTYPE :" + listValues + "\n");
 
 		double cost = decisionVector.costFunction(listValues);
+
 		System.out.print("cost: " + cost + "\n");
+		Time.printTime(cost);
+
 		return cost;
 	}
 

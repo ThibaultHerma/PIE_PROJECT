@@ -1,9 +1,6 @@
 package useCase;
 
 import java.util.ArrayList;
-  
-   
-
 
 import constellation.Constellation;
 import decisionVector.DecisionVectorDemo;
@@ -60,8 +57,11 @@ public class UseCaseDemo extends UseCase {
 		// compute the Objective Function from a sentinel constellation
 		System.out.println("\n---- COMPUTE OBJECTIVE FUNCTION -----");
 
+		int populationSize = 10;
+		int generationNb = 10;
 		Optimisation optimisationProblem = new Optimisation(decisionVectorDemo);
-		ArrayList<Object> optimisedValues = optimisationProblem.optimise(decisionVectorDemo);
+		ArrayList<Object> optimisedValues = optimisationProblem.optimise(decisionVectorDemo, populationSize,
+				generationNb);
 
 		// compute objective function (the objective function is thread safe, therefore
 		// we have to pass the values as an argument of the function

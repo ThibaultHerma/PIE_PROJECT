@@ -4,26 +4,46 @@ package decisionVector;
 import java.util.Random;
 
 /**
- *<p>The class is a decision variable for the optimization problem. It is characterized by a name,
- *   a min and a max value which define the domain of the variable. Since variables can be Integer 
- *   (ex: nb of sat) or Double (ex:inclination of the plan), the type of the Decision Variable is
- *   parameterized as <code>T</code>.</p>
- *  
- *<p>These are the guidelines to follow to use this class :</p>
- *  
- *<p> - Instantiate a new Decision Variable class by using the default constructor. The parameters of this
- *   constructor are the type of the variable, the name,the min and the max value. WARNING: min and max 
- *   value has to be of the type  <code>T</code>. </p>
- *   
- *   <p>Example of instantiation: <code>DecisionVariable Integer nbSat=new DecisionVariable(Integer.class,"nbSat",
- *   min,max)</code></p>
- *   
- * <p> - To call the methods getMin or getMax,  you have to cast the result to the correct type. To know the type,
- *  you can use the methods isDouble, or isInteger.</p>
- *  
- *  <p>Example: <code>if (nbSat.isInteger()){ Integer min= (Integer) nbSat.getMin()}</code></p>
- *  <p>TODO write randomInit test. </p>
- *  Thread safety : The class is conditionally thread safe.
+ * <p>
+ * The class is a decision variable for the optimization problem. It is
+ * characterized by a name, a min and a max value which define the domain of the
+ * variable. Since variables can be Integer (ex: nb of sat) or Double
+ * (ex:inclination of the plan), the type of the Decision Variable is
+ * parameterized as <code>T</code>.
+ * </p>
+ * 
+ * <p>
+ * These are the guidelines to follow to use this class :
+ * </p>
+ * 
+ * <p>
+ * - Instantiate a new Decision Variable class by using the default constructor.
+ * The parameters of this constructor are the type of the variable, the name,the
+ * min and the max value. WARNING: min and max value has to be of the type
+ * <code>T</code>.
+ * </p>
+ * 
+ * <p>
+ * Example of instantiation:
+ * <code>DecisionVariable Integer nbSat=new DecisionVariable(Integer.class,"nbSat",
+ *   min,max)</code>
+ * </p>
+ * 
+ * <p>
+ * - To call the methods getMin or getMax, you have to cast the result to the
+ * correct type. To know the type, you can use the methods isDouble, or
+ * isInteger.
+ * </p>
+ * 
+ * <p>
+ * Example:
+ * <code>if (nbSat.isInteger()){ Integer min= (Integer) nbSat.getMin()}</code>
+ * </p>
+ * <p>
+ * TODO write randomInit test.
+ * </p>
+ * Thread safety : The class is conditionally thread safe.
+ * 
  * @author Theo Nguyen
  */
 
@@ -38,9 +58,9 @@ public class DecisionVariable<T> {
 	 * Constructor of the class.
 	 * 
 	 * @param type:Class(T) the type of the decision variable
-	 * @param name:String the name if the class
-	 * @param min:T the max value of the variable
-	 * @param max:T the min value of the variable
+	 * @param name:String   the name if the class
+	 * @param min:T         the max value of the variable
+	 * @param max:T         the min value of the variable
 	 */
 	public DecisionVariable(Class<T> type, String name, T min, T max) {
 
@@ -75,9 +95,10 @@ public class DecisionVariable<T> {
 			Double randomValue = (Double) minValue + r;
 			this.value = (T) randomValue;
 		}
-
-		//System.out.println("Decision variable " + this.name + " initialized randomly with value: " + this.value);
 	}
+
+	// System.out.println("Decision variable " + this.name + " initialized randomly
+	// with value: " + this.value);
 
 	/**
 	 * Check the type of the variable
@@ -147,7 +168,6 @@ public class DecisionVariable<T> {
 		return (this.type);
 	}
 
-
 	/**
 	 * Get the name of the variable Threads safety : the function is reentrant
 	 * because the access to the storage is done by atomic operations since the
@@ -158,13 +178,11 @@ public class DecisionVariable<T> {
 	public String getName() {
 		return this.name;
 	}
-	
+
 	public String toString() {
-		String formatName=String.format("%1$20s", this.name);
-		return(" "+formatName+" : ( min: "+this.minValue+", max: "+this.maxValue+", val: "+this.value+" )");
+		String formatName = String.format("%1$20s", this.name);
+		return (" " + formatName + " : ( min: " + this.minValue + ", max: " + this.maxValue + ", val: " + this.value
+				+ " )");
 	}
 
 }
-
-
-

@@ -22,26 +22,25 @@ import constellation.Constellation;
 import constellation.Satellite;
 import utils.Parameters;
 
-
 class DecisionVectorDemoTest {
-	
-	ArrayList<GeodeticPoint> inputPolygon=new ArrayList<GeodeticPoint>();
-	ArrayList<DecisionVariable> variableList= new ArrayList<DecisionVariable>();
-	
+
+	ArrayList<GeodeticPoint> inputPolygon = new ArrayList<GeodeticPoint>();
+	ArrayList<DecisionVariable> variableList = new ArrayList<DecisionVariable>();
+
 	DecisionVariable<Double> inclination = new DecisionVariable<Double>(Double.class, "inclination", 1., 1.1);
 	DecisionVariable<Double> a = new DecisionVariable<Double>(Double.class, "a", 2., 2.1);
 	DecisionVariable<Double> eccentricity = new DecisionVariable<Double>(Double.class, "eccentricity", 0., 0.1);
-	DecisionVariable<Double> rightAscendingNode = new DecisionVariable<Double>(Double.class, "rightAscendingNode",4., 4.1);
-	DecisionVariable<Double> periapsisArgument = new DecisionVariable<Double>(Double.class, "periapsisArgument", 5.,5.1);
+	DecisionVariable<Double> rightAscendingNode = new DecisionVariable<Double>(Double.class, "rightAscendingNode", 4.,
+			4.1);
+	DecisionVariable<Double> periapsisArgument = new DecisionVariable<Double>(Double.class, "periapsisArgument", 5.,
+			5.1);
 	DecisionVariable<Integer> nbSat = new DecisionVariable<Integer>(Integer.class, "nbSat", 2, 3);
-	
+
 	DecisionVariable<Double> testDouble = new DecisionVariable<Double>(Double.class, "testDouble", 1., 1.1);
 	DecisionVariable<Integer> testInt = new DecisionVariable<Integer>(Integer.class, "testInteger", 1, 2);
-	
+
 	GeodeticPoint testPoint = new GeodeticPoint(-0.005, 44, 143);
 	GeodeticPoint testPoint2 = new GeodeticPoint(0.005, 44.005, 144);
-	
-	
 
 	@Test
 	void testgetName() {
@@ -49,10 +48,9 @@ class DecisionVectorDemoTest {
 		// Arrange
 		this.variableList.add(testDouble);
 		this.variableList.add(testInt);
-		
+
 		this.inputPolygon.add(testPoint);
 		this.inputPolygon.add(testPoint2);
-
 
 		// Act
 		DecisionVector decisionVector = new DecisionVectorDemo(this.variableList, this.inputPolygon);
@@ -71,10 +69,9 @@ class DecisionVectorDemoTest {
 
 		this.variableList.add(testDouble);
 		this.variableList.add(testInt);
-		
+
 		this.inputPolygon.add(testPoint);
 		this.inputPolygon.add(testPoint2);
-
 
 		// Act
 		DecisionVector decisionVector = new DecisionVectorDemo(variableList, inputPolygon);
@@ -92,7 +89,7 @@ class DecisionVectorDemoTest {
 		// Arrange
 		variableList.add(testDouble);
 		variableList.add(testInt);
-		
+
 		this.inputPolygon.add(testPoint);
 		this.inputPolygon.add(testPoint2);
 
@@ -125,7 +122,7 @@ class DecisionVectorDemoTest {
 		listValues.add(5.05);
 		variableList.add(this.nbSat);
 		listValues.add(2);
-		
+
 		this.inputPolygon.add(testPoint);
 		this.inputPolygon.add(testPoint2);
 
@@ -140,7 +137,6 @@ class DecisionVectorDemoTest {
 		assert (satList.size() == 2);
 
 		for (Satellite sat : satList) {
-			
 
 			assert (sat.getI() == 1.05);
 			assert (sat.getA() == 2.05);
@@ -149,136 +145,139 @@ class DecisionVectorDemoTest {
 			assert (sat.getRaan() == 4.05);
 			assert (sat.getW() == 5.05);
 
-			assert (sat.getM() == 0
-					|| (sat.getM() > 3.1415 && sat.getM() < 3.1416));
+			assert (sat.getM() == 0 || (sat.getM() > 3.1415 && sat.getM() < 3.1416));
 
 		}
 
 	}
+
 	@Test
 	public void testSize() {
-		
+
 		// Arrange
-				this.variableList.add(testDouble);
-				this.variableList.add(testInt);
-				
-				this.inputPolygon.add(testPoint);
-				this.inputPolygon.add(testPoint2);
+		this.variableList.add(testDouble);
+		this.variableList.add(testInt);
 
-
-				// Act
-				DecisionVector decisionVector = new DecisionVectorDemo(this.variableList, this.inputPolygon);
-				
-
-				// Assert
-				assert (decisionVector.size() == 2);
-				
-		
-	}
-
-    /**
-     * Test the thread safety of the cost function. From 2 constellations close to the sentinel2 mission, 
-     * create  nbThread*2 Threads and runs it simultaneously. Then, it checks that all every thread computed the same cost 
-     * for each constellation.
-     * @throws InterruptedException
-     */
-	@Test
-	public void testThreadSafety() throws InterruptedException {
-		
-		
-		// Arrange
-		
-		//values for the the decision variables of the 1st constellation
-		final ArrayList<Object> listValues1 = new ArrayList<Object>();
-		//values for the the decision variables of the 2nd constellation
-		final ArrayList<Object> listValues2 = new ArrayList<Object>();
-		
-		
-		variableList.add(inclination);
-		listValues1.add(1.719);listValues2.add(1.7195);
-		variableList.add(a);
-		listValues1.add(7157000.);listValues2.add(7157005.);
-		variableList.add(eccentricity);
-		listValues1.add(0.);listValues2.add(0.1);
-		variableList.add(rightAscendingNode);
-		listValues1.add(0.);listValues2.add(0.1);
-		variableList.add(periapsisArgument);
-		listValues1.add(0.);listValues2.add(0.1);
-		variableList.add(nbSat);
-		listValues1.add(1);listValues2.add(2);
-		
-		//zone
 		this.inputPolygon.add(testPoint);
 		this.inputPolygon.add(testPoint2);
 
-		//costs of the first constellation for each thread. 
-		final HashMap<String,Double> mapCost1 = new HashMap<String,Double>();
-		//costs of the first constellation for each thread. 
-		final HashMap<String,Double> mapCost2 = new HashMap<String,Double>();
-		
+		// Act
+		DecisionVector decisionVector = new DecisionVectorDemo(this.variableList, this.inputPolygon);
+
+		// Assert
+		assert (decisionVector.size() == 2);
+
+	}
+
+	/**
+	 * Test the thread safety of the cost function. From 2 constellations close to
+	 * the sentinel2 mission, create nbThread*2 Threads and runs it simultaneously.
+	 * Then, it checks that all every thread computed the same cost for each
+	 * constellation.
+	 * 
+	 * @throws InterruptedException
+	 */
+	@Test
+	public void testThreadSafety() throws InterruptedException {
+
+		// Arrange
+
+		// values for the the decision variables of the 1st constellation
+		final ArrayList<Object> listValues1 = new ArrayList<Object>();
+		// values for the the decision variables of the 2nd constellation
+		final ArrayList<Object> listValues2 = new ArrayList<Object>();
+
+		variableList.add(inclination);
+		listValues1.add(1.719);
+		listValues2.add(1.7195);
+		variableList.add(a);
+		listValues1.add(7157000.);
+		listValues2.add(7157005.);
+		variableList.add(eccentricity);
+		listValues1.add(0.);
+		listValues2.add(0.1);
+		variableList.add(rightAscendingNode);
+		listValues1.add(0.);
+		listValues2.add(0.1);
+		variableList.add(periapsisArgument);
+		listValues1.add(0.);
+		listValues2.add(0.1);
+		variableList.add(nbSat);
+		listValues1.add(1);
+		listValues2.add(2);
+
+		// zone
+		this.inputPolygon.add(testPoint);
+		this.inputPolygon.add(testPoint2);
+
+		// costs of the first constellation for each thread.
+		final HashMap<String, Double> mapCost1 = new HashMap<String, Double>();
+		// costs of the first constellation for each thread.
+		final HashMap<String, Double> mapCost2 = new HashMap<String, Double>();
+
 		final DecisionVector decisionVector = new DecisionVectorDemo(variableList, inputPolygon);
-		
-		//load Orekit Data
+
+		// load Orekit Data
 		File orekitData = new File(Parameters.orekitDataPath);
 		DataProvidersManager manager = DataProvidersManager.getInstance();
 		manager.addProvider(new DirectoryCrawler(orekitData));
-		
+
 		// list of all the threads
-		ArrayList<Thread> listThread=new ArrayList<Thread>();
-		
-		
-		//To decrease test duration, change the number of thread tested (the number is x2, for one thread by constellation
-		Integer threadNb=2;
-		
-		
-		//configure every thread
-		for (Integer i=0;i<threadNb;i++) {
-			final String index=i.toString();
-			
-			//Thread for the first constellation
+
+		ArrayList<Thread> listThread = new ArrayList<Thread>();
+
+		// To decrease test duration, change the number of thread tested (the number is
+		// x2, for one thread by constellation
+		Integer threadNb = 2;
+
+		// configure every thread
+		for (Integer i = 0; i < threadNb; i++) {
+			final String index = i.toString();
+
+			// Thread for the first constellation
+
 			Thread first = new Thread(new Runnable() {
 				@Override
 				public void run() {
-					mapCost1.put(index,decisionVector.costFunction(listValues1));
-					
+					mapCost1.put(index, decisionVector.costFunction(listValues1));
+
 				}
 			});
-			
-			//Thread for the second constellation
+
+			// Thread for the second constellation
 			Thread second = new Thread(new Runnable() {
 				@Override
 				public void run() {
-					mapCost2.put(index,decisionVector.costFunction(listValues2));
-					
+					mapCost2.put(index, decisionVector.costFunction(listValues2));
+
 				}
 			});
-			
+
 			listThread.add(first);
 			listThread.add(second);
 		}
 		System.out.println("---RUNNING THREAD SAFETY TEST (please wait) ---");
-		//Start all threads simultaneously
-		for (Thread thread:listThread) {
+		// Start all threads simultaneously
+		for (Thread thread : listThread) {
 			thread.start();
 		}
-		for (Thread thread:listThread) {
+		for (Thread thread : listThread) {
 			thread.join();
 		}
-		
-		//Check that all the costs are the same for each constellation.
-		Double cost1=mapCost1.get("0");
-		Double cost2=mapCost2.get("0");
-		
-	
+
+		// Check that all the costs are the same for each constellation.
+		Double cost1 = mapCost1.get("0");
+		Double cost2 = mapCost2.get("0");
+
 		for (String key : mapCost1.keySet()) {
 			assertEquals(cost1, mapCost1.get(key));
 		}
 		for (String key : mapCost2.keySet()) {
 			assertEquals(cost2, mapCost2.get(key));
 		}
-		System.out.println("Cost1: "+mapCost1);
-		System.out.println("Cost2: "+mapCost2);
+		System.out.println("Cost1: " + mapCost1);
+		System.out.println("Cost2: " + mapCost2);
 		System.out.println("---END OF THREAD SAFETY TEST ---");
 	}
-	
+
 }

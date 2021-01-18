@@ -19,12 +19,11 @@ import org.orekit.time.AbsoluteDate;
  * six keplerian parameters, the time t0 at which the data are given. It also
  * contains two ArrayList of Vectors3D
  * 
- * WARNINGS : - The time is an AbsoluteDate parameter 
- * 			  - The frame chosen is GCRF
- * 			  - Earth gravitational constant is taken from EGM96 model: 3.986004415e14 m�/s�.
- * Thread Safety : the class is conditionally thread safe if and only if Parameters are immutable. 
- * (see later with the method isCoveredBySat)
- * TODO put constants in Parameters class
+ * WARNINGS : - The time is an AbsoluteDate parameter - The frame chosen is GCRF
+ * - Earth gravitational constant is taken from EGM96 model: 3.986004415e14
+ * m�/s�. Thread Safety : the class is conditionally thread safe if and only if
+ * Parameters are immutable. (see later with the method isCoveredBySat) TODO put
+ * constants in Parameters class
  * 
  * @autor Amelie Falcou
  */
@@ -111,72 +110,69 @@ public class Satellite {
 		this.velocities = velocities;
 	}
 
-	
 	/**
-	 * return the a-parameter of the satellites 
+	 * return the a-parameter of the satellites
 	 */
-	public double getA(){
+	public double getA() {
 		return (a);
 	}
-	
+
 	/**
-	 * return the e-parameter of the satellites 
+	 * return the e-parameter of the satellites
 	 */
-	public double getE(){
+	public double getE() {
 		return (e);
 	}
-	
+
 	/**
-	 * return the i-parameter of the satellites 
+	 * return the i-parameter of the satellites
 	 */
-	public double getI(){
+	public double getI() {
 		return (i);
 	}
-	
+
 	/**
-	 * return the raan-parameter of the satellites 
+	 * return the raan-parameter of the satellites
 	 */
-	public double getRaan(){
+	public double getRaan() {
 		return (raan);
 	}
 
 	/**
-	 * return the w-parameter of the satellites 
+	 * return the w-parameter of the satellites
 	 */
-	public double getW(){
+	public double getW() {
 		return (w);
 	}
-	
+
 	/**
-	 * return the M-parameter of the satellites 
+	 * return the M-parameter of the satellites
 	 */
-	public double getM(){
+	public double getM() {
 		return (M);
 	}
-	
+
 	/**
-	 * return the t0-parameter of the satellites 
+	 * return the t0-parameter of the satellites
 	 */
-	public AbsoluteDate getT0(){
+	public AbsoluteDate getT0() {
 		return (t0);
 	}
-	
 
 	public Orbit getInitialOrbit() {
 		return keplerian;
 	}
 
-
 	public boolean isCoveredBySat(Zone zone, AbsoluteDate t) {
 		return true;
 	}
-	
+
 	/**
 	 * print the satellite parameters
 	 */
 	public String toString() {
-		return "satellite - idPlane : " + idPlan + " a : "+a+" e : "+e+" i : "+i+" raan : "+raan+" w : "+w+" M : "+M;
+		return "satellite - idPlane : " + idPlan + " a : " + a + " e : " + e + " i : " + i + " raan : " + raan + " w : "
+				+ w + " M : " + M;
 	}
-
 
 }

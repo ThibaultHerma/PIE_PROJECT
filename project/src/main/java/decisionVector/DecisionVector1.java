@@ -102,8 +102,8 @@ public class DecisionVector1 extends DecisionVector {
 			constellation.addSatellite(a, eccentricity, inclination, rightAscendingNode, periapsisArgument, anomaly,
 					t0);
 		}
-		
-		System.out.println( "Current individual: " +constellation);
+
+		System.out.println("Current individual: " + constellation);
 
 		return constellation;
 	}
