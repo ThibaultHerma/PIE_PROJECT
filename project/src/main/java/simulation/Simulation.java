@@ -81,6 +81,7 @@ public class Simulation {
 	/** Ending time of the simulation */
 	private AbsoluteDate tf;
 
+	/** Verbose option : if true display results */
 	private Boolean verbose = false;
 
 	/**
@@ -100,8 +101,13 @@ public class Simulation {
 	 */
 	private HashMap<GeodeticPoint, ArrayList<AbsoluteDate>> listEndVisibilitiesMesh;// = new HashMap<GeodeticPoint,
 																					// ArrayList<AbsoluteDate>>();
-
-	private HashMap<TopocentricFrame, GeodeticPoint> topoFramePoint = new HashMap<TopocentricFrame, GeodeticPoint>();
+	
+	/**
+	 * HashMap which contains all the event detectors (LoggedEvents and EventDetector)
+	 * and their corresponding geodetic point
+	 * This will be used to computes data such as the revisit time, etc.
+	 */
+	private HashMap<EventDetector, GeodeticPoint> eventDetPoint = new HashMap<EventDetector, GeodeticPoint>();
 
 	/**
 	 * Default constructor Instantiates the simulation of a constellation.
@@ -188,16 +194,21 @@ public class Simulation {
 			GeodeticPoint meshPoint = this.zone.getListMeshingPoints().get(pointIndex);
 
 			TopocentricFrame staFrame = new TopocentricFrame(this.earth, meshPoint, "mesh_point_" + pointIndex);
-			topoFramePoint.put(staFrame, meshPoint);
 
 			EventDetector staVisi = new ElevationDetector(maxcheck, threshold, staFrame)
 					.withConstantElevation(elevation).withHandler(new VisibilityHandlerSilent());
 			if (this.verbose)
 				staVisi = new ElevationDetector(maxcheck, threshold, staFrame).withConstantElevation(elevation)
 						.withHandler(new VisibilityHandlerVerbose());
+			}
 
 			// when we add an event detector, we monitor it to be able to retrieve it
-			propagator.addEventDetector(logger.monitorDetector(staVisi));
+			EventDetector detector = logger.monitorDetector(staVisi);
+			// when we add an event detector, we monitor it to be able to retrieve it
+			propagator.addEventDetector(detector);
+			eventDetPoint.put(detector, meshPoint);
+			eventDetPoint.put(staVisi, meshPoint);
+					
 		}
 
 	}
@@ -255,7 +266,6 @@ public class Simulation {
 			GeodeticPoint meshPoint = this.zone.getListMeshingPoints().get(pointIndex);
 
 			TopocentricFrame staFrame = new TopocentricFrame(this.earth, meshPoint, "mesh_point_" + pointIndex);
-			topoFramePoint.put(staFrame, meshPoint);
 
 			EventDetector staVisi = new ElevationDetector(maxcheck, threshold, staFrame)
 					.withConstantElevation(elevation).withHandler(new VisibilityHandlerSilent());
@@ -264,7 +274,11 @@ public class Simulation {
 						.withHandler(new VisibilityHandlerVerbose());
 
 			// when we add an event detector, we monitor it to be able to retrieve it
-			propagator.addEventDetector(logger.monitorDetector(staVisi));
+			EventDetector detector = logger.monitorDetector(staVisi);
+			// when we add an event detector, we monitor it to be able to retrieve it
+			propagator.addEventDetector(detector);
+			eventDetPoint.put(detector, meshPoint);
+			eventDetPoint.put(staVisi, meshPoint);
 		}
 
 	}
@@ -293,37 +307,30 @@ public class Simulation {
 			// Propagation of the orbit of the satellite
 			propagator.propagate(this.t0, this.tf);
 
-			// Clear of the events detectors on the propagator (ESSENTIAL TO HAVE RELEVANT
-			// RESULTS !!)
-			propagator.clearEventsDetectors();
-
 			// For each detector (associated to a point of the mesh) if the point is viewed
 			// by the satellite at the beginning of the simulation, it must be stored.
 			for (EventDetector detector : propagator.getEventsDetectors()) {
 				if (detector.g(propagator.getInitialState()) > 0) {
-					ElevationDetector eDetector = (ElevationDetector) detector;
-					GeodeticPoint meshPoint = topoFramePoint.get(eDetector.getTopocentricFrame());
+					GeodeticPoint meshPoint = eventDetPoint.get(detector);
 					addPointAndDateListBegVisibilitiesMesh(meshPoint, this.t0);
 					if (this.verbose)
-						System.out.println("g>0 en debut de simulation pour " + detector.toString() + "  "
-								+ sat.toString() + "   " + meshPoint.toString());
+						System.out.println("g>0 en debut de simulation pour " + sat.toString() + "   " + meshPoint.toString());
 				}
 			}
+			
+			// Clear of the events detectors on the propagator (ESSENTIAL TO HAVE RELEVANT RESULTS !)
+			propagator.clearEventsDetectors();
 
 			for (final EventsLogger.LoggedEvent event : logger.getLoggedEvents()) {
-				if (this.verbose)
-					System.out.println(event.toString());
-				ElevationDetector elevationDetector = (ElevationDetector) event.getEventDetector();
 
-				GeodeticPoint meshPoint = topoFramePoint.get(elevationDetector.getTopocentricFrame());
+				EventDetector detector = event.getEventDetector();
+				GeodeticPoint meshPoint = eventDetPoint.get(detector);
 				AbsoluteDate date = event.getState().getDate();
 
 				// The method isIncreasing returns a boolean which states
 				// whether the satellite is entering or exiting the elevation zone
-				if (event.isIncreasing())
-					addPointAndDateListBegVisibilitiesMesh(meshPoint, date);
-				else
-					addPointAndDateListEndVisibilitiesMesh(meshPoint, date);
+				if (event.isIncreasing()) addPointAndDateListBegVisibilitiesMesh(meshPoint, date);
+				else addPointAndDateListEndVisibilitiesMesh(meshPoint, date);
 			}
 		}
 	}
