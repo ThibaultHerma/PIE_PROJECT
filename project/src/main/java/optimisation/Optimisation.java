@@ -2,6 +2,21 @@ package optimisation;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
+
+import javax.swing.JFrame;
+import javax.swing.WindowConstants;
+import javax.swing.JFrame.*;
+import org.jfree.chart.ChartUtils;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import decisionVector.DecisionVariable;
 import decisionVector.DecisionVector;
@@ -26,7 +41,7 @@ import time.Time;
  *
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class Optimisation {
+public class Optimisation extends JFrame {
 
 	/** genotype of an individual */
 	private final Genotype CODE;
@@ -38,7 +53,7 @@ public class Optimisation {
 	 * storage HashMap with the fitness values of the best individual by generation.
 	 * NB: the type is a concurrent HashMap to ensure threadSafety
 	 */
-	private static ConcurrentHashMap<Long, Double> fitnessValues;
+	private static ConcurrentHashMap<Integer, Double> fitnessValues;
 
 	// Additional parameters can be added on how to perform the simulation
 
@@ -51,7 +66,7 @@ public class Optimisation {
 	public Optimisation(DecisionVector decisionVector) {
 
 		Optimisation.decisionVector = decisionVector;
-		Optimisation.fitnessValues = new ConcurrentHashMap<Long, Double>();
+		Optimisation.fitnessValues = new ConcurrentHashMap<Integer, Double>();
 		/*
 		 * A list of chromosomes is created depending on their type, in the order given
 		 * by the input file. They are all cast as Chromosome to allow the creation of a
@@ -128,11 +143,27 @@ public class Optimisation {
 		System.out.println(statistics + "\n");
 		System.out.println("Fitness across generation:" + fitnessValues);
 
-		// empty the list of fitness values in case of a second optimization following
-		fitnessValues = new ConcurrentHashMap<Long, Double>();
+		// Plot of the Cost Function
 
-		System.out.println("\n*********** END OF OPTIMIZATION ***********\n\n");
-		System.out.println(statistics);
+		// Convert HashMap to DataSet
+		XYDataset dataset = createDataset(fitnessValues);
+		// Create chart
+		JFreeChart chart = ChartFactory.createXYLineChart(
+				"Evolution of Revisit Time for " + Integer.toString(populationSize) + " populations and "
+						+ Integer.toString(generationNb) + " generations",
+				"Iteration", "Cost Function", dataset, PlotOrientation.VERTICAL, true, true, false);
+		// Create Panel
+		ChartPanel panel = new ChartPanel(chart);
+		setContentPane(panel);
+		setSize(800, 400);
+		setLocationRelativeTo(null);
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		setVisible(true);
+		// To save the picture (doesn't work)
+		// ChartUtils.saveChartAsPNG(new File("CostFunction_P_G.png"), chart, 800, 400);
+
+		// empty the list of fitness values in case of a second optimization following
+		fitnessValues = new ConcurrentHashMap<Integer, Double>();
 
 		return optimisedValues;
 	}
@@ -149,7 +180,7 @@ public class Optimisation {
 		EvolutionResult evolutionResult = (EvolutionResult) rawEvolutionResult;
 		Phenotype bestPhenotype = evolutionResult.bestPhenotype();
 
-		long generationIdx = evolutionResult.totalGenerations();// index of the current generation
+		int generationIdx = (int) evolutionResult.totalGenerations();// index of the current generation
 		double bestFitness = (double) bestPhenotype.fitness(); // fitness of the best individual of the current
 																// generation
 
@@ -224,6 +255,21 @@ public class Optimisation {
 	 */
 	public DecisionVector getDecisionVector() {
 		return decisionVector;
+	}
+
+	private XYDataset createDataset(ConcurrentHashMap<Integer, Double> hashmap) {
+		XYSeriesCollection dataset = new XYSeriesCollection();
+
+		XYSeries series = new XYSeries("fitness values");
+
+		for (int key : hashmap.keySet()) {
+			series.add(key, hashmap.get(key));
+		}
+
+		// Add series to dataset
+		dataset.addSeries(series);
+
+		return dataset;
 	}
 
 }
