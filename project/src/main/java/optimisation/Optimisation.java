@@ -33,6 +33,7 @@ import io.jenetics.stat.DoubleMomentStatistics;
 import io.jenetics.util.ISeq;
 import io.jenetics.util.Seq;
 import time.Time;
+import utils.Plot;
 
 /**
  * Optimisation class. At the moment, it is only suitable for the demo case.
@@ -41,7 +42,7 @@ import time.Time;
  *
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class Optimisation extends JFrame {
+public class Optimisation  {
 
 	/** genotype of an individual */
 	private final Genotype CODE;
@@ -145,22 +146,12 @@ public class Optimisation extends JFrame {
 
 		// Plot of the Cost Function
 
-		// Convert HashMap to DataSet
-		XYDataset dataset = createDataset(fitnessValues);
-		// Create chart
-		JFreeChart chart = ChartFactory.createXYLineChart(
-				"Evolution of Revisit Time for " + Integer.toString(populationSize) + " populations and "
+		Plot plot=new Plot(fitnessValues,"Evolution of Revisit Time for " + Integer.toString(populationSize) + " individuals and "
 						+ Integer.toString(generationNb) + " generations",
-				"Iteration", "Cost Function", dataset, PlotOrientation.VERTICAL, true, true, false);
-		// Create Panel
-		ChartPanel panel = new ChartPanel(chart);
-		setContentPane(panel);
-		setSize(800, 400);
-		setLocationRelativeTo(null);
-		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		setVisible(true);
-		// To save the picture (doesn't work)
-		// ChartUtils.saveChartAsPNG(new File("CostFunction_P_G.png"), chart, 800, 400);
+				"Iteration", "Cost Function");
+		// Create chart
+		
+		
 
 		// empty the list of fitness values in case of a second optimization following
 		fitnessValues = new ConcurrentHashMap<Integer, Double>();
@@ -257,19 +248,5 @@ public class Optimisation extends JFrame {
 		return decisionVector;
 	}
 
-	private XYDataset createDataset(ConcurrentHashMap<Integer, Double> hashmap) {
-		XYSeriesCollection dataset = new XYSeriesCollection();
-
-		XYSeries series = new XYSeries("fitness values");
-
-		for (int key : hashmap.keySet()) {
-			series.add(key, hashmap.get(key));
-		}
-
-		// Add series to dataset
-		dataset.addSeries(series);
-
-		return dataset;
-	}
-
+	
 }
