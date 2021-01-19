@@ -93,6 +93,93 @@ public abstract class UseCase {
 	}
 
 	/**
+	 * Check if the minimum and maximum values of the variables (for now, only the
+	 * minimum value of the semi-major axis and the minimum value of the
+	 * inclination) are compatible with the zone to be observed. If they are not
+	 * compatible, they should be modified as the algorithm loses time to find
+	 * solutions when it is not necessary.
+	 */
+	public void checkOptimisationBoundariesVariables() {
+
+		/*
+		 * We look for the maximum absolute value of the latitude for all the points in
+		 * the input polygon. We do not look for the minimum as if the maximum is
+		 * reached, the minimum is also reached.
+		 */
+		double maxLatitude = Math.abs(inputPolygon.get(0).getLatitude());
+
+		for (int k = 1; k < inputPolygon.size(); k++) {
+			if (Math.abs(inputPolygon.get(k).getLatitude()) > maxLatitude) {
+				maxLatitude = Math.abs(inputPolygon.get(k).getLatitude());
+			}
+		}
+
+		/*
+		 * We will check whether the parameters of inclination, semi-major axis and
+		 * Field Of View are compatible with the minimum and maximum latitude or not. We
+		 * check that the combination of the minimum semi-major axis and minimum
+		 * inclination are compatible with the maximum latitude. We also check that the
+		 * combination of the minimum semi-major axis and maximum inclination are
+		 * compatible with the maximum latitude. Compatible means here that the zone at
+		 * the given latitude is visible.
+		 */
+
+		DecisionVariable variableSemiMajorAxis = null;
+		DecisionVariable variableInclination = null;
+		for (int k = 0; k < variablesList.size(); k++) {
+			if (variablesList.get(k).getName().equals("a")) {
+				variableSemiMajorAxis = variablesList.get(k);
+			} else if (variablesList.get(k).getName().equals("inclination")) {
+				variableInclination = variablesList.get(k);
+			}
+		}
+		if (variableSemiMajorAxis == null) {
+			System.out.println("WARNING : Decision variable of semi-major axis not found.");
+		}
+		if (variableInclination == null) {
+			System.out.println("WARNING : Decision variable of inclination not found.");
+		}
+
+		double minSemiMajorAxis = (Double) variableSemiMajorAxis.getMin();
+		double minInclination = (Double) variableInclination.getMin();
+		double maxInclination = (Double) variableInclination.getMax();
+
+		/*
+		 * We check whether the satellite can see the maximum longitude with the minimum
+		 * semi-major axis and the minimum and maximum inclination or not.
+		 */
+
+		/*
+		 * beta is the angle between : - the intersection of the surface of the Earth
+		 * and the axis [center of satellite - center of the Earth] - the center of the
+		 * Earth - the intersection of the surface of the Earth and the FOV of the
+		 * satellite
+		 * 
+		 * It is somehow the FOV of the satellite seen from the center of the Earth.
+		 */
+
+		double beta = (minSemiMajorAxis - Parameters.projectEarthEquatorialRadius);
+		beta = beta * Math.tan(Parameters.halfFOV);
+		beta = beta / Parameters.projectEarthEquatorialRadius;
+		beta = Math.atan(beta);
+
+		if (maxInclination - beta > maxLatitude) {
+			System.out.println("When the satellite has the combination of the minimum semi-major axis "
+					+ "and maximum inclination, it is not able to see the maximum latitude of the points "
+					+ "of the zone to be observed (the satellite is 'too high in latitude'). ");
+			System.out.println("This means that the range of the input parameters could be "
+					+ "improved by reducing the maximum inclination or increasing the minimum semi-major axis.");
+		}
+		if (minInclination + beta < maxLatitude) {
+			System.out.println("When the satellite has the combination of the minimum semi-major axis "
+					+ "and minimum inclination, it is not able to see the maximum latitude of the points "
+					+ "of the zone to be observed (the satellite is 'too low in latitude'). ");
+			System.out.println("This means that the range of the input parameters could be "
+					+ "improved by increasing the minimum inclination or increasing the minimum semi-major axis..");
+		}
+	}
+
+	/**
 	 * Optimize the type of constellation given in input. Since it depends of the
 	 * use case (type of constellation,type of optimizer,type of decision vector),
 	 * the function is implemented in subclasses.
@@ -130,6 +217,9 @@ public abstract class UseCase {
 		} else {
 			throw new Exception("\"The use case specified (" + useCaseNb + ") doesn't exist");
 		}
+
+		// check whether the boundaries of the variables could be optimised or not
+		useCase.checkOptimisationBoundariesVariables();
 
 		// duration of the program : TOP
 		long startTime = System.nanoTime();
