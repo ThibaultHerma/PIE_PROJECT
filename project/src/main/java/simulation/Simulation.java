@@ -200,7 +200,7 @@ public class Simulation {
 			if (this.verbose)
 				staVisi = new ElevationDetector(maxcheck, threshold, staFrame).withConstantElevation(elevation)
 						.withHandler(new VisibilityHandlerVerbose());
-			}
+			
 
 			// when we add an event detector, we monitor it to be able to retrieve it
 			EventDetector detector = logger.monitorDetector(staVisi);
