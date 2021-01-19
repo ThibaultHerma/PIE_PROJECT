@@ -64,10 +64,11 @@ public class UseCase1 extends UseCase {
 		// decisionVectorDemo.randomInit();
 
 		Optimisation optimisationProblem = new Optimisation(decisionVector1);
-		int populationSize = 10;
+
+		int populationSize = 25;
 		int generationNb = 10;
 
-		ArrayList<Object> optimisedValues = optimisationProblem.optimise(decisionVector1, populationSize, generationNb);
+		ArrayList<Object> optimisedValues = optimisationProblem.optimize(decisionVector1, populationSize, generationNb);
 
 		// compute objective function (the objective function is thread safe, therefore
 		// we have to pass the values as an argument of the function

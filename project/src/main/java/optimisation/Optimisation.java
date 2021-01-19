@@ -1,7 +1,7 @@
 package optimisation;
 
 import java.util.List;
-
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.ArrayList;
 import decisionVector.DecisionVariable;
 import decisionVector.DecisionVector;
@@ -28,8 +28,17 @@ import time.Time;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class Optimisation {
 
+	/** genotype of an individual */
 	private final Genotype CODE;
+
+	/** decision vector from which the genotype is created */
 	private static DecisionVector decisionVector;
+
+	/**
+	 * storage HashMap with the fitness values of the best individual by generation.
+	 * NB: the type is a concurrent HashMap to ensure threadSafety
+	 */
+	private static ConcurrentHashMap<Long, Double> fitnessValues;
 
 	// Additional parameters can be added on how to perform the simulation
 
@@ -42,7 +51,7 @@ public class Optimisation {
 	public Optimisation(DecisionVector decisionVector) {
 
 		Optimisation.decisionVector = decisionVector;
-
+		Optimisation.fitnessValues = new ConcurrentHashMap<Long, Double>();
 		/*
 		 * A list of chromosomes is created depending on their type, in the order given
 		 * by the input file. They are all cast as Chromosome to allow the creation of a
@@ -82,18 +91,18 @@ public class Optimisation {
 	 *         constellation
 	 */
 
-	public ArrayList<Object> optimise(DecisionVector decisionVector, int populationSize, int generationNb) {
+	public ArrayList<Object> optimize(DecisionVector decisionVector, int populationSize, int generationNb) {
 
 		System.out.println("\n \n *********** BEGINING OPTIMIZATION ***********");
+
+		final EvolutionStatistics<Double, DoubleMomentStatistics> statistics = EvolutionStatistics.ofNumber();
 
 		final Engine engine = Engine.builder(Optimisation::fitness, this.CODE).optimize(Optimize.MINIMUM)
 				.populationSize(populationSize) // Small value for tests
 				.build();
 
-		final EvolutionStatistics<Double, DoubleMomentStatistics> statistics = EvolutionStatistics.ofNumber();
-
 		final Phenotype bestConstellation = (Phenotype) engine.stream().limit(generationNb) // Small value for tests
-				.peek(statistics).collect(EvolutionResult.toBestPhenotype());
+				.peek(r -> saveGeneration(r)).peek(statistics).collect(EvolutionResult.toBestPhenotype());
 
 		// Best constellation found
 		System.out.println(bestConstellation);
@@ -116,12 +125,44 @@ public class Optimisation {
 		}
 
 		System.out.println("\n*********** END OF OPTIMIZATION ***********\n\n");
-		System.out.println(statistics);
+		System.out.println(statistics + "\n");
+		System.out.println("Fitness across generation:" + fitnessValues);
+
+		// empty the list of fitness values in case of a second optimization following
+		fitnessValues = new ConcurrentHashMap<Long, Double>();
 
 		System.out.println("\n*********** END OF OPTIMIZATION ***********\n\n");
 		System.out.println(statistics);
 
 		return optimisedValues;
+	}
+
+	/**
+	 * Method called at each generation to save the fitness of the best individual
+	 * in the dictionary fitnessValues
+	 * 
+	 * @param rawEvolutionResult:Object the evolution result extracted from the
+	 *                                  engine at each generation.
+	 */
+	private static void saveGeneration(Object rawEvolutionResult) {
+
+		EvolutionResult evolutionResult = (EvolutionResult) rawEvolutionResult;
+		Phenotype bestPhenotype = evolutionResult.bestPhenotype();
+
+		long generationIdx = evolutionResult.totalGenerations();// index of the current generation
+		double bestFitness = (double) bestPhenotype.fitness(); // fitness of the best individual of the current
+																// generation
+
+		// put the best fitness in the storage
+		fitnessValues.put(generationIdx, bestFitness);
+
+		System.out.println(
+				"\n\n------------------------------------- GENERATION " + generationIdx + " ------------------------");
+		System.out.println("BEST INDIVIDUAL: " + bestPhenotype);
+		System.out.println("BEST FITNESS: " + bestFitness);
+		Time.printTime(bestFitness);
+		System.out.println("-----------------------------------------------------------------------------\n\n");
+
 	}
 
 	/**

@@ -367,7 +367,11 @@ public class Simulation {
 				AbsoluteDate date = endDates.remove(0);
 				nbParenthesis -= 1;
 				if (nbParenthesis < 0)
-					System.out.println("ERROR:Negative number of parenthesis during");
+
+					if (verbose) {
+						System.out.println("ERROR:Negative number of parenthesis during");
+					}
+
 				if (nbParenthesis == 0)
 					endDate = date;
 			}
@@ -378,7 +382,11 @@ public class Simulation {
 				AbsoluteDate date = endDates.remove(0);
 				nbParenthesis -= 1;
 				if (nbParenthesis < 0)
-					System.out.println("ERROR:Negative number of parenthesis end");
+
+					if (verbose) {
+						System.out.println("ERROR:Negative number of parenthesis end");
+					}
+
 				if (nbParenthesis == 0)
 					endDate = date;
 			}
