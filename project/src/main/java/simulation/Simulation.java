@@ -4,12 +4,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-import org.hipparchus.geometry.euclidean.threed.Vector3D;
+import org.hipparchus.ode.events.Action;
 import org.orekit.bodies.GeodeticPoint;
+import org.orekit.frames.TopocentricFrame;
+import org.orekit.propagation.Propagator;
+import org.orekit.propagation.SpacecraftState;
 import org.orekit.propagation.analytical.KeplerianPropagator;
 import org.orekit.propagation.events.ElevationDetector;
 import org.orekit.propagation.events.EventDetector;
 import org.orekit.propagation.events.EventsLogger;
+import org.orekit.propagation.events.handlers.EventHandler;
 import org.orekit.time.AbsoluteDate;
 
 import utils.Parameters;
@@ -59,13 +63,9 @@ public class Simulation {
 	
 	/** Ending time of the simulation */
 	private AbsoluteDate tf;
-
-	/** 
-	 * Elevation in radian, the elevation at which the point begins to be visible
-	 * 	(90Â° - elevation) corresponds to the half extent of the FOV of the satellite
-	 * */
-	private double elevation = Parameters.elevation;
 	
+	private Boolean verbose=false;
+
 	/**
 	 * HashMap which contains all the dates at which a geodetic point is beginning to be seen
 	 * by a satellite of the constellation. It corresponds to the moment at which the geodetic 
@@ -82,6 +82,32 @@ public class Simulation {
 	 */
 	private HashMap<GeodeticPoint, ArrayList<AbsoluteDate>> listEndVisibilitiesMesh;// = new HashMap<GeodeticPoint, ArrayList<AbsoluteDate>>();
 
+	private HashMap<TopocentricFrame, GeodeticPoint> topoFramePoint = new HashMap<TopocentricFrame, GeodeticPoint>();
+	
+	/**
+	 * Default constructor
+	 * Instantiates the simulation of a constellation.
+	 * 
+	 * @param constellation : the constellation to simulate
+	 * @param t0 : the date corresponding to the beginning of the simulation
+	 * @param tf : the date which corresponds to the end of the simulation
+	 * @param zone : the zone to explore on the Earth
+	 */
+	public Simulation(Constellation constellation, AbsoluteDate t0, AbsoluteDate tf, Zone zone, Boolean verbose) {
+		this.constellation = constellation;
+		this.t0 = t0;
+		this.tf = tf;
+		this.zone = zone;
+		this.verbose = verbose;
+		
+		this.listBegVisibilitiesMesh = new HashMap<GeodeticPoint, ArrayList<AbsoluteDate>>();
+		this.listEndVisibilitiesMesh = new HashMap<GeodeticPoint, ArrayList<AbsoluteDate>>();
+		
+		for (GeodeticPoint meshPoint : zone.getListMeshingPoints()) {
+			listBegVisibilitiesMesh.put(meshPoint, new ArrayList<AbsoluteDate>());
+			listEndVisibilitiesMesh.put(meshPoint, new ArrayList<AbsoluteDate>());
+		}
+	}
 	
 	/**
 	 * Default constructor
@@ -119,10 +145,93 @@ public class Simulation {
 		this.listBegVisibilitiesMesh.get(pointToAdd).add(dateToAdd);
 	}
 	
+	/**
+	 * This method creates all the events for eachpoint of the meshing.
+	 * The events are "ElevationDetector" events.
+	 * This method has to be called before propagating the orbit.
+	 * 
+	 * @param propagator the propagator used
+	 * 
+	 * @param elevation in radian
+	 * 					it is the elevation at which the point begins to be visible
+	 * 					(90° - elevation) corresponds approximately to the half extent of the FOV of the satellite if it is not agile
+	 */
+	public void createEventsDetector(Propagator propagator, EventsLogger logger, double elevation) {
+		
+		double maxcheck  = 60.0;
+		double threshold =  0.001;
+		
+		// we go through all the points of the meshing and add them as events to be detected
+		for (int pointIndex = 0; pointIndex < this.zone.getListMeshingPoints().size(); pointIndex++) {
+			
+			GeodeticPoint meshPoint = this.zone.getListMeshingPoints().get(pointIndex);
+
+			TopocentricFrame staFrame = new TopocentricFrame(Parameters.earth, meshPoint, "mesh_point_" + pointIndex);
+			topoFramePoint.put(staFrame, meshPoint);
+			
+			EventDetector staVisi = new ElevationDetector(maxcheck, threshold, staFrame).withConstantElevation(elevation);
+			if (this.verbose) staVisi = new ElevationDetector(maxcheck, threshold, staFrame).withConstantElevation(elevation).withHandler(new VisibilityHandler());						
+			
+			// when we add an event detector, we monitor it to be able to retrieve it
+			propagator.addEventDetector(logger.monitorDetector(staVisi));
+		}
+		
+	}
+	
+	//adaptative maxcheck
+	/**
+	 * WARNING for now, the orbit is assumed circular, thus the altitude of the satellite is assumed constant
+	 * 
+	 * This method creates all the events for eachpoint of the meshing.
+	 * The events are "ElevationDetector" events.
+	 * This method has to be called before propagating the orbit.
+	 * 
+	 * @param propagator the propagator used
+	 * 
+	 * @param halfFOV in radian
+	 * 					half FOV of the satellite
+	 * 
+	 * @param a : satellite to center of the Earth distance 
+	 */
+	public void createEventsDetectorSatellite(Propagator propagator, EventsLogger logger, double halfFOV, double a) {
+		
+		
+		// angle between the direction from the center of the Earth to the mesh point and the direction from the center of the Earth to the satellite 
+		double alpha = -halfFOV + Math.asin(a/Parameters.projectEarthEquatorialRadius * Math.sin(halfFOV));
+		
+		// elevation at which the point begins to be visible
+		double elevation = Math.PI/2 - (halfFOV + alpha);
+
+				
+		// time window when the satellite is seen by the station (assuming the orbit is passing over the station)
+		double visibilityWindow = (alpha/Math.PI)*2*Math.PI*Math.sqrt(Math.pow(a, 3)/Parameters.projectEarthMu);
+		
+		// adaptative maxcheck : increases with altitude >> the higher the maxcheck, the faster the algorithm (the higher the probability of missing a satellite pass)
+		double maxcheck  = visibilityWindow/3; // the division factor to tune the frequency at which each detector checks if a satellite is passing over the mesh point
+		//double maxcheck  = 60;
+		
+		double threshold =  0.01;// accuracy of 0.01 s
+		
+		// we go through all the points of the meshing and add them as events to be detected
+		for (int pointIndex = 0; pointIndex < this.zone.getListMeshingPoints().size(); pointIndex++) {
+			
+			GeodeticPoint meshPoint = this.zone.getListMeshingPoints().get(pointIndex);
+
+			TopocentricFrame staFrame = new TopocentricFrame(Parameters.earth, meshPoint, "mesh_point_" + pointIndex);
+			topoFramePoint.put(staFrame, meshPoint);
+			
+			EventDetector staVisi = new ElevationDetector(maxcheck, threshold, staFrame).withConstantElevation(elevation);
+			if (this.verbose) staVisi = new ElevationDetector(maxcheck, threshold, staFrame).withConstantElevation(elevation).withHandler(new VisibilityHandler());			
+			
+			// when we add an event detector, we monitor it to be able to retrieve it
+			propagator.addEventDetector(logger.monitorDetector(staVisi));
+		}
+		
+	}
 	
 	
 	/**
-	 * This method computes the propagation of all satellites of the coonstellation and 
+	 * This method computes the propagation of all satellites of the constellation and 
 	 * detect when each point of the mesh is seen by a satellite.
 	 * 
 	 * The dates at which each point of the mesh enters and exits the satellite view are
@@ -138,14 +247,11 @@ public class Simulation {
 			// Definition of the propagator of the satellite trajectory
 			KeplerianPropagator propagator = new KeplerianPropagator(sat.getInitialOrbit());
 			
-			// Addition of all event detectors
-//			zone.createEventsDetector(propagator, logger, elevation);
-			
 			// Addition of all event detectors : adaptative maxcheck version
-			zone.createEventsDetectorSatellite(propagator, logger, Parameters.halfFOV, sat.getA());
+			createEventsDetectorSatellite(propagator, logger, Parameters.halfFOV, sat.getA());
 			
 			// Propagation of the orbit of the satellite
-			propagator.propagate(t0, tf);
+			propagator.propagate(this.t0, this.tf);
 			
 			// Clear of the events detectors on the propagator (ESSENTIAL TO HAVE RELEVANT RESULTS !!)
  			propagator.clearEventsDetectors();
@@ -155,26 +261,97 @@ public class Simulation {
  			for (EventDetector detector : propagator.getEventsDetectors()) {
  				if (detector.g(propagator.getInitialState())>0)  {
  					ElevationDetector eDetector = (ElevationDetector) detector;
- 					addPointAndDateListBegVisibilitiesMesh(eDetector.getTopocentricFrame().getPoint(), t0)  ;
+ 					GeodeticPoint meshPoint = topoFramePoint.get(eDetector.getTopocentricFrame());
+ 					addPointAndDateListBegVisibilitiesMesh(meshPoint, this.t0)  ;
+ 					if (this.verbose) System.out.println("g>0 en debut de simulation pour " + detector.toString() + "  " + sat.toString() + "   " + meshPoint.toString());
  				}
  			}
 
  			
 			for (final EventsLogger.LoggedEvent event : logger.getLoggedEvents()) {
-				System.out.println(event.toString());
+				if (this.verbose) System.out.println(event.toString());
 				ElevationDetector elevationDetector = (ElevationDetector) event.getEventDetector();
 				
-				GeodeticPoint mesh_point = elevationDetector.getTopocentricFrame().getPoint();				
+				GeodeticPoint meshPoint = topoFramePoint.get(elevationDetector.getTopocentricFrame());				
 				AbsoluteDate date = event.getState().getDate();
 				
 				// The method isIncreasing returns a boolean which states
 				// whether the satellite is entering or exiting the elevation zone
-				if (event.isIncreasing()) addPointAndDateListBegVisibilitiesMesh(mesh_point, date);
-				else addPointAndDateListEndVisibilitiesMesh(mesh_point, date);
+				if (event.isIncreasing()) addPointAndDateListBegVisibilitiesMesh(meshPoint, date);
+				else addPointAndDateListEndVisibilitiesMesh(meshPoint, date);
 			}	
 		}
 	}
 	
+	
+	public double getMaxRevisitPoint(GeodeticPoint meshPoint) {
+		
+		double maxRevisit = -1;
+		
+		// a beginning of visibilty is seen as "(" and an end is seen as ")" 
+					// nbParenthis is the current number of "(" minus the number of ")".
+				// It should always be positive.
+		int nbParenthesis = 0;
+					
+		AbsoluteDate endDate = t0;
+					
+					
+		ArrayList<AbsoluteDate> begDates = listBegVisibilitiesMesh.get(meshPoint);
+		
+		// Dans le cas où le point n'est jamais vu : 1000000000
+		if (begDates.isEmpty()) return 1000000000;	
+		
+		ArrayList<AbsoluteDate> endDates = listEndVisibilitiesMesh.get(meshPoint);
+					
+		Collections.sort(endDates);
+		Collections.sort(begDates);
+							
+		
+		while (!begDates.isEmpty() && !endDates.isEmpty()) {
+						
+		// If the next event is a beginning of view
+			if (begDates.get(0).compareTo(endDates.get(0))<0) {
+				AbsoluteDate date = begDates.remove(0);
+				if (nbParenthesis == 0) {
+					double revisit = date.durationFrom(endDate);
+					if (revisit>maxRevisit) maxRevisit=revisit;
+				}
+				nbParenthesis += 1;
+			}
+				// If the next event is an end of view
+			else {
+				AbsoluteDate date = endDates.remove(0);
+				nbParenthesis -= 1;
+				if (nbParenthesis <0) System.out.println("ERROR:Negative number of parenthesis during");
+				if (nbParenthesis==0) endDate = date;
+			}
+		}
+		
+		if (begDates.isEmpty() && !endDates.isEmpty()) {
+			while (!endDates.isEmpty()){
+				AbsoluteDate date = endDates.remove(0);
+				nbParenthesis -= 1;
+				if (nbParenthesis <0) System.out.println("ERROR:Negative number of parenthesis end");
+				if (nbParenthesis==0) endDate = date;
+			}
+			if (nbParenthesis==0) {
+				double revisit = this.tf.durationFrom(endDate);
+				if (revisit>maxRevisit) maxRevisit=revisit;
+			}
+		}
+		
+		else if (nbParenthesis==0 && !begDates.isEmpty() && endDates.isEmpty()){
+			AbsoluteDate date = begDates.remove(0);
+			double revisit = date.durationFrom(endDate);
+			if (revisit>maxRevisit) maxRevisit=revisit;
+		}
+		
+		if (maxRevisit==-1){
+			System.out.println("ERROR maxRevisite = -1 s for constellation : \n"+ constellation + "\nand point  "+ meshPoint);
+			maxRevisit=1000000000;
+		}
+		return maxRevisit;
+	}	
 	
 	
 	/**
@@ -184,61 +361,46 @@ public class Simulation {
 	 */
 	public double getMaxRevisit() {
 		
-		double maxRevisite = 0;
+		double maxRevisit = -1;
 		
 		for (GeodeticPoint meshPoint : zone.getListMeshingPoints()) {
 			
-			// a beginning of visibilty is seen as "(" and an end is seen as ")" 
-			// nbParenthis is the current number of "(" minus the number of ")".
-			// It should always be positive.
-			int nbParenthesis = 0;
+			double pointRevisit =  getMaxRevisitPoint(meshPoint);
+			if (pointRevisit>maxRevisit) maxRevisit = pointRevisit;
 			
-			AbsoluteDate endDate = t0;
-			
-			
-			ArrayList<AbsoluteDate> begDates = listBegVisibilitiesMesh.get(meshPoint);
-			ArrayList<AbsoluteDate> endDates = listEndVisibilitiesMesh.get(meshPoint);
-			
-			Collections.sort(endDates);
-			Collections.sort(begDates);
-			
-			
-			while (!begDates.isEmpty() && !endDates.isEmpty()) {
-				
-				// If the next event is a beginning of view
-				if (begDates.get(0).compareTo(endDates.get(0))<0) {
-					AbsoluteDate date = begDates.remove(0);
-					if (nbParenthesis == 0) {
-						double revisite = date.durationFrom(endDate);
-						if (revisite>maxRevisite) maxRevisite=revisite;
-					}
-					nbParenthesis += 1;
-				}
-				// If the next event is an end of view
-				else {
-					AbsoluteDate date = endDates.remove(0);
-					nbParenthesis += -1;
-					if (nbParenthesis <0) System.out.println("Negative number of parenthesis...");
-					if (nbParenthesis==0) {
-						endDate = date;
-					}
-				}
-			}
-			
-			if (begDates.isEmpty()) while (!endDates.isEmpty()){
-				AbsoluteDate date = endDates.remove(0);
-				nbParenthesis += -1;
-				if (nbParenthesis <0) System.out.println("Negative number of parenthesis...");
-				if (nbParenthesis==0) {
-					endDate = date;
-				}
-			}		
 		}
-		if (maxRevisite==0){
-			System.out.println("ERROR maxRevisite = 0 s for constellation : \n"+ constellation );
-			maxRevisite=1000000000;
+		if (maxRevisit==-1){
+			System.out.println("ERROR maxRevisite = -1 s for constellation : \n"+ constellation );
+			maxRevisit=1000000000;
 		}
 		
-		return maxRevisite; 
+		return maxRevisit; 
 	}
+}
+
+
+/**
+ * That class is here to display when an event is detected.
+ *
+ */
+class VisibilityHandler implements EventHandler<ElevationDetector> {
+
+    public Action eventOccurred(final SpacecraftState s, final ElevationDetector detector,
+                                final boolean increasing) {
+        if (increasing) {
+            System.out.println(" Visibility on " + detector.getTopocentricFrame().getName()+ " begins at " + s.getDate());
+            return Action.CONTINUE;
+        } else {
+            System.out.println(" Visibility on " + detector.getTopocentricFrame().getName()+ " ends at " + s.getDate());
+            // we need to continue the simulation once a point is seen because we may have other points
+            // or may want to calculate the revisit time
+            return Action.CONTINUE;
+            }
+         
+    }
+
+    public SpacecraftState resetState(final ElevationDetector detector, final SpacecraftState oldState) {
+        return oldState;
+    }
+
 }

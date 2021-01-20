@@ -30,7 +30,7 @@ public abstract class DecisionVector {
 	 * The optimization variables on which the optimization program will play to
 	 * optimize the cost function
 	 */
-	public final ArrayList<DecisionVariable> listDecisionVariables;
+	protected final ArrayList<DecisionVariable> listDecisionVariables;
 
 	/*
 	 * The input polygon of the zone to cover (useful for the simulation in the cost
@@ -56,6 +56,9 @@ public abstract class DecisionVector {
 
 		// initialize randomly the vector
 		randomInit();
+		
+		// print the decision vector 
+		System.out.println(this);
 	}
 
 	/**
@@ -108,6 +111,7 @@ public abstract class DecisionVector {
 		for (DecisionVariable var : listDecisionVariables) {
 			var.randomInit();
 		}
+		System.out.println("Decision Vector initialized randomly");
 	}
 
 	/**
@@ -128,7 +132,25 @@ public abstract class DecisionVector {
 		System.out.println("ERROR  The variable : " + variableName + " doesn't exist in the decision vector");
 		return -1;
 	}
-
+	
+	/**
+	 * Convert the decision vector to String.
+	 * @return String - the string of the decision vector
+	 */
+	public String toString() {
+		String stringVector ="\n";
+		for (DecisionVariable var:listDecisionVariables) {
+			stringVector+="\n"+var;
+		}
+		return(stringVector);
+	}
+	/**
+	 * get the size of the vector
+	 * @return  int - the number of decision variable in the vector
+	 */
+	public int size() {
+		return listDecisionVariables.size();
+	}
 	/**
 	 * Abstract method which converts the current state of the decision vector into
 	 * a Constellation. Its implementation depends of the Use Case.

@@ -1,28 +1,10 @@
 package zone;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
-import org.hipparchus.ode.events.Action;
-import org.orekit.bodies.BodyShape;
 import org.orekit.bodies.GeodeticPoint;
-import org.orekit.bodies.OneAxisEllipsoid;
-import org.orekit.propagation.Propagator;
-import org.orekit.propagation.SpacecraftState;
-import org.orekit.propagation.events.ElevationDetector;
-import org.orekit.propagation.events.EventDetector;
-import org.orekit.propagation.events.EventsLogger;
-import org.orekit.propagation.events.handlers.EventHandler;
-import org.orekit.time.AbsoluteDate;
-import org.orekit.utils.IERSConventions;
-
 import utils.Parameters;
 
-import org.orekit.frames.FramesFactory;
-import org.orekit.frames.TopocentricFrame;
-
-import java.lang.Math;
 
 // TODO : write unit tests
 
@@ -66,30 +48,7 @@ public class Zone {
 	 * For example, list of the points which map France.
 	 */
 	private ArrayList<GeodeticPoint> listMeshingPoints;// = new ArrayList<GeodeticPoint>();
-	
-	
-	/**
-	 * HashMap which contains all the dates at which a geodetic point is beginning to be seen
-	 * by the satellite. It corresponds to the moment at which the geodetic point enters into
-	 * the field of view of the satellite.
-	 * This can be used to computes data such as the revisit time, etc.
-	 */
-	private HashMap<GeodeticPoint, ArrayList<AbsoluteDate>> listBegVisibilitiesMesh;// = new HashMap<GeodeticPoint, ArrayList<AbsoluteDate>>();
-	
-	/**
-	 * HashMap which contains all the dates at which a geodetic point is not seen anymore
-	 * by the satellite. It corresponds to the moment at which the geodetic point goes out of
-	 * the field of view of the satellite.
-	 * This will be used to computes data such as the revisit time, etc.
-	 */
-	private HashMap<GeodeticPoint, ArrayList<AbsoluteDate>> listEndVisibilitiesMesh;// = new HashMap<GeodeticPoint, ArrayList<AbsoluteDate>>();
 
-
-	/**
-	 * We need an event logger in order to retrieve all the events which will occur
-	 */
-	private EventsLogger logger;// = new EventsLogger();
-	
 	/**
 	 * The resolution of the standard mesh.
 	 * The unit is the radian. 
@@ -121,9 +80,6 @@ public class Zone {
 			System.out.println("The meshing style " + meshingStyle +
 					           " which has been given as input does not exist.");
 		}
-		this.listBegVisibilitiesMesh = new HashMap<GeodeticPoint, ArrayList<AbsoluteDate>>();
-		this.listEndVisibilitiesMesh = new HashMap<GeodeticPoint, ArrayList<AbsoluteDate>>();
-		this.logger = new EventsLogger();
 	}
  
 	
@@ -214,134 +170,6 @@ public class Zone {
 	}
 	
 	
-	/**
-	 * This method creates all the events for eachpoint of the meshing.
-	 * The events are "ElevationDetector" events.
-	 * This method has to be called before propagating the orbit.
-	 * 
-	 * @param propagator the propagator used
-	 * 
-	 * @param elevation in radian
-	 * 					it is the elevation at which the point begins to be visible
-	 * 					(90° - elevation) corresponds approximately to the half extent of the FOV of the satellite if it is not agile
-	 */
-	public void createEventsDetector(Propagator propagator, EventsLogger logger, double elevation) {
-		
-		org.orekit.frames.Frame earthFrame = FramesFactory.getITRF(Parameters.projectIERSConventions, true);
-		BodyShape earth = new OneAxisEllipsoid(Parameters.projectEarthEquatorialRadius,
-											   Parameters.projectEarthFlattening,
-		                                       earthFrame);
-		
-		// TODO : find the meaning of these parameters
-		double maxcheck  = 60.0;
-		double threshold =  0.001;
-		
-		// we go through all the points of the meshing and add them as events to be detected
-		for (int point_index = 0; point_index < listMeshingPoints.size(); point_index++) {
-			
-			GeodeticPoint mesh_point = listMeshingPoints.get(point_index);
-
-			TopocentricFrame staFrame = new TopocentricFrame(earth, mesh_point, "mesh_point_" + point_index);
-			
-			EventDetector staVisi =
-			  new ElevationDetector(maxcheck, threshold, staFrame).
-			  withConstantElevation(elevation).
-			  withHandler(new VisibilityHandler());
-			// TODO : the visibility handler is only there to display informations but has no utility
-			
-			
-			// when we add an event detector, we monitor it to be able to retrieve it
-			propagator.addEventDetector(logger.monitorDetector(staVisi));
-		}
-		
-	}
-	//adaptative maxcheck
-	/**
-	 * WARNING for now, the orbit is assumed circular, thus the altitude of the satellite is assumed constant
-	 * 
-	 * This method creates all the events for eachpoint of the meshing.
-	 * The events are "ElevationDetector" events.
-	 * This method has to be called before propagating the orbit.
-	 * 
-	 * @param propagator the propagator used
-	 * 
-	 * @param halfFOV in radian
-	 * 					half FOV of the satellite
-	 * 
-	 * @param a : satellite to center of the Earth distance 
-	 */
-	public void createEventsDetectorSatellite(Propagator propagator, EventsLogger logger, double halfFOV, double a) {
-		
-		org.orekit.frames.Frame earthFrame = FramesFactory.getITRF(Parameters.projectIERSConventions, true);
-		BodyShape earth = new OneAxisEllipsoid(Parameters.projectEarthEquatorialRadius,
-											   Parameters.projectEarthFlattening,
-		                                       earthFrame);
-		
-		// angle between the direction from the center of the Earth to the mesh point and the direction from the center of the Earth to the satellite 
-		double alpha = -halfFOV + Math.asin(a/Parameters.projectEarthEquatorialRadius * Math.sin(halfFOV));
-		
-		// elevation at which the point begins to be visible
-		double elevation = Math.PI/2 - (halfFOV + alpha);
-
-				
-		// time window when the satellite is seen by the station (assuming the orbit is passing over the station)
-		double visibilityWindow = (alpha/Math.PI)*2*Math.PI*Math.sqrt(Math.pow(a, 3)/Parameters.projectEarthMu);
-		
-		// adaptative maxcheck : increases with altitude >> the higher the maxcheck, the faster the algorithm (the higher the probability of missing a satellite pass)
-		double maxcheck  = visibilityWindow/3; // the division factor to tune the frequency at which each detector checks if a satellite is passing over the mesh point
-		//double maxcheck  = 60;
-		
-		double threshold =  0.01;// accuracy of 0.01 s
-		
-		// we go through all the points of the meshing and add them as events to be detected
-		for (int point_index = 0; point_index < listMeshingPoints.size(); point_index++) {
-			
-			GeodeticPoint mesh_point = listMeshingPoints.get(point_index);
-
-			TopocentricFrame staFrame = new TopocentricFrame(earth, mesh_point, "mesh_point_" + point_index);
-			
-			EventDetector staVisi =
-			  new ElevationDetector(maxcheck, threshold, staFrame).
-			  withConstantElevation(elevation).
-			  withHandler(new VisibilityHandler());
-			// TODO : the visibility handler is only there to display informations but has no utility
-			
-			
-			// when we add an event detector, we monitor it to be able to retrieve it
-			propagator.addEventDetector(logger.monitorDetector(staVisi));
-		}
-		
-	}
-	
-	
-	/**
-	 * This method reads what has been stored during the propagation in the list of
-	 * logged events. It fills the hashmaps listBegVisibilitiesMesh and
-	 * listEndVisibilitiesMesh with the time of revisit of each point of the
-	 * meshing.
-	 */
-	public void fillListRevisitTimeMeshFromLog() {
-
-		List<EventsLogger.LoggedEvent> listEvents = logger.getLoggedEvents();
-		
-		for (EventsLogger.LoggedEvent event : listEvents) {
-
-			ElevationDetector elevationDetector = (ElevationDetector) event.getEventDetector();
-			SpacecraftState spacecraftState = event.getState();
-			
-			GeodeticPoint mesh_point = elevationDetector.getTopocentricFrame().getPoint();
-			AbsoluteDate date = spacecraftState.getDate();
-			
-			// the method isIncreasing returns a boolean which states
-			// whether the satellite is entering or exiting the elevation zone
-			if (event.isIncreasing()) {
-				addPointAndDateListBegVisibilitiesMesh(mesh_point, date);
-			}
-			else {
-				addPointAndDateListEndVisibilitiesMesh(mesh_point, date);
-			}
-		}
-	}
 	
 	
 	
@@ -370,44 +198,6 @@ public class Zone {
 	public void addPointListMeshingPoints(GeodeticPoint pointToAdd) {
 		this.listMeshingPoints.add(pointToAdd);
 	}
-	
-
-	public HashMap<GeodeticPoint, ArrayList<AbsoluteDate>> getListBegVisibilitiesMesh() {
-		return listBegVisibilitiesMesh;
-	}
-
-	public void setListBegVisibilitiesMesh(HashMap<GeodeticPoint, ArrayList<AbsoluteDate>> listBegVisibilitiesMesh) {
-		this.listBegVisibilitiesMesh = listBegVisibilitiesMesh;
-	}
-
-	public void addPointAndDateListBegVisibilitiesMesh(GeodeticPoint pointToAdd, AbsoluteDate dateToAdd) {
-		this.listBegVisibilitiesMesh.putIfAbsent(pointToAdd, new ArrayList<AbsoluteDate>());
-		this.listBegVisibilitiesMesh.get(pointToAdd).add(dateToAdd);
-	}
-	
-	public HashMap<GeodeticPoint, ArrayList<AbsoluteDate>> getListEndVisibilitiesMesh() {
-		return listEndVisibilitiesMesh;
-	}
-
-	public void setListEndVisibilitiesMesh(HashMap<GeodeticPoint, ArrayList<AbsoluteDate>> listEndVisibilitiesMesh) {
-		this.listEndVisibilitiesMesh = listEndVisibilitiesMesh;
-	}
-
-	public void addPointAndDateListEndVisibilitiesMesh(GeodeticPoint pointToAdd, AbsoluteDate dateToAdd) {
-		this.listEndVisibilitiesMesh.putIfAbsent(pointToAdd, new ArrayList<AbsoluteDate>());
-		this.listEndVisibilitiesMesh.get(pointToAdd).add(dateToAdd);
-	}
-	
-
-	public EventsLogger getLogger() {
-		return logger;
-	}
-
-	public void setLogger(EventsLogger logger) {
-		this.logger = logger;
-	}
-
-
 
 	public double getStandardMeshResolution() {
 		return standardMeshResolution;
@@ -421,32 +211,4 @@ public class Zone {
 
 	
 	
-}
-
-/**
- * That class is here to display when an event is detected.
- *
- */
-class VisibilityHandler implements EventHandler<ElevationDetector> {
-
-    public Action eventOccurred(final SpacecraftState s, final ElevationDetector detector,
-                                final boolean increasing) {
-        if (increasing) {
-            System.out.println(" Visibility on " + detector.getTopocentricFrame().getName()
-                                                 + " begins at " + s.getDate());
-            return Action.CONTINUE;
-        } else {
-            System.out.println(" Visibility on " + detector.getTopocentricFrame().getName()
-                                                 + " ends at " + s.getDate());
-            // we need to continue the simulation once a point is seen because we may have other points
-            // or may want to calculate the revisit time
-            return Action.CONTINUE;
-            }
-         
-    }
-
-    public SpacecraftState resetState(final ElevationDetector detector, final SpacecraftState oldState) {
-        return oldState;
-    }
-
 }

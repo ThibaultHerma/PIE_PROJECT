@@ -97,11 +97,14 @@ public class DecisionVector1 extends DecisionVector {
 		// read the anomaly and add each satellite to the constellation
 		for (Double i = 0.0; i < nbSat; i++) {
 			String nameAnomaly = "anomaly" + Double.toString(i);
+
 			Double anomaly = (Double) values.get(getIndex(nameAnomaly));
 
 			constellation.addSatellite(a, eccentricity, inclination, rightAscendingNode, periapsisArgument, anomaly,
 					t0);
 		}
+		
+		System.out.println( "Current individual: " +constellation);
 
 		return constellation;
 	}

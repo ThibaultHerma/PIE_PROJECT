@@ -1,5 +1,8 @@
 package utils;
 
+import org.orekit.bodies.BodyShape;
+import org.orekit.bodies.OneAxisEllipsoid;
+import org.orekit.frames.FramesFactory;
 import org.orekit.time.AbsoluteDate;
 import org.orekit.utils.IERSConventions;
 
@@ -38,6 +41,18 @@ public class Parameters {
 	 * The Earth mu which should be used in all the project.
 	 */
 	public static final  double projectEarthMu = org.orekit.utils.Constants.WGS84_EARTH_MU; 
+
+	
+	/**
+	 * The Earth ITRF frame which should be used in all the project.
+	 */
+	public static final org.orekit.frames.Frame earthFrame = FramesFactory.getITRF(projectIERSConventions, true);
+	
+	/**
+	 * The Earth body shape frame which should be used in all the project.
+	 */
+	public static final BodyShape earth = new OneAxisEllipsoid(projectEarthEquatorialRadius, projectEarthFlattening, earthFrame);
+
     
 	/**
 	 * The start time of the simulation. By default, the constructor set the date 
@@ -84,7 +99,7 @@ public class Parameters {
 	 * The use case chosen. WARNING : The use case nb is here temporarily for convenient reasons.
 	 * It will be in the arguments of the main in the releases.
 	 */
-	public static final int useCaseNb=0;
+	public static final int useCaseNb=1;
 	
 	
 	/**

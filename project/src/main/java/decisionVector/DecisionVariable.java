@@ -76,7 +76,7 @@ public class DecisionVariable<T> {
 			this.value = (T) randomValue;
 		}
 
-		System.out.println("Decision variable " + this.name + " initialized randomly with value: " + this.value);
+		//System.out.println("Decision variable " + this.name + " initialized randomly with value: " + this.value);
 	}
 
 	/**
@@ -147,6 +147,11 @@ public class DecisionVariable<T> {
 	 */
 	public String getName() {
 		return this.name;
+	}
+	
+	public String toString() {
+		String formatName=String.format("%1$20s", this.name);
+		return(" "+formatName+" : ( min: "+this.minValue+", max: "+this.maxValue+", val: "+this.value+" )");
 	}
 
 }
