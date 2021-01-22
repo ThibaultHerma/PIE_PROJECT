@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+import org.hipparchus.geometry.euclidean.threed.Vector3D;
 import org.hipparchus.ode.events.Action;
 import org.orekit.bodies.BodyShape;
 import org.orekit.bodies.GeodeticPoint;
 import org.orekit.bodies.OneAxisEllipsoid;
+import org.orekit.frames.Frame;
 import org.orekit.frames.FramesFactory;
 import org.orekit.frames.TopocentricFrame;
 import org.orekit.propagation.Propagator;
@@ -18,6 +20,8 @@ import org.orekit.propagation.events.EventDetector;
 import org.orekit.propagation.events.EventsLogger;
 import org.orekit.propagation.events.handlers.EventHandler;
 import org.orekit.time.AbsoluteDate;
+import org.orekit.utils.PVCoordinates;
+import org.orekit.utils.PVCoordinatesProvider;
 
 import utils.Parameters;
 
@@ -109,6 +113,8 @@ public class Simulation {
 	 */
 	private HashMap<EventDetector, GeodeticPoint> eventDetPoint = new HashMap<EventDetector, GeodeticPoint>();
 
+
+	
 	/**
 	 * Default constructor Instantiates the simulation of a constellation.
 	 * 
@@ -298,7 +304,7 @@ public class Simulation {
 			EventsLogger logger = new EventsLogger();
 
 			// Definition of the propagator of the satellite trajectory
-			KeplerianPropagator propagator = new KeplerianPropagator(sat.getInitialOrbit());
+			KeplerianPropagator propagator = sat.getPropagator();
 
 			// Addition of all event detectors : adaptative maxcheck version
 			createEventsDetectorSatellite(propagator, logger, Parameters.halfFOV, sat.getA());
@@ -443,7 +449,7 @@ public class Simulation {
 		}
 
 		return maxRevisit;
-	}
+	}	
 }
 
 /**
