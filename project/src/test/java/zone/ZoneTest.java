@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
 import org.orekit.bodies.GeodeticPoint;
 
+import utils.Parameters;
+
 class ZoneTest {
 
 	@Test
@@ -15,8 +17,8 @@ class ZoneTest {
 	 */
 	void testComputeLatLonStandardMeshing() {
 
-		double earthRadius = org.orekit.utils.Constants.WGS84_EARTH_EQUATORIAL_RADIUS;
-		double standardMeshResolution = 20000 / earthRadius;
+		double earthRadius = Parameters.projectEarthEquatorialRadius;
+		double standardMeshResolution = Parameters.standardMeshResolution;
 		double latMin = 0;
 		double lonMin = 0;
 

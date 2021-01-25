@@ -212,7 +212,6 @@ public abstract class UseCase {
 			useCase.loadParams(Parameters.inputPath + "Demo.json");
 		} else if (useCaseNb == 1) {
 			useCase = new UseCase1();
-			// TODO create the JSON for use case 1
 			useCase.loadParams(Parameters.inputPath + "1.json");
 		} else {
 			throw new Exception("\"The use case specified (" + useCaseNb + ") doesn't exist");
