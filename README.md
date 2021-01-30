@@ -18,6 +18,42 @@
 
 
 ## Getting Started
+
+### Requirements :computer:
+* Java-SE11 (or above) installed on your computer.
+* [node.js](http://nodejs.org/)
+
+### Launch the application :telescope:
+1) Clone the repository.
+   
+2) On eclipse, go in the menu : file>import and in the popup window, select
+   "import existing maven project". Then choose the path of the "project" folder.
+
+3) On the package explorer panel, right click on PIE and then choose MAVEN>update project
+   to build the project.
+   
+4) Run the program UseCase in useCase package. You can change the use case  number in the file Parameters in 
+the package utils. You can load your own JSON input file in the input folder.
+
+
+### Launch  the HMI :earth_americas:
+* Install [node.js](http://nodejs.org/) from the official website.
+* From the `HMI` root directory, run
+```
+npm install
+npm start
+```
+
+or 
+```
+node server.js
+```
+
+  
+
+* Browse to `http://localhost:8080/`
+
+## Contribution guide
 ### If you work on the repository for the first time:
 Go on github:
 1)  Fork the repository 
