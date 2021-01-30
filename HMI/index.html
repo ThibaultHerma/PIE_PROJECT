@@ -1,39 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <!-- Use correct character set. -->
-        <meta charset="utf-8">
-        <!-- Tell IE to use the latest, best version. -->
-        <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-        <!-- Make the app on mobile take up the full browser screen and disable user scaling. -->
-        <meta name="viewport"
-            content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
-        <title>HMI PIE</title>
-        <!-- The Cesium library. -->
-        <script src="https://cesium.com/downloads/cesiumjs/releases/1.77/Build/Cesium/Cesium.js"></script>
-        <link href="https://cesium.com/downloads/cesiumjs/releases/1.77/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
-        <!-- Style our app. -->
-        <link rel="stylesheet" href="index.css" media="screen">
-    </head>
-    <body>
+<head>
+    <!-- Use correct character set. -->
+    <meta charset="utf-8">
+    <!-- Tell IE to use the latest, best version. -->
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <!-- Make the app on mobile take up the full browser screen and disable user scaling. -->
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <title>HMI PIE</title>
+    <!-- The Cesium library. -->
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.77/Build/Cesium/Cesium.js"></script>
+    <link href="https://cesium.com/downloads/cesiumjs/releases/1.77/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+    <!-- Style our app. -->
+    <link rel="stylesheet" href="index.css" media="screen">
+</head>
+<body>
 
 
-        <!-- A container for the Cesium Viewer to live in. -->
-        <div id="cesiumContainer"></div>
+<!-- A container for the Cesium Viewer to live in. -->
+<div id="cesiumContainer"></div>
 
-        <!-- Some input elements for our app. -->
-        <div class="backdrop" id="menu">
-            <center><img  src="content/logo.png" width="100"></center>
-            <h2>PIE CONSTELLATION</h2>
+<!-- Some input elements for our app. -->
+<div class="backdrop" id="menu">
+    <center><img src="content/logo.png" width="100"></center>
+    <h2>PIE CONSTELLATION</h2>
 
 
-        </div>
-        <div id="loadingIndicator" class="cover">
-            <div id="loadingIcon" class="loadingIndicator"></div>
-        </div>
+</div>
 
-        <!-- Our app code. -->
-        <script src="FrontEnd/App.js"></script>
 
-    </body>
+<div id="testPopup" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <p> FrontEnd successfully received connection test</p>
+    </div>
+</div>
+
+
+<div id="loadingIndicator" class="cover">
+    <div id="loadingIcon" class="loadingIndicator"></div>
+</div>
+
+<!-- Our app code. -->
+
+<script src="FrontEnd/Popup.js"></script>
+<script src="FrontEnd/App.js"></script>
+
+</body>
 </html>

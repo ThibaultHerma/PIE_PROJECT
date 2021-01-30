@@ -1,11 +1,23 @@
 /*eslint-env node*/
-(function() {
+/**
+ * MAIN BACKEND FUNCTION
+ * This function creates the server and bind it to the app.
+ * It creates all communication protocol (web socket and UDP)
+ * It is used as a relay between the front end and the java app.
+ * --> Whenever a message is received on the websocket from the frontEnd,
+ * it forwards it to the server java app through UDP protocol on the  JAVA_PORT
+ * --> Whenever a message is received on the JAVA_PORT , it forwards it to the frontend via
+ * the websocket.
+ * @author: Theo Nguyen
+ */
+(function () {
     'use strict';
 
     //////////////////////////////////////////////////////////////////////////
     //Load useful modules
     //////////////////////////////////////////////////////////////////////////
     const serverServices = require('./utils/serverServices');
+    const config = require('./utils/config');
     var express = require('express');
     var compression = require('compression');
     var url = require('url');
@@ -16,24 +28,24 @@
     //Launch configuration
     //////////////////////////////////////////////////////////////////////////
     var yargs = require('yargs').options({
-        'port' : {
-            'default' : 8080,
-            'description' : 'Port to listen on.'
+        'port': {
+            'default': config.WS_PORT,
+            'description': 'Port to listen on.'
         },
-        'public' : {
-            'type' : 'boolean',
-            'description' : 'Run a public server that listens on all interfaces.'
+        'public': {
+            'type': 'boolean',
+            'description': 'Run a public server that listens on all interfaces.'
         },
-        'upstream-proxy' : {
-            'description' : 'A standard proxy server that will be used to retrieve data.  Specify a URL including port, e.g. "http://proxy:8000".'
+        'upstream-proxy': {
+            'description': 'A standard proxy server that will be used to retrieve data.  Specify a URL including port, e.g. "http://proxy:8000".'
         },
-        'bypass-upstream-proxy-hosts' : {
-            'description' : 'A comma separated list of hosts that will bypass the specified upstream_proxy, e.g. "lanhost1,lanhost2"'
+        'bypass-upstream-proxy-hosts': {
+            'description': 'A comma separated list of hosts that will bypass the specified upstream_proxy, e.g. "lanhost1,lanhost2"'
         },
-        'help' : {
-            'alias' : 'h',
-            'type' : 'boolean',
-            'description' : 'Show this help.'
+        'help': {
+            'alias': 'h',
+            'type': 'boolean',
+            'description': 'Show this help.'
         }
     });
 
@@ -48,12 +60,12 @@
     // *NOTE* Any changes you make here must be mirrored in web.config.
     var mime = express.static.mime;
     mime.define({
-        'application/json' : ['czml', 'json', 'geojson', 'topojson'],
-        'image/crn' : ['crn'],
-        'image/ktx' : ['ktx'],
-        'model/gltf+json' : ['gltf'],
-        'model/gltf.binary' : ['bgltf', 'glb'],
-        'text/plain' : ['glsl']
+        'application/json': ['czml', 'json', 'geojson', 'topojson'],
+        'image/crn': ['crn'],
+        'image/ktx': ['ktx'],
+        'model/gltf+json': ['gltf'],
+        'model/gltf.binary': ['bgltf', 'glb'],
+        'text/plain': ['glsl']
     });
 
     //////////////////////////////////////////////////////////////////////////
@@ -62,7 +74,7 @@
 
     var app = express();
     app.use(compression());
-    app.use(function(req, res, next) {
+    app.use(function (req, res, next) {
         res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
         next();
@@ -88,7 +100,9 @@
     function filterHeaders(req, headers) {
         var result = {};
         // filter out headers that are listed in the regex above
-        Object.keys(headers).forEach(function(name) {
+
+        Object.keys(headers).forEach(function (name) {
+
             if (!dontProxyHeaderRegex.test(name)) {
                 result[name] = headers[name];
             }
@@ -99,12 +113,16 @@
     var upstreamProxy = argv['upstream-proxy'];
     var bypassUpstreamProxyHosts = {};
     if (argv['bypass-upstream-proxy-hosts']) {
-        argv['bypass-upstream-proxy-hosts'].split(',').forEach(function(host) {
+
+        argv['bypass-upstream-proxy-hosts'].split(',').forEach(function (host) {
+
             bypassUpstreamProxyHosts[host.toLowerCase()] = true;
         });
     }
 
-    app.get('/proxy/*', function(req, res, next) {
+
+    app.get('/proxy/*', function (req, res, next) {
+
         // look for request like http://localhost:8080/proxy/http://example.com/file?query=1
         var remoteUrl = getRemoteUrlFromParam(req);
         if (!remoteUrl) {
@@ -131,11 +149,13 @@
         // encoding : null means "body" passed to the callback will be raw bytes
 
         request.get({
-            url : url.format(remoteUrl),
-            headers : filterHeaders(req, req.headers),
-            encoding : null,
-            proxy : proxy
-        }, function(error, response, body) {
+
+            url: url.format(remoteUrl),
+            headers: filterHeaders(req, req.headers),
+            encoding: null,
+            proxy: proxy
+        }, function (error, response, body) {
+
             var code = 500;
 
             if (response) {
@@ -152,7 +172,9 @@
     //////////////////////////////////////////////////////////////////////////
 
     //create the server on the chosen port
-    var server = app.listen(argv.port, argv.public ? undefined : 'localhost', function() {
+
+    var server = app.listen(argv.port, argv.public ? undefined : 'localhost', function () {
+
         if (argv.public) {
             console.log('Cesium development server running publicly.  Connect to http://localhost:%d/', server.address().port);
         } else {
@@ -179,17 +201,20 @@
     });
 
     //close the server
-    server.on('close', function() {
+    server.on('close', function () {
+
         console.log('Cesium development server stopped.');
     });
 
     //force to kill
     var isFirstSig = true;
-    process.on('SIGINT', function() {
+
+    process.on('SIGINT', function () {
         if (isFirstSig) {
             console.log('Cesium development server shutting down.');
-            server.close(function() {
-              process.exit(0);
+            server.close(function () {
+                process.exit(0);
+
             });
             isFirstSig = false;
         } else {
@@ -203,35 +228,63 @@
     //////////////////////////////////////////////////////////////////////////
 
     //UDP port and client to connect to the Java app
-    var PORT_JAVA = '28764';
-    var udpClient = dgram.createSocket('udp4');
-    udpClient.bind(PORT_JAVA);
+
+
+    //client to receive data from java
+    var udpClient_JAVA_TO_JS = dgram.createSocket('udp4');
+    udpClient_JAVA_TO_JS.bind(config.JAVA_TO_JS_PORT);
+
+    // client to send data to java
+    var udpClient_JS_TO_JAVA = dgram.createSocket('udp4');
+    //udpClient_JS_TO_JAVA.bind(config.JS_TO_JAVA);
+
 
     // websocket object to connect to to the frontend
     const wss = serverServices.createWebSocket(server);
 
     // each time the client frontend connects to the WS, this function is called.
-    wss.on('connection', function(ws) {
+
+    wss.on('connection', function (ws) {
         //send a simple response to the connection
-        try{
-            ws.send(JSON.stringify({"type":"firstConnection"}));
-        }catch(e){
+        try {
+            ws.send(JSON.stringify({"request": "firstConnection"}));
+        } catch (e) {
+
             console.log('send first connection failed' + e);
         }
 
         //forward a message  to the front end through the websocket when a message is received from java
-        udpClient.on('message', function(msg, rinfo) {
-            try{
+
+        udpClient_JAVA_TO_JS.on('message', function (msg, rinfo) {
+            try {
 
                 var data = JSON.parse(msg);
                 ws.send(JSON.stringify(data));
-                console.log("message received from java app. Type of the request: "+data.type);
-            }catch(e){
+                console.log("\n\n **** message received from java app.**** \n Type of the request: " + data.request + '\n\n');
+            } catch (e) {
+
                 console.log('//////////--------FAILED TO RECEIVE DATA FROM JAVA APP--------//////////\n' + e);
             }
 
         });
 
+
+        //listening to a message from the frontend and forward it to the java app server
+        ws.on('message', function (msg) {
+            //console.log(msg);
+            var data = JSON.parse(msg);
+            msg = JSON.stringify(data);
+            udpClient_JS_TO_JAVA.send(msg, 0, msg.length, config.JS_TO_JAVA_PORT, config.HOST, function (err, bytes) {
+                if (err) throw err;
+                console.log('UDP message sent to ' + config.HOST + ':' + config.JS_TO_JAVA_PORT);
+                console.log('**** message sent to java app ****\n Type of the request: ' + data.request + '\n\n');
+            });
+
+
+            ws.on('error', function () {
+                ws.close();
+            });
+        })
 
     });
 

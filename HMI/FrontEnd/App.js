@@ -1,3 +1,17 @@
+/**
+ * MAIN APP FUNCTION
+ * This function is executed as a script of the index.html.
+ * -it creates the cesium viewer
+ * -it loads the terrain
+ * -it listens to the websocket and do the following depending of the request
+ *  --> display a test popup when a connection test is triggered
+ *  --> load the constellation  and the zone when there is a start request
+ *  --> update the constellation position when there is a position request
+ *  --> unload the constellation at the end
+ *
+ * @author: PIE CONSTELLATION
+ */
+
 (function () {
     "use strict";
 
@@ -9,10 +23,23 @@
         try {
             var obj = JSON.parse(message.data);
 
-            switch (obj.type) {
+            switch (obj.request) {
+                /**
+                 * print hello world each time the app is connected to the server
+                 */
                 case 'firstConnection':
                     console.log('hello world')
                     break;
+
+                /**
+                 * used for a connection test from the java app. It displays a popup if the test
+                 * is received and send back a success message.
+                 */
+                case 'testConnection':
+                    console.log('test Connection')
+                    toggle_visibility_test_popup();
+                    ws.send(JSON.stringify({"request": "testResult", "result": "success"}))
+
             }
         } catch (err) {
             console.error(err);
@@ -31,7 +58,7 @@
         selectionIndicator: false,
         baseLayerPicker: false,
         timeline: false,
-        animation : false
+        animation: false
     });
 
     viewer._cesiumWidget._creditContainer.style.display = "none";
@@ -44,7 +71,7 @@
     viewer.imageryLayers.remove(viewer.imageryLayers.get(0));
 
     // Add Sentinel-2 imagery
-    viewer.imageryLayers.addImageryProvider(new Cesium.IonImageryProvider({ assetId: 3954 }));
+    viewer.imageryLayers.addImageryProvider(new Cesium.IonImageryProvider({assetId: 3954}));
     //viewer.imageryLayers.addImageryProvider(new Cesium.IonImageryProvider({ assetId: 2 }));
 
     //////////////////////////////////////////////////////////////////////////
@@ -53,8 +80,8 @@
 
     // Load Cesium World Terrain
     viewer.terrainProvider = Cesium.createWorldTerrain({
-        requestWaterMask : true, // required for water effects
-        requestVertexNormals : true // required for terrain lighting
+        requestWaterMask: true, // required for water effects
+        requestVertexNormals: true // required for terrain lighting
     });
     // Enable depth testing so things behind the terrain disappear.
     viewer.scene.globe.depthTestAgainstTerrain = true;
@@ -68,13 +95,13 @@
 
     // Create an initial camera view
     var initialPosition = new Cesium.Cartesian3.fromDegrees(-73.998114468289017509, 40.674512895646692812, 12000000);
-    var initialOrientation = new Cesium.HeadingPitchRoll.fromDegrees(180, 270,180);
+    var initialOrientation = new Cesium.HeadingPitchRoll.fromDegrees(180, 270, 180);
     var homeCameraView = {
-        destination : initialPosition,
-        orientation : {
-            heading : initialOrientation.heading,
-            pitch : initialOrientation.pitch,
-            roll : initialOrientation.roll
+        destination: initialPosition,
+        orientation: {
+            heading: initialOrientation.heading,
+            pitch: initialOrientation.pitch,
+            roll: initialOrientation.roll
         }
     };
     // Set the initial view
@@ -100,9 +127,6 @@
     viewer.clock.clockStep = Cesium.ClockStep.SYSTEM_CLOCK_MULTIPLIER; // tick computation mode
     viewer.clock.clockRange = Cesium.ClockRange.LOOP_STOP; // loop at the end
     viewer.timeline.zoomTo(viewer.clock.startTime, viewer.clock.stopTime); // set visible range*/
-
-
-
 
 
 }());
