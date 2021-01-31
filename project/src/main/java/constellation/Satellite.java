@@ -10,7 +10,11 @@ import org.orekit.utils.PVCoordinates;
 import zone.Zone;
 
 import org.orekit.orbits.PositionAngle;
+import org.orekit.propagation.analytical.KeplerianPropagator;
 import org.orekit.utils.Constants;
+import org.orekit.bodies.BodyShape;
+import org.orekit.bodies.GeodeticPoint;
+import org.orekit.frames.Frame;
 import org.orekit.frames.FramesFactory;
 import org.orekit.time.AbsoluteDate;
 
@@ -47,6 +51,8 @@ public class Satellite {
 	private ArrayList<Vector3D> velocities;
 
 	private KeplerianOrbit keplerian;
+	
+	private KeplerianPropagator propagator;
 
 	/**
 	 * First constructor Input parameters : keplerian parameters and the absolute
@@ -81,6 +87,8 @@ public class Satellite {
 
 		// Orbital period
 		this.T = keplerian.getKeplerianPeriod();
+		
+		this.propagator = new KeplerianPropagator(this.keplerian);
 
 	}
 
@@ -158,6 +166,13 @@ public class Satellite {
 	public AbsoluteDate getT0() {
 		return (t0);
 	}
+	
+	/**
+	 * @return the propagator of the satellite
+	 */
+	public KeplerianPropagator getPropagator() {
+		return this.propagator;
+	}
 
 	public Orbit getInitialOrbit() {
 		return keplerian;
@@ -165,6 +180,35 @@ public class Satellite {
 
 	public boolean isCoveredBySat(Zone zone, AbsoluteDate t) {
 		return true;
+	}
+	
+	
+	/**
+	 * @param date the date at which the position is computed
+	 * @param frame the frame in which the position is computed
+	 * @return the position of the satellite in frame and date given
+	 */
+	public Vector3D getPosition(AbsoluteDate date, Frame frame) {
+		return this.propagator.getPVCoordinates(date, frame).getPosition();
+	}
+	
+	/**
+	 * @param date the date at which the velocity is computed
+	 * @param frame the frame in which the velocity is computed
+	 * @return the velocity of the satellite in frame and date given
+	 */
+	public Vector3D getVelocity(AbsoluteDate date, Frame frame) {
+		return this.propagator.getPVCoordinates(date, frame).getVelocity();
+	}
+	
+	/**
+	 * @param date the date at which the position is computed
+	 * @param frame the frame in which the position is given
+	 * @param earth the body shape considered
+	 * @return the position (geodetic point) of the satellite at date given
+	 */
+	public GeodeticPoint getGeodeticPoint(AbsoluteDate date, Frame frame, BodyShape earth) {
+		return earth.transform(this.getPosition(date, frame), frame, date);
 	}
 
 	/**
