@@ -62,10 +62,13 @@ public class UseCase1 extends UseCase {
 		DecisionVector decisionVector1 = new DecisionVector1(this.variablesList, this.inputPolygon);
 		// decisionVectorDemo.get("nbSat").setValue(2);
 		// decisionVectorDemo.randomInit();
-		
-		
+
 		Optimisation optimisationProblem = new Optimisation(decisionVector1);
-		ArrayList<Object> optimisedValues = optimisationProblem.optimise(decisionVector1);
+
+		int populationSize = 10;
+		int generationNb = 10;
+
+		ArrayList<Object> optimisedValues = optimisationProblem.optimize(decisionVector1, populationSize, generationNb);
 
 		// compute objective function (the objective function is thread safe, therefore
 		// we have to pass the values as an argument of the function
@@ -117,9 +120,9 @@ public class UseCase1 extends UseCase {
 		Integer nbSatMax = (Integer) decVarNbSat.getMax();
 
 		// then we add the new decision variables
-		for (int sat = 0; sat < nbSatMax; sat++) {
-			String newName = decVarAnomaly.getName() + Double.toString(sat);
-			DecisionVariable newDecVarAnomaly = new DecisionVariable(decVarAnomaly.getClass(), newName,
+		for (int sat = 0; sat < (nbSatMax - 1); sat++) {
+			String newName = decVarAnomaly.getName() + Integer.toString(sat);
+			DecisionVariable newDecVarAnomaly = new DecisionVariable(decVarAnomaly.getType(), newName,
 					decVarAnomaly.getMin(), decVarAnomaly.getMax());
 			this.variablesList.add(newDecVarAnomaly);
 		}

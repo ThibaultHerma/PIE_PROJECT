@@ -1,7 +1,22 @@
 package optimisation;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
+
+import javax.swing.JFrame;
+import javax.swing.WindowConstants;
+import javax.swing.JFrame.*;
+import org.jfree.chart.ChartUtils;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import decisionVector.DecisionVariable;
 import decisionVector.DecisionVector;
@@ -17,6 +32,8 @@ import io.jenetics.engine.EvolutionStatistics;
 import io.jenetics.stat.DoubleMomentStatistics;
 import io.jenetics.util.ISeq;
 import io.jenetics.util.Seq;
+import time.Time;
+import utils.Plot;
 
 /**
  * Optimisation class. At the moment, it is only suitable for the demo case.
@@ -25,10 +42,19 @@ import io.jenetics.util.Seq;
  *
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class Optimisation {
+public class Optimisation  {
 
+	/** genotype of an individual */
 	private final Genotype CODE;
+
+	/** decision vector from which the genotype is created */
 	private static DecisionVector decisionVector;
+
+	/**
+	 * storage HashMap with the fitness values of the best individual by generation.
+	 * NB: the type is a concurrent HashMap to ensure threadSafety
+	 */
+	private static ConcurrentHashMap<Integer, Double> fitnessValues;
 
 	// Additional parameters can be added on how to perform the simulation
 
@@ -41,12 +67,13 @@ public class Optimisation {
 	public Optimisation(DecisionVector decisionVector) {
 
 		Optimisation.decisionVector = decisionVector;
-
+		Optimisation.fitnessValues = new ConcurrentHashMap<Integer, Double>();
 		/*
 		 * A list of chromosomes is created depending on their type, in the order given
 		 * by the input file. They are all cast as Chromosome to allow the creation of a
 		 * multi-type genotype. All chromosome sizes are set to 1.
 		 */
+
 		final var listChromosomes0 = new ArrayList();
 
 		for (int i = 0; i < decisionVector.size(); i++) {
@@ -57,7 +84,9 @@ public class Optimisation {
 						(Double) currentVariable.getMax(), 1));
 			} else if (currentVariable.isInteger()) {
 				listChromosomes0.add((Chromosome) IntegerChromosome.of((Integer) currentVariable.getMin(),
-						(Integer) currentVariable.getMax(), 1));
+						(Integer) currentVariable.getMax() - 1, 1));
+				// we subtract 1 as the maximum value has to be excluded from the possible
+				// values
 			} else {
 				// Provisoire pour gérer les null du usecase1
 				listChromosomes0.add((Chromosome) DoubleChromosome.of((Double) currentVariable.getMin(),
@@ -65,8 +94,9 @@ public class Optimisation {
 				// TO DO: return an error if no other type allowed
 			}
 		}
-		
+
 		this.CODE = Genotype.of(listChromosomes0);
+
 	}
 
 	/**
@@ -76,18 +106,19 @@ public class Optimisation {
 	 * @return optimisedValues: ArrayList<Object> Values for the optimal
 	 *         constellation
 	 */
-	public ArrayList<Object> optimise(DecisionVector decisionVector) {
+
+	public ArrayList<Object> optimize(DecisionVector decisionVector, int populationSize, int generationNb) {
 
 		System.out.println("\n \n *********** BEGINING OPTIMIZATION ***********");
 
-		final Engine engine = Engine.builder(Optimisation::fitness, this.CODE).optimize(Optimize.MINIMUM)
-				.populationSize(3) // Small value for tests
-				.build();
-
 		final EvolutionStatistics<Double, DoubleMomentStatistics> statistics = EvolutionStatistics.ofNumber();
 
-		final Phenotype bestConstellation = (Phenotype) engine.stream().limit(3) // Small value for tests
-				.peek(statistics).collect(EvolutionResult.toBestPhenotype());
+		final Engine engine = Engine.builder(Optimisation::fitness, this.CODE).optimize(Optimize.MINIMUM)
+				.populationSize(populationSize) // Small value for tests
+				.build();
+
+		final Phenotype bestConstellation = (Phenotype) engine.stream().limit(generationNb) // Small value for tests
+				.peek(r -> saveGeneration(r)).peek(statistics).collect(EvolutionResult.toBestPhenotype());
 
 		// Best constellation found
 		System.out.println(bestConstellation);
@@ -98,12 +129,11 @@ public class Optimisation {
 			if (decisionVector.get(i).isDouble()) {
 				DoubleChromosome dc = (DoubleChromosome) bestConstellation.genotype().get(i);
 				optimisedValues.add((Double) dc.doubleValue());
-			}
-			else if (decisionVector.get(i).isInteger()) {
+			} else if (decisionVector.get(i).isInteger()) {
 				IntegerChromosome ic = (IntegerChromosome) bestConstellation.genotype().get(i);
 				optimisedValues.add((Integer) ic.intValue());
 			}
-			// Provisoire pour gérer les null du usecase1
+			// Provisoire pour gerer les null du usecase1
 			else {
 				DoubleChromosome dc = (DoubleChromosome) bestConstellation.genotype().get(i);
 				optimisedValues.add((Double) dc.doubleValue());
@@ -111,9 +141,50 @@ public class Optimisation {
 		}
 
 		System.out.println("\n*********** END OF OPTIMIZATION ***********\n\n");
-		System.out.println(statistics);
+		System.out.println(statistics + "\n");
+		System.out.println("Fitness across generation:" + fitnessValues);
+
+		// Plot of the Cost Function
+
+		Plot plot=new Plot(fitnessValues,"Evolution of Revisit Time for " + Integer.toString(populationSize) + " individuals and "
+						+ Integer.toString(generationNb) + " generations",
+				"Iteration", "Cost Function");
+		// Create chart
+		
+		
+
+		// empty the list of fitness values in case of a second optimization following
+		fitnessValues = new ConcurrentHashMap<Integer, Double>();
 
 		return optimisedValues;
+	}
+
+	/**
+	 * Method called at each generation to save the fitness of the best individual
+	 * in the dictionary fitnessValues
+	 * 
+	 * @param rawEvolutionResult:Object the evolution result extracted from the
+	 *                                  engine at each generation.
+	 */
+	private static void saveGeneration(Object rawEvolutionResult) {
+
+		EvolutionResult evolutionResult = (EvolutionResult) rawEvolutionResult;
+		Phenotype bestPhenotype = evolutionResult.bestPhenotype();
+
+		int generationIdx = (int) evolutionResult.totalGenerations();// index of the current generation
+		double bestFitness = (double) bestPhenotype.fitness(); // fitness of the best individual of the current
+																// generation
+
+		// put the best fitness in the storage
+		fitnessValues.put(generationIdx, bestFitness);
+
+		System.out.println(
+				"\n\n------------------------------------- GENERATION " + generationIdx + " ------------------------");
+		System.out.println("BEST INDIVIDUAL: " + bestPhenotype);
+		System.out.println("BEST FITNESS: " + bestFitness);
+		Time.printTime(bestFitness);
+		System.out.println("-----------------------------------------------------------------------------\n\n");
+
 	}
 
 	/**
@@ -138,8 +209,7 @@ public class Optimisation {
 			if (decisionVector.get(i).isDouble()) {
 				DoubleChromosome doubleChr = (DoubleChromosome) currentGenotype.get(i);
 				listValues.add((Double) doubleChr.doubleValue());
-			}
-			else if (decisionVector.get(i).isInteger()) {
+			} else if (decisionVector.get(i).isInteger()) {
 				IntegerChromosome intChr = (IntegerChromosome) currentGenotype.get(i);
 				listValues.add((Integer) intChr.intValue());
 			}
@@ -152,7 +222,10 @@ public class Optimisation {
 		System.out.print("EVALUATION OF THE GENOTYPE :" + listValues + "\n");
 
 		double cost = decisionVector.costFunction(listValues);
+
 		System.out.print("cost: " + cost + "\n");
+		Time.printTime(cost);
+
 		return cost;
 	}
 
@@ -175,4 +248,5 @@ public class Optimisation {
 		return decisionVector;
 	}
 
+	
 }

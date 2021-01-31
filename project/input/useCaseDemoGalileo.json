@@ -1,6 +1,6 @@
 
-    {   "useCaseId":0,
-        "useCaseDescription":"Demo of the simulation : a constellation is initialized randomly",
+    {   "useCaseId":-1,
+        "useCaseDescription":"Demo of the simulation : a Galileo like satellite, without optimization (only simulation)",
 
         "optimisationParameters": {
             "algoName": "genetic",
@@ -13,39 +13,39 @@
         "decisionVariables":{
 
             "nbSat":{
-                "min":1,
-                "max":6,
+                "min":1.0,
+                "max":2.0,
                 "type":"Integer"
             },
             "a":{
-                "min":6800000,
-                "max":10000000,
+                "min":29622000,
+                "max":29622001,
                 "type":"Double"
 
             },
              "eccentricity":{
                 "min":0.0,
-                "max":0.5,
+                "max":0.01,
                 "type":"Double"
 
             },
             "inclination":{
-                "min":0.0,
-                "max":3.1415926,
+                "min":0.9774,
+                "max":0.97741,
                 "type":"Double"
 
             },
            
             "rightAscendingNode":{
                 "min":0.0,
-                "max":6.2831853,
+                "max":0.01,
                 "type":"Double"
 
             },
 
             "periapsisArgument":{
                 "min":0.0,
-                "max":6.2831853,
+                "max":0.01,
                 "type":"Double"
             }
         },
@@ -55,12 +55,12 @@
         	"inputPolygon":[
         	
             	{"lat":-0.005,
-            	"lon":0,
+            	"lon":44,
             	"alt":143 }
             ,
            
             	{"lat":0.005,
-            	"lon":0.005,
+            	"lon":44.005,
             	"alt":144 }
             
             ]

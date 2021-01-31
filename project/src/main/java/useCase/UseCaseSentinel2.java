@@ -3,8 +3,9 @@ package useCase;
 import java.util.ArrayList;
 
 import constellation.Constellation;
+import decisionVector.DecisionVector;
+import decisionVector.DecisionVector1;
 import decisionVector.DecisionVectorDemo;
-import optimisation.Optimisation;
 
 /**
  * 
@@ -37,8 +38,7 @@ import optimisation.Optimisation;
  */
 //TODO create the test
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
-public class UseCaseDemo extends UseCase {
+public class UseCaseSentinel2 extends UseCase {
 	/**
 	 * Instantiate randomly a decision vector and compute the cost function for a
 	 * demonstration of the simulation
@@ -50,27 +50,22 @@ public class UseCaseDemo extends UseCase {
 
 		/** initialize randomly the demo decision vector */
 		System.out.println("\n---- INITIALIZE DECISION VECTOR -----");
-		DecisionVectorDemo decisionVectorDemo = new DecisionVectorDemo(this.variablesList, this.inputPolygon);
+		DecisionVector decisionVectorS2 = new DecisionVectorDemo(this.variablesList, this.inputPolygon);
 		// decisionVectorDemo.get("nbSat").setValue(2);
 		// decisionVectorDemo.randomInit();
 
 		// compute the Objective Function from a sentinel constellation
 		System.out.println("\n---- COMPUTE OBJECTIVE FUNCTION -----");
+		// get the values of the decision vector
 
-		int populationSize = 50;
-		int generationNb = 15;
-		Optimisation optimisationProblem = new Optimisation(decisionVectorDemo);
-		ArrayList<Object> optimisedValues = optimisationProblem.optimize(decisionVectorDemo, populationSize,
-
-				generationNb);
-
+		ArrayList<Object> values = decisionVectorS2.getValues();
 		// compute objective function (the objective function is thread safe, therefore
-		// we have to pass the values as an argument of the function
-		System.out.println("Max revisit time: " + decisionVectorDemo.costFunction(optimisedValues));
+		// we have
+		// to pass the values as an argument of the function
+		System.out.println("Max revisit time: " + decisionVectorS2.costFunction(values));
 
 		// get and return the constellation from the decision vector
-		return (decisionVectorDemo.createConstellationFromVector(optimisedValues));
+		return (decisionVectorS2.createConstellationFromVector(values));
 
 	}
-
 }
