@@ -105,11 +105,11 @@ public class Simulation {
 	 */
 	private HashMap<GeodeticPoint, ArrayList<AbsoluteDate>> listEndVisibilitiesMesh;// = new HashMap<GeodeticPoint,
 																					// ArrayList<AbsoluteDate>>();
-	
+
 	/**
-	 * HashMap which contains all the event detectors (LoggedEvents and EventDetector)
-	 * and their corresponding geodetic point
-	 * This will be used to computes data such as the revisit time, etc.
+	 * HashMap which contains all the event detectors (LoggedEvents and
+	 * EventDetector) and their corresponding geodetic point This will be used to
+	 * computes data such as the revisit time, etc.
 	 */
 	private HashMap<EventDetector, GeodeticPoint> eventDetPoint = new HashMap<EventDetector, GeodeticPoint>();
 
@@ -206,7 +206,6 @@ public class Simulation {
 			if (this.verbose)
 				staVisi = new ElevationDetector(maxcheck, threshold, staFrame).withConstantElevation(elevation)
 						.withHandler(new VisibilityHandlerVerbose());
-			
 
 			// when we add an event detector, we monitor it to be able to retrieve it
 			EventDetector detector = logger.monitorDetector(staVisi);
@@ -214,7 +213,7 @@ public class Simulation {
 			propagator.addEventDetector(detector);
 			eventDetPoint.put(detector, meshPoint);
 			eventDetPoint.put(staVisi, meshPoint);
-					
+
 		}
 
 	}
@@ -320,11 +319,13 @@ public class Simulation {
 					GeodeticPoint meshPoint = eventDetPoint.get(detector);
 					addPointAndDateListBegVisibilitiesMesh(meshPoint, this.t0);
 					if (this.verbose)
-						System.out.println("g>0 en debut de simulation pour " + sat.toString() + "   " + meshPoint.toString());
+						System.out.println(
+								"g>0 en debut de simulation pour " + sat.toString() + "   " + meshPoint.toString());
 				}
 			}
-			
-			// Clear of the events detectors on the propagator (ESSENTIAL TO HAVE RELEVANT RESULTS !)
+
+			// Clear of the events detectors on the propagator (ESSENTIAL TO HAVE RELEVANT
+			// RESULTS !)
 			propagator.clearEventsDetectors();
 
 			for (final EventsLogger.LoggedEvent event : logger.getLoggedEvents()) {
@@ -335,8 +336,10 @@ public class Simulation {
 
 				// The method isIncreasing returns a boolean which states
 				// whether the satellite is entering or exiting the elevation zone
-				if (event.isIncreasing()) addPointAndDateListBegVisibilitiesMesh(meshPoint, date);
-				else addPointAndDateListEndVisibilitiesMesh(meshPoint, date);
+				if (event.isIncreasing())
+					addPointAndDateListBegVisibilitiesMesh(meshPoint, date);
+				else
+					addPointAndDateListEndVisibilitiesMesh(meshPoint, date);
 			}
 		}
 	}

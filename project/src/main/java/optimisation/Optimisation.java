@@ -42,7 +42,9 @@ import utils.Plot;
  *
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
+
 public class Optimisation  {
+
 
 	/** genotype of an individual */
 	private final Genotype CODE;
@@ -146,13 +148,13 @@ public class Optimisation  {
 
 		// Plot of the Cost Function
 
+
 		Plot plot=new Plot(fitnessValues,"Evolution of Revisit Time for " + Integer.toString(populationSize) + " individuals and "
 						+ Integer.toString(generationNb) + " generations",
 				"Iteration", "Cost Function");
 		// Create chart
 		
 		
-
 		// empty the list of fitness values in case of a second optimization following
 		fitnessValues = new ConcurrentHashMap<Integer, Double>();
 
@@ -248,5 +250,4 @@ public class Optimisation  {
 		return decisionVector;
 	}
 
-	
 }
