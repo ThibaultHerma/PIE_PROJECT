@@ -38,6 +38,7 @@ the package utils. You can load your own JSON input file in the input folder.
 
 ### Launch  the HMI :earth_americas:
 * Install [node.js](http://nodejs.org/) from the official website.
+* On Windows, you may need to [add node to the ```PATH ```](http://nodejs.org/) environment variable. 
 * From the `HMI` root directory, run
 ```
 npm install

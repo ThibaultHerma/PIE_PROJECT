@@ -57,17 +57,7 @@ import zone.Zone;
  */
 public class Simulation {
 
-	/**
-	 * The Earth ITRF frame which should be used in all the project.
-	 */
-	public final org.orekit.frames.Frame earthFrame = FramesFactory.getITRF(Parameters.projectIERSConventions, true);
-
-	/**
-	 * The Earth body shape frame which should be used in all the project.
-	 */
-	public final BodyShape earth = new OneAxisEllipsoid(Parameters.projectEarthEquatorialRadius,
-			Parameters.projectEarthFlattening, earthFrame);
-
+	
 	/**
 	 * Constellation which contains all the satellites of the studied constellation
 	 */
@@ -199,7 +189,7 @@ public class Simulation {
 
 			GeodeticPoint meshPoint = this.zone.getListMeshingPoints().get(pointIndex);
 
-			TopocentricFrame staFrame = new TopocentricFrame(this.earth, meshPoint, "mesh_point_" + pointIndex);
+			TopocentricFrame staFrame = new TopocentricFrame(Parameters.earth, meshPoint, "mesh_point_" + pointIndex);
 
 			EventDetector staVisi = new ElevationDetector(maxcheck, threshold, staFrame)
 					.withConstantElevation(elevation).withHandler(new VisibilityHandlerSilent());
@@ -270,7 +260,7 @@ public class Simulation {
 
 			GeodeticPoint meshPoint = this.zone.getListMeshingPoints().get(pointIndex);
 
-			TopocentricFrame staFrame = new TopocentricFrame(this.earth, meshPoint, "mesh_point_" + pointIndex);
+			TopocentricFrame staFrame = new TopocentricFrame(Parameters.earth, meshPoint, "mesh_point_" + pointIndex);
 
 			EventDetector staVisi = new ElevationDetector(maxcheck, threshold, staFrame)
 					.withConstantElevation(elevation).withHandler(new VisibilityHandlerSilent());

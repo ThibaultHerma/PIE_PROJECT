@@ -47,7 +47,7 @@ public class SatelliteTest {
 		System.out.println(sat1.toString());
 
 	}
-	/**
+	
 	@Test
 	
 	void testGetGeodeticPoint() {
@@ -59,25 +59,19 @@ public class SatelliteTest {
 		
 		
 		Frame frame = FramesFactory.getGCRF();
-		System.out.println("checkpoint 1");
-		org.orekit.frames.Frame earthFrame = FramesFactory.getITRF(Parameters.projectIERSConventions, true);
-		System.out.println("checkpoint 2");
-		BodyShape earth = new OneAxisEllipsoid(Parameters.projectEarthEquatorialRadius,
-				Parameters.projectEarthFlattening, earthFrame);
-		System.out.println("checkpoint 3");
-		GeodeticPoint LatLongAlt = sat1.getGeodeticPoint(Parameters.t0, frame, earth);
-		System.out.println("checkpoint 4");
 		
-		
-		
+		GeodeticPoint LatLongAlt = sat1.getGeodeticPoint(Parameters.t0, Parameters.earthFrame, Parameters.earth);
 		System.out.println(LatLongAlt.getLatitude());
+		assert(LatLongAlt.getLatitude()==-1.3351593219850104);
 		System.out.println(LatLongAlt.getAltitude());
+		assert(LatLongAlt.getAltitude()==-6355584.864443043);
 		System.out.println(LatLongAlt.getLongitude());
+		assert(LatLongAlt.getLongitude()==1.3928785661937213);
 		
 		// Assert
 		
 		
 	}
-	*/
+
 
 }
