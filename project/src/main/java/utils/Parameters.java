@@ -83,6 +83,18 @@ public class Parameters {
 	 * resolution is set to 20km (at the Equator).
 	 */
 	public static double standardMeshResolution = 20000 / projectEarthEquatorialRadius;
+	
+	/**
+	 * The maxcheck duration used in the simulation (for the detectors).
+	 * Caution : this parameter is not used when an adaptative maxcheck is used
+	 * (in the method createEventsDetectorSatellite for example).
+	 */
+	public static final double maxcheck = 60.0;
+	
+	/**
+	 * The threshold duration used in the simulation (for the detectors).
+	 */
+	public static final double threshold = 0.001;
 
 	/**
 	 * ---- Simulation parameters which can also be loaded from the JSON file ----
