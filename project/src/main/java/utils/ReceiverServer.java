@@ -26,7 +26,7 @@ public class ReceiverServer extends Thread {
     private DatagramSocket socket;
     
     /** byte array to wrap the messages */
-    private byte[] buf = new byte[256];
+    private byte[] buf = new byte[Parameters.senderBufferSize];
  
 	/** Mode of request from the HMI : 
 	 * 	   -1 - Test case : checks that the connection with the IHM works
@@ -43,7 +43,7 @@ public class ReceiverServer extends Thread {
      */
     public ReceiverServer() throws SocketException {
     	
-        socket = new DatagramSocket(4433);
+        socket = new DatagramSocket(Parameters.receiverPort);
     }
 
     
@@ -79,17 +79,26 @@ public class ReceiverServer extends Thread {
             String received 
               = new String(packet.getData(), 0, packet.getLength()); //String version of the received JSON
             
-
+            System.out.println("message received : \n"+received+"\n length : " +received.length());
+            
+            if (received.length()==Parameters.senderBufferSize) {
+            	System.out.println("WARNING: The message received may have reached the buffer size limit,\n"
+            			+ "pleaser check that the whole message has been received \n"
+            			+ "and if not, increase the Buffer size in utils.Parameters");
+            }
+            
+            if(!String.valueOf(received.charAt(received.length()-1)).equals("}")) {
+            	System.out.println("WARNING: invalid JSON received. Please check the syntax and the buffer size");
+            }
             
             //the user (HMI) orders to stop the animation
-            /////////////////////to modify : parser problems !! && close the SenderServer as well
+            
             if (received.equals("stop")) {
                 runningMode = 0; // enters mode 0 - "Shutdown"
                 continue;
             }
             
-            
-            /////////////////////to modify : parser problems !!
+          
     		JSONParser jsonParser = new JSONParser();
     		JSONObject receivedJSON= null;
     	
@@ -104,7 +113,7 @@ public class ReceiverServer extends Thread {
     		System.out.println(receivedJSON.get("request"));
     		
     		
-            if (receivedJSON.get("request").equals("testConnection")) { 
+            if (receivedJSON.get("request").equals("testResult")) { 
             	System.out.println(received);
                 runningMode = -1;
                 continue;

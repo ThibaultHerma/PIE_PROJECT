@@ -53,7 +53,7 @@ public class SenderServer {
 		buf = msg.getBytes();
 		
 		DatagramPacket packet 
-		= new DatagramPacket(buf, buf.length, address, 4433);
+		= new DatagramPacket(buf, buf.length, address, Parameters.senderPort);
 		socket.send(packet);
 		
 	}

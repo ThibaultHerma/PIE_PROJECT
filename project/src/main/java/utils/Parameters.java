@@ -117,5 +117,14 @@ public class Parameters {
 	 * The path of the data file needed by orekit
 	 */
 	public static final String orekitDataPath = "data/orekit-data-master";
+	
+	/** ----Network configuration---- */
+	
+	public static final int senderPort=28764;
+	
+	public static final int receiverPort=28765;
+	
+	public static final int senderBufferSize=256;
+	
 
 }

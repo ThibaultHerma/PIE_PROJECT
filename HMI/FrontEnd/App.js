@@ -22,13 +22,14 @@
     ws.onmessage = function (message) {
         try {
             var obj = JSON.parse(message.data);
-
+            console.log('JSON RECEIVED')
+            console.log(obj)
             switch (obj.request) {
                 /**
                  * print hello world each time the app is connected to the server
                  */
                 case 'firstConnection':
-                    console.log('hello world')
+                    console.log('hello world');
                     break;
 
                 /**
@@ -36,7 +37,7 @@
                  * is received and send back a success message.
                  */
                 case 'testConnection':
-                    console.log('test Connection')
+                    console.log('test Connection');
                     toggle_visibility_test_popup();
                     ws.send(JSON.stringify({"request": "testResult", "result": "success"}))
 
