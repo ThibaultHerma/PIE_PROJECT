@@ -65,7 +65,7 @@ public class UseCase1 extends UseCase {
 
 		Optimisation optimisationProblem = new Optimisation(decisionVector1);
 
-		int populationSize = 10;
+		int populationSize = 25;
 		int generationNb = 10;
 
 		ArrayList<Object> optimisedValues = optimisationProblem.optimize(decisionVector1, populationSize, generationNb);
