@@ -75,7 +75,7 @@ public class ReceiverServer extends Thread {
             
             InetAddress address = packet.getAddress();
             int port = packet.getPort();
-            packet = new DatagramPacket(buf, buf.length, address, port);
+    
             String received 
               = new String(packet.getData(), 0, packet.getLength()); //String version of the received JSON
             
@@ -104,7 +104,7 @@ public class ReceiverServer extends Thread {
     		System.out.println(receivedJSON.get("request"));
     		
     		
-            if (receivedJSON.get("request")=="testConnection") { 
+            if (receivedJSON.get("request").equals("testConnection")) { 
             	System.out.println(received);
                 runningMode = -1;
                 continue;

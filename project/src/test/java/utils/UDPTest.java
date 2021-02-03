@@ -41,7 +41,7 @@ class UDPTest {
 		
 		//Is it necessary to put a running time before checking the value of "running" ?
 		try {
-			Thread.sleep(1);
+			Thread.sleep(100);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
