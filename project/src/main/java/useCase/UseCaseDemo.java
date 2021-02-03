@@ -57,8 +57,8 @@ public class UseCaseDemo extends UseCase {
 		// compute the Objective Function from a sentinel constellation
 		System.out.println("\n---- COMPUTE OBJECTIVE FUNCTION -----");
 
-		int populationSize = 25;
-		int generationNb = 10;
+		int populationSize = 50;
+		int generationNb = 15;
 		Optimisation optimisationProblem = new Optimisation(decisionVectorDemo);
 		ArrayList<Object> optimisedValues = optimisationProblem.optimize(decisionVectorDemo, populationSize,
 

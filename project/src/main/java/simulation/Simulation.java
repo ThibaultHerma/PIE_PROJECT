@@ -279,8 +279,9 @@ public class Simulation {
 	}
 
 	/**
-	 * This method computes the propagation of all satellites of the coonstellation
-	 * and detect when each point of the mesh is seen by a satellite.
+
+	 * This method computes the propagation of all satellites of the constellation and 
+	 * detect when each point of the mesh is seen by a satellite.
 	 * 
 	 * The dates at which each point of the mesh enters and exits the satellite view
 	 * are stored in the corresponding HashMaps.

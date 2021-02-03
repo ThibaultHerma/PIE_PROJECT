@@ -53,6 +53,7 @@ public class Parameters {
 			Parameters.projectEarthFlattening, earthFrame);
 
 
+
 	/**
 	 * The start time of the simulation. By default, the constructor set the date to
 	 * J2000_EPOCH, which is J2000.0 Reference epoch: 2000-01-01T12:00:00
@@ -100,7 +101,7 @@ public class Parameters {
 	 * convenient reasons. It will be in the arguments of the main in the releases.
 	 */
 
-	public static final int useCaseNb = 1;
+	public static final int useCaseNb = 0;
 
 	/**
 	 * The path of the input JSON files
