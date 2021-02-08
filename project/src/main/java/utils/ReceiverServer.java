@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 
 /**
+
  * Class for ReceiverServers : UDP servers communication between the application
  * and Java. The ReceiverSocket listen to requests (JSON) from the user (HMI)
  * and instantiates Animators to send the desired information to the app via the
@@ -25,51 +26,54 @@ import java.net.DatagramPacket;
 
 public class ReceiverServer extends Thread {
 
+	
 	/** ReceiverSocket */
-	private DatagramSocket socket;
-
-	/** byte array to wrap the messages */
-	private byte[] buf = new byte[Parameters.senderBufferSize];
-
-	/**
-	 * Mode of request from the HMI : -1 - Test case : checks that the connection
-	 * with the IHM works 0 - Shutdown : the user (HMI) requests to close the app :
-	 * ReceiverSocket is closed 1 - Listening : listens to the requests of the HMI 2
-	 * - Pause : the user (HMI) requests a "pause" of the animation : ReceiverSocket
-	 * listens until order "resume"
-	 */
-	private int runningMode;
+    private DatagramSocket socket;
+    
+    /** byte array to wrap the messages */
+    private byte[] buf = new byte[Parameters.senderBufferSize];
+ 
+	/** Mode of request from the HMI : 
+	 * 	   -1 - Test case : checks that the connection with the IHM works
+	 * 		0 - Shutdown : the user (HMI) requests to close the app : ReceiverSocket is closed
+	 *  	1 - Listening : listens to the requests of the HMI
+	 * 		2 - Pause : the user (HMI) requests a "pause" of the animation : ReceiverSocket listens until order "resume"
+	 */ 
+    private int runningMode;
 //    private Animator animator; 
 
-	/**
-	 * Constructor of the ReceiverSocket
-	 * 
-	 * @throws SocketException
-	 */
-	public ReceiverServer() throws SocketException {
+    /**
+     * Constructor of the ReceiverSocket
+     * @throws SocketException
+     */
+    public ReceiverServer() throws SocketException {
+    	
+        socket = new DatagramSocket(Parameters.receiverPort);
+    }
 
-		socket = new DatagramSocket(Parameters.receiverPort);
+    
+    /**
+     * Runs the ReceiverSocket : for each request, the socket enters a mode.
+     * By default, the ReceiverSocket is in mode 1 "listening" : 
+     * 		- the user (HMI) requests the step-n constellation of the Genetic optimization : 
+	 * 				ReceiverSocket instantiates the corresponding animator and waits for other instructions ; 
+	 * 		- the user (HMI) requests to close the app : 
+	 * 				ReceiverSocket enters mode 0 "shutdown";
+	 * 		- the user (HMI) requests a "pause" of the animation : 
+	 * 				ReceiverSocket enters mode 2 "pause" listens until order "resume"
+     */
+    public void run() {
+    	
+        runningMode = 1; // mode 1 - "Listening" 
+        
+       
+        while (runningMode==1) {
+        	
+            DatagramPacket packet 
+              = new DatagramPacket(buf, buf.length);
+            try {
+				socket.receive(packet); 
 
-	}
-
-	/**
-	 * Runs the ReceiverSocket : for each request, the socket enters a mode. By
-	 * default, the ReceiverSocket is in mode 1 "listening" : - the user (HMI)
-	 * requests the step-n constellation of the Genetic optimization :
-	 * ReceiverSocket instantiates the corresponding animator and waits for other
-	 * instructions ; - the user (HMI) requests to close the app : ReceiverSocket
-	 * enters mode 0 "shutdown"; - the user (HMI) requests a "pause" of the
-	 * animation : ReceiverSocket enters mode 2 "pause" listens until order "resume"
-	 */
-	public void run() {
-
-		runningMode = 1; // mode 1 - "Listening"
-
-		while (runningMode == 1) {
-
-			DatagramPacket packet = new DatagramPacket(buf, buf.length);
-			try {
-				socket.receive(packet);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -97,12 +101,14 @@ public class ReceiverServer extends Thread {
 			JSONObject receivedJSON = null;
 
 			Object obj = null;
+
 			try {
 				obj = jsonParser.parse(received);
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+
 			receivedJSON = (JSONObject) obj;
 
 			// Connection test java-to-HMI-to java
@@ -188,3 +194,4 @@ public class ReceiverServer extends Thread {
 	}
 
 }
+

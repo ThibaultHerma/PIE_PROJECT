@@ -39,6 +39,7 @@ class UDPTest {
         //sending the request
 		sender.sendJSON(obj);
 		
+
 		//We wait for 1 s before asserting in order to let the connection being made
 		try {
 			Thread.sleep(100);
