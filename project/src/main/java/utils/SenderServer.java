@@ -49,11 +49,10 @@ public class SenderServer {
 	public void sendJSON(JSONObject msgJSON) throws IOException {
 		
 		String msg=msgJSON.toJSONString();
-		JSONParser jsonParser = new JSONParser();
 		buf = msg.getBytes();
 		
 		DatagramPacket packet 
-		= new DatagramPacket(buf, buf.length, address, 4433);
+		= new DatagramPacket(buf, buf.length, address, Parameters.senderPort);
 		socket.send(packet);
 		
 	}

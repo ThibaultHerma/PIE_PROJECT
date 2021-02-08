@@ -180,8 +180,8 @@ public class Simulation {
 	 */
 	public void createEventsDetector(Propagator propagator, EventsLogger logger, double elevation) {
 
-		double maxcheck = 60.0;
-		double threshold = 0.001;
+		double maxcheck = Parameters.maxcheck;
+		double threshold = Parameters.threshold;
 
 		// we go through all the points of the meshing and add them as events to be
 		// detected
@@ -252,7 +252,7 @@ public class Simulation {
 			System.out.println("Maxcheck is : " + maxcheck);
 		}
 
-		double threshold = 0.01;// accuracy of 0.01 s
+		double threshold = Parameters.threshold;// accuracy of 0.01 s
 
 		// we go through all the points of the meshing and add them as events to be
 		// detected

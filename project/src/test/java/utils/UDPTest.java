@@ -39,9 +39,10 @@ class UDPTest {
         //sending the request
 		sender.sendJSON(obj);
 		
-		//Is it necessary to put a running time before checking the value of "running" ?
+		//We wait for 1 s before asserting in order to let the connection being made
 		try {
-			Thread.sleep(1);
+			Thread.sleep(100);
+			
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
